@@ -11,7 +11,8 @@ biocViews:
 Depends: R (>= 4.0.0)
 Imports:
     SingleCellExperiment, 
-    utils
+    rlang, 
+    ggplot2
 VignetteBuilder: knitr
 Suggests:
     BiocStyle, 
