@@ -5,7 +5,9 @@ R package containing visualization functions for spatially resolved transcriptom
 
 ## Installation
 
-Installation from GitHub (until the package has been submitted to Bioconductor):
+Currently, the package is available from GitHub. This will be extended and submitted to Bioconductor in the future.
+
+To install from GitHub including vignettes, use the following options:
 
 ```
 remotes::install_github("lmweber/SpaViz", build_vignettes = TRUE, force = TRUE)
