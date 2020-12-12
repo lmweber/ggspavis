@@ -6,42 +6,54 @@
 \usage{
 plotSpots(
   spe,
-  x_coord = "pxl_row_in_fullres",
-  y_coord = "pxl_col_in_fullres",
-  cluster_id = NULL,
-  palette = "libd_layer_colors"
+  x_coord = "x_coord",
+  y_coord = "y_coord",
+  discrete = NULL,
+  continuous = NULL,
+  palette = NULL,
+  flip_xy_Visium = FALSE
 )
 }
 \arguments{
-\item{spe}{Input object (SpatialExperiment).}
+\item{spe}{(SpatialExperiment) Input data object.}
 
-\item{x_coord}{Name of column in spatialCoords slot containing x-coordinates.
-Default = "pxl_row_in_fullres".}
+\item{x_coord}{(character) Name of column in spatialCoords containing
+x-coordinates. Default = "x_coord".}
 
-\item{y_coord}{Name of column in spatialCoords slot containing x-coordinates.
-Default = "pxl_col_in_fullres".}
+\item{y_coord}{(character) Name of column in spatialCoords containing
+y-coordinates. Default = "y_coord".}
 
-\item{cluster_id}{Name of column in colData containing cluster IDs. To plot
-without cluster labels, set "cluster_id = NULL". Default = "cluster_id".}
+\item{discrete}{(character) Name of column in colData containing discrete
+labels (e.g. cluster labels or ground truth labels) to show with colors.
+Default = NULL.}
 
-\item{palette}{Color palette for cluster labels. Options are
-"libd_layer_colors", "Okabe-Ito", or providing a vector of hex codes for a
-custom palette.}
+\item{continuous}{(character) Name of column in colData containing continuous
+values (e.g. total UMI counts) to show with colors. Default = NULL.}
+
+\item{palette}{(character) Color palette. Options for discrete labels are
+"libd_layer_colors", "Okabe-Ito", or a vector of hex codes for a custom
+palette. Default = "libd_layer_colors". Options for continuous values are
+"navy", or a vector of length two containing custom colors. Default =
+"navy".}
+
+\item{flip_xy_Visium}{(logical) Whether to switch x and y coordinates and
+reverse y coordinates (sometimes required for 10x Visium platform if using
+the default `pxl_row_in_fullres` and `pxl_col_in_fullres` columns as
+coordinates). Default = FALSE.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, formatting).
+  ggplot elements (e.g. title, customized formatting, etc).
 }
 \description{
 Plots for spatial transcriptomics datasets.
 }
 \details{
-Functions to generate plots of spatial coordinates for spatial
-transcriptomics datasets, optionally including cluster labels.
+Function to plot spatial transcriptomics data in spatial (x-y) coordinates.
 
-This function generates a plot showing spatial coordinates (spots) in the
-physical x-y coordinates of the tissue slide. Cluster labels or ground truth
-labels can be shown with colors.
+This function generates a plot showing spatial coordinates (spots) in the x-y
+coordinates of the tissue slide, with optional colors for cluster labels,
+ground truth labels, or other quantities.
 }
 \examples{
 # to do
