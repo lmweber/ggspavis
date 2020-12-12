@@ -1,4 +1,4 @@
-# SpaViz
+# ggspavis
 
 R package containing visualization functions for spatially resolved transcriptomics data.
 
@@ -10,6 +10,6 @@ Currently, the package is available from GitHub. This will be extended and submi
 To install from GitHub including vignettes, use the following options:
 
 ```
-remotes::install_github("lmweber/SpaViz", build_vignettes = TRUE, force = TRUE)
+remotes::install_github("lmweber/ggspavis", build_vignettes = TRUE, force = TRUE)
 ```
 
