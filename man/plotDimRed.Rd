@@ -9,43 +9,51 @@ plotDimRed(
   type = "UMAP",
   x_axis = "UMAP1",
   y_axis = "UMAP2",
-  cluster_id = NULL,
-  palette = "libd_layer_colors"
+  discrete = NULL,
+  continuous = NULL,
+  palette = NULL,
+  flip_xy_Visium = FALSE
 )
 }
 \arguments{
-\item{spe}{Input object (SpatialExperiment).}
+\item{spe}{(SpatialExperiment) Input data object.}
 
-\item{type}{Type of dimension reduction to use. Options are "PCA" or "UMAP".
-Default = "UMAP".}
+\item{type}{(character) Type of reduced dimension plot. Options are "PCA" or
+"UMAP". Default = "UMAP.}
 
-\item{x_axis}{Name of column in reducedDim to use for x-axis. Default =
-"UMAP1".}
+\item{x_axis}{(character) Name of column in reducedDim slot containing
+x-coordinates. Default = "UMAP1".}
 
-\item{y_axis}{Name of column in reducedDim to use for y-axis. Default =
-"UMAP2".}
+\item{y_axis}{(character) Name of column in reducedDim slot containing
+y-coordinates. Default = "UMAP2".}
 
-\item{cluster_id}{Name of column in colData containing cluster IDs. To plot
-without cluster labels, set "cluster_id = NULL". Default = "cluster_id".}
+\item{discrete}{(character) Name of column in colData containing discrete
+labels (e.g. cluster labels or ground truth labels) to show with colors.
+Default = NULL.}
 
-\item{palette}{Color palette for cluster labels. Options are
-"libd_layer_colors", "Okabe-Ito", or providing a vector of hex codes for a
-custom palette.}
+\item{continuous}{(character) Name of column in colData containing continuous
+values (e.g. total UMI counts) to show with colors. Default = NULL.}
+
+\item{palette}{(character) Color palette. Options for discrete labels are
+"libd_layer_colors", "Okabe-Ito", or a vector of hex codes for a custom
+palette. Default = "libd_layer_colors". Options for continuous values are
+"navy", or a vector of length two containing custom colors. Default =
+"navy".}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, formatting).
+  ggplot elements (e.g. title, customized formatting, etc).
 }
 \description{
 Plots for spatial transcriptomics datasets.
 }
 \details{
-Functions to generate plots of spatial coordinates for spatial
-transcriptomics datasets, optionally including cluster labels.
+Function to plot spatial transcriptomics data in reduced dimension
+coordinates.
 
 This function generates a plot showing spatial coordinates (spots) in reduced
-dimension space (either PCA or UMAP). Cluster labels or ground truth labels
-can be shown with colors.
+dimension coordinates (PCA or UMAP), with optional colors for cluster labels,
+ground truth labels, or other quantities.
 }
 \examples{
 # to do
