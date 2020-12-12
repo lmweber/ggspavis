@@ -52,7 +52,7 @@
 plotDimRed <- function(spe, type = "UMAP", 
                        x_axis = "UMAP1", y_axis = "UMAP2", 
                        discrete = NULL, continuous = NULL, 
-                       palette = NULL, flip_xy_Visium = FALSE) {
+                       palette = NULL) {
   
   # note: using quasiquotation to allow custom variable names in ggplot ("sym" and "!!")
   

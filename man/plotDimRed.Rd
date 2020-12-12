@@ -11,8 +11,7 @@ plotDimRed(
   y_axis = "UMAP2",
   discrete = NULL,
   continuous = NULL,
-  palette = NULL,
-  flip_xy_Visium = FALSE
+  palette = NULL
 )
 }
 \arguments{
