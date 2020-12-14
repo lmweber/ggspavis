@@ -53,7 +53,7 @@
 #' # library(ggspavis)
 #' # library(STdata)
 #' # spe <- load_data("human_DLPFC")
-#' # plotSpots(spe, discrete = "ground_truth")
+#' # plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 #' 
 plotSpots <- function(spe, 
                       x_coord = "x_coord", y_coord = "y_coord", 
