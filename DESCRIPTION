@@ -17,5 +17,6 @@ Imports:
 VignetteBuilder: knitr
 Suggests:
     BiocStyle, 
+    STdata, 
     knitr
 RoxygenNote: 7.1.1
