@@ -1,8 +1,9 @@
 #' plotSpots
 #' 
-#' Plots for spatial transcriptomics datasets.
+#' Plots for spatially resolved transcriptomics datasets.
 #' 
-#' Function to plot spatial transcriptomics data in spatial (x-y) coordinates.
+#' Function to plot spatially resolved transcriptomics data in spatial (x-y)
+#' coordinates.
 #' 
 #' This function generates a plot showing spatial coordinates (spots) in the x-y
 #' coordinates of the tissue slide, with optional colors for cluster labels,
@@ -49,7 +50,10 @@
 #' @export
 #' 
 #' @examples
-#' # to do
+#' # library(ggspavis)
+#' # library(STdata)
+#' # spe <- load_data("human_DLPFC")
+#' # plotSpots(spe, discrete = "ground_truth")
 #' 
 plotSpots <- function(spe, 
                       x_coord = "x_coord", y_coord = "y_coord", 

@@ -44,10 +44,10 @@ Returns a ggplot object. Additional plot elements can be added as
   ggplot elements (e.g. title, customized formatting, etc).
 }
 \description{
-Plots for spatial transcriptomics datasets.
+Plots for spatially resolved transcriptomics datasets.
 }
 \details{
-Function to plot spatial transcriptomics data in reduced dimension
+Function to plot spatially resolved transcriptomics data in reduced dimension
 coordinates.
 
 This function generates a plot showing spatial coordinates (spots) in reduced

@@ -46,16 +46,20 @@ Returns a ggplot object. Additional plot elements can be added as
   ggplot elements (e.g. title, customized formatting, etc).
 }
 \description{
-Plots for spatial transcriptomics datasets.
+Plots for spatially resolved transcriptomics datasets.
 }
 \details{
-Function to plot spatial transcriptomics data in spatial (x-y) coordinates.
+Function to plot spatially resolved transcriptomics data in spatial (x-y)
+coordinates.
 
 This function generates a plot showing spatial coordinates (spots) in the x-y
 coordinates of the tissue slide, with optional colors for cluster labels,
 ground truth labels, or other quantities.
 }
 \examples{
-# to do
+# library(ggspavis)
+# library(STdata)
+# spe <- load_data("human_DLPFC")
+# plotSpots(spe, discrete = "ground_truth")
 
 }
