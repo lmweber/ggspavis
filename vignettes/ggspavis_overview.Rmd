@@ -1,0 +1,51 @@
+---
+title: "ggspavis package overview"
+author: 
+  - name: Lukas M. Weber
+    affiliation: "Johns Hopkins Bloomberg School of Public Health"
+package: STdata
+output: 
+  BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{ggspavis package overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introduction
+
+The `ggspavis` package (under development) contains a set of visualization functions for spatially resolved transcriptomics datasets.
+
+Functions in this package are designed to work with the [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) Bioconductor object class.
+
+
+# Example
+
+We load an example dataset from the [STdata](https://github.com/lmweber/STdata) package, and create some example plots.
+
+```{r, message=FALSE}
+library(SpatialExperiment)
+library(STdata)
+library(ggspavis)
+```
+
+```{r, message=FALSE}
+# load data in SpatialExperiment format
+spe <- load_data("human_DLPFC")
+```
+
+```{r, message=FALSE, out.width="60%"}
+# example plot in x-y space showing spots over tissue; no cluster labels
+plotSpots(spe)
+```
+
+```{r, message=FALSE, out.width="75%"}
+# example plot in x-y space showing ground truth labels
+plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
+```
+
