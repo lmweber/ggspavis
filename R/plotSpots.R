@@ -12,10 +12,10 @@
 #' 
 #' @param spe (SpatialExperiment) Input data object.
 #' 
-#' @param x_coord (character) Name of column in spatialCoords containing
+#' @param x_coord (character) Name of column in spatialData containing
 #'   x-coordinates. Default = "x_coord".
 #' 
-#' @param y_coord (character) Name of column in spatialCoords containing
+#' @param y_coord (character) Name of column in spatialData containing
 #'   y-coordinates. Default = "y_coord".
 #' 
 #' @param discrete (character) Name of column in colData containing discrete
@@ -42,7 +42,7 @@
 #' 
 #' 
 #' @importFrom rlang sym "!!"
-#' @importFrom SpatialExperiment spatialCoords
+#' @importFrom SpatialExperiment spatialData
 #' @importFrom SingleCellExperiment colData
 #' @importFrom ggplot2 ggplot aes geom_point coord_fixed ggtitle
 #'   scale_color_manual scale_color_gradient theme_bw theme element_blank
@@ -52,7 +52,7 @@
 #' @examples
 #' # library(ggspavis)
 #' # library(STdata)
-#' # spe <- load_data("human_DLPFC")
+#' # spe <- load_data("Visium_humanDLPFC")
 #' # plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 #' 
 plotSpots <- function(spe, 
@@ -76,12 +76,12 @@ plotSpots <- function(spe,
   }
   
   if (flip_xy_Visium) {
-    x_coord_tmp <- spatialCoords(spe)[, y_coord]
-    y_coord_tmp <- -1 * spatialCoords(spe)[, x_coord] + max(spatialCoords(spe)[, x_coord]) + 1
+    x_coord_tmp <- spatialData(spe)[, y_coord]
+    y_coord_tmp <- -1 * spatialData(spe)[, x_coord] + max(spatialData(spe)[, x_coord]) + 1
     df_plot <- data.frame(x_coord = x_coord_tmp, y_coord = y_coord_tmp)
   }
   
-  df_plot <- spatialCoords(spe)[, c(x_coord, y_coord), drop = FALSE]
+  df_plot <- spatialData(spe)[, c(x_coord, y_coord), drop = FALSE]
   
   if (!is.null(discrete)) {
     df_plot <- cbind(df_plot, colData(spe)[, discrete, drop = FALSE])

@@ -17,10 +17,10 @@ plotSpots(
 \arguments{
 \item{spe}{(SpatialExperiment) Input data object.}
 
-\item{x_coord}{(character) Name of column in spatialCoords containing
+\item{x_coord}{(character) Name of column in spatialData containing
 x-coordinates. Default = "x_coord".}
 
-\item{y_coord}{(character) Name of column in spatialCoords containing
+\item{y_coord}{(character) Name of column in spatialData containing
 y-coordinates. Default = "y_coord".}
 
 \item{discrete}{(character) Name of column in colData containing discrete
@@ -59,7 +59,7 @@ ground truth labels, or other quantities.
 \examples{
 # library(ggspavis)
 # library(STdata)
-# spe <- load_data("human_DLPFC")
+# spe <- load_data("Visium_humanDLPFC")
 # plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 
 }

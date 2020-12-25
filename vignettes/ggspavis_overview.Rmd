@@ -36,7 +36,7 @@ library(ggspavis)
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- load_data("human_DLPFC")
+spe <- load_data("Visium_humanDLPFC")
 ```
 
 ```{r, message=FALSE, out.width="60%"}
