@@ -32,7 +32,7 @@
 #' @importFrom SpatialExperiment spatialData
 #' @importFrom SingleCellExperiment colData counts
 #' @importFrom ggplot2 ggplot aes_string geom_point scale_color_gradient
-#'   coord_fixed theme_void gg_title
+#'   coord_fixed theme_void ggtitle
 #' @importFrom methods as
 #' 
 #' @export
