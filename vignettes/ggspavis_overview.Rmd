@@ -3,7 +3,7 @@ title: "ggspavis package overview"
 author: 
   - name: Lukas M. Weber
     affiliation: "Johns Hopkins Bloomberg School of Public Health"
-package: STdata
+package: ggspavis
 output: 
   BiocStyle::html_document
 vignette: >
@@ -19,14 +19,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-The `ggspavis` package (under development) contains a set of visualization functions for spatially resolved transcriptomics datasets.
+The `ggspavis` package contains a set of visualization functions for spatially resolved transcriptomics datasets.
 
 Functions in this package are designed to work with the [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) Bioconductor object class.
 
 
-# Example
+# Functions
 
-We load an example dataset from the [STdata](https://github.com/lmweber/STdata) package, and create some example plots.
+Currently the package contains the following plotting functions:
+
+- `?plotVisium`
+- `?plotSpots`
+- `?plotDimRed`
+
+
+# Examples
+
+We load some example datasets from the [STdata](https://github.com/lmweber/STdata) package, and create some example plots using the plotting functions from the `ggspavis` package.
 
 ```{r, message=FALSE}
 library(SpatialExperiment)
@@ -34,18 +43,34 @@ library(STdata)
 library(ggspavis)
 ```
 
+
+## 10x Genomics Visium: mouse coronal brain section
+
+```{r, message=FALSE}
+# load data in SpatialExperiment format
+spe <- load_data("Visium_mouseCoronal")
+```
+
+```{r, message=FALSE, out.width="60%"}
+# add some values in 'colData' to show using color scale
+colData(spe)$sum <- colSums(counts(spe))
+
+# example plots
+plotVisium(spe, fill = "sum")
+plotVisium(spe, fill = "sum", palette = "red")
+```
+
+
+## 10x Genomics Visium: human brain (DLPFC)
+
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
 spe <- load_data("Visium_humanDLPFC")
 ```
 
 ```{r, message=FALSE, out.width="60%"}
-# example plot in x-y space showing spots over tissue; no cluster labels
+# example plots
 plotSpots(spe)
-```
-
-```{r, message=FALSE, out.width="75%"}
-# example plot in x-y space showing ground truth labels
 plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 ```
 
