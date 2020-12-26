@@ -82,8 +82,9 @@ plotVisium <- function(spe,
                        spots = TRUE, fill = NULL, highlight = "in_tissue", 
                        facets = "sample_id", image = TRUE, 
                        x_coord = "x_coord", y_coord = "y_coord", 
-                       flip_xy_Visium = FALSE, palette = NULL, 
-                       sample_ids = NULL, image_ids = NULL) {
+                       flip_xy_Visium = FALSE, 
+                       sample_ids = NULL, image_ids = NULL, 
+                       palette = NULL) {
   
   # check input type
   stopifnot(is(spe, "SpatialExperiment"))

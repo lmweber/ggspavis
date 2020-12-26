@@ -14,9 +14,9 @@ plotVisium(
   x_coord = "x_coord",
   y_coord = "y_coord",
   flip_xy_Visium = FALSE,
-  palette = NULL,
   sample_ids = NULL,
-  image_ids = NULL
+  image_ids = NULL,
+  palette = NULL
 )
 }
 \arguments{
@@ -51,18 +51,18 @@ Default = 'y_coord'.}
 reverse y scale to match orientation of histology images. This is sometimes
 required for Visium data, depending on the orientation of the raw data.}
 
+\item{sample_ids}{(character) Samples to show, if multiple samples are
+available. Default = NULL (show all samples).}
+
+\item{image_ids}{(character) Images to show, if multiple images are
+available. Default = NULL (show all images).}
+
 \item{palette}{(character) Color palette for points. Options for discrete
 labels are 'libd_layer_colors', 'Okabe-Ito', or a custom vector of hex
 color codes. Options for continuous values are 'viridis', a single color
 name (e.g. 'red', 'navy', etc), or a vector of length two containing color
 names for each end of the scale. Default = 'libd_layer_colors' for discrete
 data, and 'viridis' for continuous data.}
-
-\item{sample_ids}{(character) Samples to show, if multiple samples are
-available. Default = NULL (show all samples).}
-
-\item{image_ids}{(character) Images to show, if multiple images are
-available. Default = NULL (show all images).}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
