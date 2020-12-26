@@ -85,6 +85,7 @@ options available to adjust the plot type and style.
 # library(STdata)
 # spe <- load_data("Visium_mouseCoronal")
 # plotVisium(spe)
+
 }
 \author{
 Helena L. Crowell and Lukas M. Weber

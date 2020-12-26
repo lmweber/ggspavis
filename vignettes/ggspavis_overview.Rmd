@@ -74,3 +74,16 @@ plotSpots(spe)
 plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 ```
 
+
+## seqFISH: mouse embryo
+
+```{r, message=FALSE}
+# load data in SpatialExperiment format
+spe <- load_data("seqFISH_mouseEmbryo")
+```
+
+```{r, message=FALSE, out.width="60%"}
+# example plots
+plotMolecules(spe, molecule = "Sox2")
+```
+

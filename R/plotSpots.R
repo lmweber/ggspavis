@@ -1,9 +1,9 @@
 #' plotSpots
 #' 
-#' Plots for spatially resolved transcriptomics datasets.
+#' Plots for spatially resolved transcriptomics datasets
 #' 
-#' Function to plot spatially resolved transcriptomics data in spatial (x-y)
-#' coordinates.
+#' Function to plot spot-based spatially resolved transcriptomics data in
+#' spatial (x-y) coordinates.
 #' 
 #' This function generates a plot showing spatial coordinates (spots) in the x-y
 #' coordinates of the tissue slide, with optional colors for cluster labels,

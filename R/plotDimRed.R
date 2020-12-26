@@ -1,6 +1,6 @@
 #' plotDimRed
 #' 
-#' Plots for spatially resolved transcriptomics datasets.
+#' Plots for spatially resolved transcriptomics datasets
 #' 
 #' Function to plot spatially resolved transcriptomics data in reduced dimension
 #' coordinates.

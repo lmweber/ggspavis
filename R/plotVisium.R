@@ -78,6 +78,7 @@
 #' # library(STdata)
 #' # spe <- load_data("Visium_mouseCoronal")
 #' # plotVisium(spe)
+#' 
 plotVisium <- function(spe, 
                        spots = TRUE, fill = NULL, highlight = "in_tissue", 
                        facets = "sample_id", image = TRUE, 

@@ -46,11 +46,11 @@ Returns a ggplot object. Additional plot elements can be added as
   ggplot elements (e.g. title, customized formatting, etc).
 }
 \description{
-Plots for spatially resolved transcriptomics datasets.
+Plots for spatially resolved transcriptomics datasets
 }
 \details{
-Function to plot spatially resolved transcriptomics data in spatial (x-y)
-coordinates.
+Function to plot spot-based spatially resolved transcriptomics data in
+spatial (x-y) coordinates.
 
 This function generates a plot showing spatial coordinates (spots) in the x-y
 coordinates of the tissue slide, with optional colors for cluster labels,
