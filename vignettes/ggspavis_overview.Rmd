@@ -68,9 +68,12 @@ plotVisium(spe, fill = "sum", palette = "red")
 spe <- load_data("Visium_humanDLPFC")
 ```
 
-```{r, message=FALSE, out.width="60%"}
+```{r, message=FALSE, out.width="52%"}
 # example plots
 plotSpots(spe)
+```
+
+```{r, message=FALSE, out.width="65%"}
 plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 ```
 

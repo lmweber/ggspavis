@@ -31,8 +31,8 @@
 #' 
 #' @importFrom SpatialExperiment spatialData
 #' @importFrom SingleCellExperiment colData counts
-#' @importFrom ggplot2 ggplot aes_string geom_point coord_fixed
-#'   scale_color_gradient theme_void
+#' @importFrom ggplot2 ggplot aes_string geom_point scale_color_gradient
+#'   coord_fixed theme_void gg_title
 #' @importFrom methods as
 #' 
 #' @export
@@ -70,6 +70,7 @@ plotMolecules <- function(spe,
     geom_point(size = 0.5) + 
     scale_color_gradient(low = palette[1], high = palette[2], trans = "sqrt") + 
     coord_fixed() + 
+    ggtitle(molecule) + 
     theme_void()
   
   p
