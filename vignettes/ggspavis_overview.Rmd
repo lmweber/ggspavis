@@ -30,6 +30,7 @@ Currently the package contains the following plotting functions:
 
 - `?plotVisium`
 - `?plotSpots`
+- `?plotMolecules`
 - `?plotDimRed`
 
 
