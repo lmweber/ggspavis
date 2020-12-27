@@ -68,12 +68,20 @@ plotVisium(spe, fill = "sum", palette = "red")
 spe <- load_data("Visium_humanDLPFC")
 ```
 
-```{r, message=FALSE, out.width="52%"}
+```{r, message=FALSE, out.width="60%"}
 # example plots
-plotSpots(spe)
+plotVisium(spe, fill = "ground_truth")
+```
+
+```{r, message=FALSE, out.width="60%"}
+# add some values in 'colData' to show using color scale
+colData(spe)$sum <- colSums(counts(spe))
+
+plotVisium(spe, fill = "sum")
 ```
 
 ```{r, message=FALSE, out.width="65%"}
+# alternatively
 plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 ```
 
