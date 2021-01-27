@@ -188,11 +188,11 @@ plotVisium <- function(spe,
     points <- list(
       guides(fill = guide(
         title = fill, order = 1, override.aes = list(col = NA, size = 3))), 
-      geom_point(shape = 21, size = 1.25, stroke = 0.25))
+      geom_point(shape = 21, size = 1, stroke = 0.25, alpha = 0.5))
     if (!is.null(highlight)) {
       df_plot$highlight <- df_plot[[highlight]]
       highlights <- list(
-        scale_color_manual(highlight, values = c("transparent", "black")), 
+        scale_color_manual(highlight, values = c("gray50", "black")), 
         guides(col = guide_legend(override.aes = list(
           size = 2, stroke = 1, col = c("gray", "black")[seq_along(unique(df_plot$highlight))]))))
     } else {
