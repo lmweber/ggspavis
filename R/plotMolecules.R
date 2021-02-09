@@ -15,10 +15,10 @@
 #'   the row names of 'rowData').
 #' 
 #' @param x_coord (character) Name of column in 'spatialData' containing
-#'   x-coordinates of the cell centroids. Default = 'x_coord'.
+#'   x-coordinates of the cell centroids. Default = 'x'.
 #' 
 #' @param y_coord (character) Name of column in 'spatialData' containing
-#'   y-coordinates of the cell centroids. Default = 'y_coord'.
+#'   y-coordinates of the cell centroids. Default = 'y'.
 #' 
 #' @param palette (character) Color palette for points. Options are a single
 #'   color name (e.g. 'red', 'navy', etc), or a vector of length two containing
@@ -45,7 +45,7 @@
 #' 
 plotMolecules <- function(spe, 
                           molecule =  NULL, 
-                          x_coord = "x_coord", y_coord = "y_coord", 
+                          x_coord = "x", y_coord = "y", 
                           palette = NULL) {
   
   # set up color palette
@@ -66,7 +66,7 @@ plotMolecules <- function(spe,
   
   df_plot <- as.data.frame(df_plot)
   
-  p <- ggplot(df_plot, aes_string(x = "x_coord", y = "y_coord", color = "sum")) + 
+  p <- ggplot(df_plot, aes_string(x = "x", y = "y", color = "sum")) + 
     geom_point(size = 0.5) + 
     scale_color_gradient(low = palette[1], high = palette[2], trans = "sqrt") + 
     coord_fixed() + 

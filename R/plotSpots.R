@@ -13,10 +13,10 @@
 #' @param spe (SpatialExperiment) Input data object.
 #' 
 #' @param x_coord (character) Name of column in spatialData containing
-#'   x-coordinates. Default = "x_coord".
+#'   x-coordinates. Default = "x".
 #' 
 #' @param y_coord (character) Name of column in spatialData containing
-#'   y-coordinates. Default = "y_coord".
+#'   y-coordinates. Default = "y".
 #' 
 #' @param discrete (character) Name of column in colData containing discrete
 #'   labels (e.g. cluster labels or ground truth labels) to show with colors.
@@ -56,7 +56,7 @@
 #' # plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 #' 
 plotSpots <- function(spe, 
-                      x_coord = "x_coord", y_coord = "y_coord", 
+                      x_coord = "x", y_coord = "y", 
                       discrete = NULL, continuous = NULL, 
                       palette = NULL, flip_xy_Visium = FALSE) {
   

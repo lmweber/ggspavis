@@ -33,10 +33,10 @@
 #'   = TRUE.
 #' 
 #' @param x_coord (character) Column in 'spatialData' containing x-coordinates.
-#'   Default = 'x_coord'.
+#'   Default = 'x'.
 #' 
 #' @param y_coord (character) Column in 'spatialData' containing y-coordinates.
-#'   Default = 'y_coord'.
+#'   Default = 'y'.
 #' 
 #' @param flip_xy_Visium (logical) Whether to flip x and y coordinates and
 #'   reverse y scale to match orientation of histology images. This is sometimes
@@ -82,7 +82,7 @@
 plotVisium <- function(spe, 
                        spots = TRUE, fill = NULL, highlight = "in_tissue", 
                        facets = "sample_id", image = TRUE, 
-                       x_coord = "x_coord", y_coord = "y_coord", 
+                       x_coord = "x", y_coord = "y", 
                        flip_xy_Visium = FALSE, 
                        sample_ids = NULL, image_ids = NULL, 
                        palette = NULL) {
