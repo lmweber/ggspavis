@@ -40,7 +40,7 @@ We load some example datasets from the [STdata](https://github.com/lmweber/STdat
 
 ```{r, message=FALSE}
 library(SpatialExperiment)
-library(STdata)
+library(STexampleData)
 library(ggspavis)
 ```
 
