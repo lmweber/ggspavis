@@ -7,8 +7,8 @@
 plotMolecules(
   spe,
   molecule = NULL,
-  x_coord = "x_coord",
-  y_coord = "y_coord",
+  x_coord = "x",
+  y_coord = "y",
   palette = NULL
 )
 }
@@ -19,10 +19,10 @@ plotMolecules(
 the row names of 'rowData').}
 
 \item{x_coord}{(character) Name of column in 'spatialData' containing
-x-coordinates of the cell centroids. Default = 'x_coord'.}
+x-coordinates of the cell centroids. Default = 'x'.}
 
 \item{y_coord}{(character) Name of column in 'spatialData' containing
-y-coordinates of the cell centroids. Default = 'y_coord'.}
+y-coordinates of the cell centroids. Default = 'y'.}
 
 \item{palette}{(character) Color palette for points. Options are a single
 color name (e.g. 'red', 'navy', etc), or a vector of length two containing

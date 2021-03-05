@@ -61,7 +61,6 @@
 #' 
 #' 
 #' @importFrom SpatialExperiment spatialData imgData 'imgData<-' scaleFactors
-#'   imgGrob
 #' @importFrom SingleCellExperiment colData
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
 #'   scale_fill_viridis_c scale_color_identity facet_wrap guides guide_colorbar
@@ -174,7 +173,7 @@ plotVisium <- function(spe,
       position = "identity", 
       geom = ggplot2::GeomCustomAnn, 
       params = list(
-        grob = imgGrob(.$data[[1]]), 
+        #grob = imgGrob(.$data[[1]]), 
         xmin = 0, xmax = .$width, 
         ymin = 0, ymax = .$height)))
   } else {

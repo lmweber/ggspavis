@@ -6,8 +6,8 @@
 \usage{
 plotSpots(
   spe,
-  x_coord = "x_coord",
-  y_coord = "y_coord",
+  x_coord = "x",
+  y_coord = "y",
   discrete = NULL,
   continuous = NULL,
   palette = NULL,
@@ -18,10 +18,10 @@ plotSpots(
 \item{spe}{(SpatialExperiment) Input data object.}
 
 \item{x_coord}{(character) Name of column in spatialData containing
-x-coordinates. Default = "x_coord".}
+x-coordinates. Default = "x".}
 
 \item{y_coord}{(character) Name of column in spatialData containing
-y-coordinates. Default = "y_coord".}
+y-coordinates. Default = "y".}
 
 \item{discrete}{(character) Name of column in colData containing discrete
 labels (e.g. cluster labels or ground truth labels) to show with colors.

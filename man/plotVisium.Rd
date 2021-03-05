@@ -11,8 +11,8 @@ plotVisium(
   highlight = "in_tissue",
   facets = "sample_id",
   image = TRUE,
-  x_coord = "x_coord",
-  y_coord = "y_coord",
+  x_coord = "x",
+  y_coord = "y",
   flip_xy_Visium = FALSE,
   sample_ids = NULL,
   image_ids = NULL,
@@ -42,10 +42,10 @@ disable.}
 = TRUE.}
 
 \item{x_coord}{(character) Column in 'spatialData' containing x-coordinates.
-Default = 'x_coord'.}
+Default = 'x'.}
 
 \item{y_coord}{(character) Column in 'spatialData' containing y-coordinates.
-Default = 'y_coord'.}
+Default = 'y'.}
 
 \item{flip_xy_Visium}{(logical) Whether to flip x and y coordinates and
 reverse y scale to match orientation of histology images. This is sometimes
