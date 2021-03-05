@@ -56,8 +56,16 @@ plotDimRed <- function(spe, type = c("UMAP", "PCA"),
   
   # note: using quasiquotation to allow custom variable names in ggplot ("sym" and "!!")
   
+  if (type == "UMAP" & is.null(x_axis) & is.null(y_axis)) {
+    x_axis <- "UMAP1"
+    y_axis <- "UMAP2"
+  } else if (type == "PCA" & is.null(x_axis) & is.null(y_axis)) {
+    x_axis <- "PC1"
+    y_axis <- "PC2"
+  }
   x_axis_sym <- sym(x_axis)
   y_axis_sym <- sym(y_axis)
+  
   if (!is.null(discrete)) discrete_sym <- sym(discrete)
   if (!is.null(continuous)) continuous_sym <- sym(continuous)
   
@@ -67,14 +75,6 @@ plotDimRed <- function(spe, type = c("UMAP", "PCA"),
     palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
   } else if (!is.null(palette) && palette == "navy") {
     palette <- c("gray95", "navy")
-  }
-  
-  if (type == "UMAP" & is.null(x_axis) & is.null(y_axis)) {
-    x_axis <- "UMAP1"
-    y_axis <- "UMAP2"
-  } else if (type == "PCA" & is.null(x_axis) & is.null(y_axis)) {
-    x_axis <- "PC1"
-    y_axis <- "PC2"
   }
   
   df_plot <- reducedDim(spe, type)
