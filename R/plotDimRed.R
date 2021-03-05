@@ -12,14 +12,14 @@
 #' 
 #' @param spe (SpatialExperiment) Input data object.
 #' 
-#' @param type (character) Type of reduced dimension plot. Options are "PCA" or
-#'   "UMAP". Default = "UMAP.
+#' @param type (character) Type of reduced dimension plot. Options are "UMAP" or
+#'   "PCA". Default = "UMAP.
 #' 
 #' @param x_axis (character) Name of column in reducedDim slot containing
-#'   x-coordinates. Default = "UMAP1".
+#'   x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.
 #' 
 #' @param y_axis (character) Name of column in reducedDim slot containing
-#'   y-coordinates. Default = "UMAP2".
+#'   y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.
 #' 
 #' @param discrete (character) Name of column in colData containing discrete
 #'   labels (e.g. cluster labels or ground truth labels) to show with colors.
@@ -49,8 +49,8 @@
 #' @examples
 #' # to do
 #' 
-plotDimRed <- function(spe, type = "UMAP", 
-                       x_axis = "UMAP1", y_axis = "UMAP2", 
+plotDimRed <- function(spe, type = c("UMAP", "PCA"), 
+                       x_axis = NULL, y_axis = NULL, 
                        discrete = NULL, continuous = NULL, 
                        palette = NULL) {
   
@@ -67,6 +67,14 @@ plotDimRed <- function(spe, type = "UMAP",
     palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
   } else if (!is.null(palette) && palette == "navy") {
     palette <- c("gray95", "navy")
+  }
+  
+  if (type == "UMAP" & is.null(x_axis) & is.null(y_axis)) {
+    x_axis <- "UMAP1"
+    y_axis <- "UMAP2"
+  } else if (type == "PCA" & is.null(x_axis) & is.null(y_axis)) {
+    x_axis <- "PC1"
+    y_axis <- "PC2"
   }
   
   df_plot <- reducedDim(spe, type)

@@ -6,9 +6,9 @@
 \usage{
 plotDimRed(
   spe,
-  type = "UMAP",
-  x_axis = "UMAP1",
-  y_axis = "UMAP2",
+  type = c("UMAP", "PCA"),
+  x_axis = NULL,
+  y_axis = NULL,
   discrete = NULL,
   continuous = NULL,
   palette = NULL
@@ -17,14 +17,14 @@ plotDimRed(
 \arguments{
 \item{spe}{(SpatialExperiment) Input data object.}
 
-\item{type}{(character) Type of reduced dimension plot. Options are "PCA" or
-"UMAP". Default = "UMAP.}
+\item{type}{(character) Type of reduced dimension plot. Options are "UMAP" or
+"PCA". Default = "UMAP.}
 
 \item{x_axis}{(character) Name of column in reducedDim slot containing
-x-coordinates. Default = "UMAP1".}
+x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.}
 
 \item{y_axis}{(character) Name of column in reducedDim slot containing
-y-coordinates. Default = "UMAP2".}
+y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.}
 
 \item{discrete}{(character) Name of column in colData containing discrete
 labels (e.g. cluster labels or ground truth labels) to show with colors.
