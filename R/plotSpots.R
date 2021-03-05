@@ -18,6 +18,9 @@
 #' @param y_coord (character) Name of column in spatialData containing
 #'   y-coordinates. Default = "y".
 #' 
+#' @param in_tissue (logical) Whether to plot only spots over tissue (TRUE) or
+#'   all spots (FALSE). Default = TRUE.
+#' 
 #' @param discrete (character) Name of column in colData containing discrete
 #'   labels (e.g. cluster labels or ground truth labels) to show with colors.
 #'   Default = NULL.
@@ -56,7 +59,7 @@
 #' # plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 #' 
 plotSpots <- function(spe, 
-                      x_coord = "x", y_coord = "y", 
+                      x_coord = "x", y_coord = "y", in_tissue = TRUE, 
                       discrete = NULL, continuous = NULL, 
                       palette = NULL, flip_xy_Visium = FALSE) {
   
@@ -73,6 +76,10 @@ plotSpots <- function(spe,
     palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
   } else if (!is.null(palette) && palette == "navy") {
     palette <- c("gray95", "navy")
+  }
+  
+  if (in_tissue) {
+    spe <- spe[, spatialData(spe)$in_tissue == 1]
   }
   
   if (flip_xy_Visium) {

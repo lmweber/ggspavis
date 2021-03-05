@@ -8,6 +8,7 @@ plotSpots(
   spe,
   x_coord = "x",
   y_coord = "y",
+  in_tissue = TRUE,
   discrete = NULL,
   continuous = NULL,
   palette = NULL,
@@ -22,6 +23,9 @@ x-coordinates. Default = "x".}
 
 \item{y_coord}{(character) Name of column in spatialData containing
 y-coordinates. Default = "y".}
+
+\item{in_tissue}{(logical) Whether to plot only spots over tissue (TRUE) or
+all spots (FALSE). Default = TRUE.}
 
 \item{discrete}{(character) Name of column in colData containing discrete
 labels (e.g. cluster labels or ground truth labels) to show with colors.
