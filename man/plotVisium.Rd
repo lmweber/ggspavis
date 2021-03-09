@@ -8,12 +8,14 @@ plotVisium(
   spe,
   spots = TRUE,
   fill = NULL,
-  highlight = "in_tissue",
+  highlight = NULL,
   facets = "sample_id",
   image = TRUE,
+  assay = "logcounts",
+  trans = "identity",
   x_coord = "x",
   y_coord = "y",
-  flip_xy_Visium = FALSE,
+  flip_xy = FALSE,
   sample_ids = NULL,
   image_ids = NULL,
   palette = NULL
@@ -41,13 +43,21 @@ disable.}
 \item{image}{(logical) Whether to show histology image as background. Default
 = TRUE.}
 
+\item{assay}{(character) Name of assay data to use 
+when \code{fill} is in \code{rownames(spe)}.
+Should be one of \code{assayNames(spe)}.}
+
+\item{trans}{Transformation to apply for continuous scales.
+Ignored unless \code{fill} is numeric, e.g. feature expression.
+(See \code{\link{ggplot2}{continuous_scale}} for valid options)}
+
 \item{x_coord}{(character) Column in 'spatialData' containing x-coordinates.
 Default = 'x'.}
 
 \item{y_coord}{(character) Column in 'spatialData' containing y-coordinates.
 Default = 'y'.}
 
-\item{flip_xy_Visium}{(logical) Whether to flip x and y coordinates and
+\item{flip_xy}{(logical) Whether to flip x and y coordinates and
 reverse y scale to match orientation of histology images. This is sometimes
 required for Visium data, depending on the orientation of the raw data.}
 
@@ -81,11 +91,19 @@ transcriptomics data from the 10x Genomics Visium platform, with several
 options available to adjust the plot type and style.
 }
 \examples{
-# library(ggspavis)
-# library(STdata)
-# spe <- load_data("Visium_mouseCoronal")
-# plotVisium(spe)
+library(ggspavis)
+library(STexampleData)
+spe <- load_data("Visium_mouseCoronal")
 
+# color by x coordinate, highlight in-tissue spots
+plotVisium(spe, fill = "x", highlight = "in_tissue")
+
+# subset in-tissue spots
+sub <- spe[, inTissue(spe)]
+
+# color by feature counts, don't include image
+rownames(sub) <- make.names(rowData(sub)$gene_name)
+plotVisium(sub, fill = "Gad2", assay = "counts", image = FALSE)
 }
 \author{
 Helena L. Crowell and Lukas M. Weber

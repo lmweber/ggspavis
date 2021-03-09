@@ -32,13 +32,21 @@
 #' @param image (logical) Whether to show histology image as background. Default
 #'   = TRUE.
 #' 
+#' @param assay (character) Name of assay data to use 
+#'   when \code{fill} is in \code{rownames(spe)}.
+#'   Should be one of \code{assayNames(spe)}.
+#'   
+#' @param trans Transformation to apply for continuous scales.
+#'   Ignored unless \code{fill} is numeric, e.g. feature expression.
+#'   (See \code{\link{ggplot2}{continuous_scale}} for valid options)
+#' 
 #' @param x_coord (character) Column in 'spatialData' containing x-coordinates.
 #'   Default = 'x'.
 #' 
 #' @param y_coord (character) Column in 'spatialData' containing y-coordinates.
 #'   Default = 'y'.
 #' 
-#' @param flip_xy_Visium (logical) Whether to flip x and y coordinates and
+#' @param flip_xy (logical) Whether to flip x and y coordinates and
 #'   reverse y scale to match orientation of histology images. This is sometimes
 #'   required for Visium data, depending on the orientation of the raw data.
 #' 
@@ -73,129 +81,124 @@
 #' @author Helena L. Crowell and Lukas M. Weber
 #' 
 #' @examples
-#' # library(ggspavis)
-#' # library(STdata)
-#' # spe <- load_data("Visium_mouseCoronal")
-#' # plotVisium(spe)
+#' library(ggspavis)
+#' library(STexampleData)
+#' spe <- load_data("Visium_mouseCoronal")
 #' 
+#' # color by x coordinate, highlight in-tissue spots
+#' plotVisium(spe, fill = "x", highlight = "in_tissue")
+#' 
+#' # subset in-tissue spots
+#' sub <- spe[, inTissue(spe)]
+#' 
+#' # color by feature counts, don't include image
+#' rownames(sub) <- make.names(rowData(sub)$gene_name)
+#' plotVisium(sub, fill = "Gad2", assay = "counts", image = FALSE)
+
 plotVisium <- function(spe, 
-                       spots = TRUE, fill = NULL, highlight = "in_tissue", 
+                       spots = TRUE, fill = NULL, highlight = NULL, 
                        facets = "sample_id", image = TRUE, 
-                       x_coord = "x", y_coord = "y", 
-                       flip_xy_Visium = FALSE, 
-                       sample_ids = NULL, image_ids = NULL, 
-                       palette = NULL) {
+                       assay = "logcounts", trans = "identity",
+                       x_coord = "x", y_coord = "y", flip_xy = FALSE, 
+                       sample_ids = NULL, image_ids = NULL, palette = NULL) {
   
-  # check input type
-  stopifnot(is(spe, "SpatialExperiment"))
+  # check validity of input arguments
+  stopifnot(
+    is(spe, "SpatialExperiment"),
+    is.logical(spots), length(spots) == 1,
+    is.logical(image), length(image) == 1,
+    is.logical(flip_xy), length(flip_xy) == 1,
+    is.character(x_coord), length(x_coord) == 1,
+    is.character(y_coord), length(y_coord) == 1,
+    c(x_coord, y_coord) %in% spatialCoordsNames(spe))
   
-  # set up color palette
+  # set up data for plotting
+  plt_df <- data.frame(spatialData(spe), colData(spe))
   if (!is.null(fill)) {
-    if (is.null(palette) && is.factor(colData(spe)[[fill]])) {
-      palette <- "libd_layer_colors" }
-    if (is.null(palette) && is.numeric(colData(spe)[[fill]])) {
-      palette <- "viridis" } }
-  # if length(palette) > 1, use palette as provided (either multiple colors for
-  # discrete labels, or length 2 for continuous gradient)
-  if (!is.null(palette) & length(palette) == 1) {
-    if (palette == "libd_layer_colors") {
-      palette <- c("#F0027F", "#377EB8", "#4DAF4A", "#984EA3", "#FFD700", "#FF7F00", "#1A1A1A", "#666666")
-    } else if (palette == "Okabe-Ito") {
-      palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-    } else if (palette == "viridis") {
-      # if viridis, use 'scale_fill_viridis_c' instead of hex codes or color names
-    } else {
-      # if providing a single color name (e.g. 'navy' or 'red'), combine with
-      # 'gray95' for continuous color scale
-      palette <- c("gray95", palette) } }
-  
-  # select samples
+    # check validity of 'fill' argument
+    stopifnot(is.character(fill), length(fill) == 1)
+    if (!fill %in% c(names(plt_df), rownames(spe))) {
+      stop("'fill' should be in rownames(spe) or",
+        " names(colData(spe)/spatialData(spe))")
+    }
+    # (optionally) add feature assay data to 'plt_df'
+    if (fill %in% rownames(spe)) {
+      stopifnot(
+          is.character(assay), 
+          length(grep(assay, assayNames(spe))) == 1)
+      plt_df[[fill]] <- assay(spe, assay)[fill, ]
+    }
+    # get color palette
+    palette <- .get_pal(palette, plt_df[[fill]])
+  } else {
+    fill <- "foo"
+    plt_df[[fill]] <- "black"
+  }
+
   if (is.null(sample_ids)) {
     # default to using all samples
-    sample_ids <- unique(colData(spe)$sample_id)
-  }
-  spe <- spe[, colData(spe)$sample_id %in% sample_ids]
-  
-  # select images
-  if (is.null(image_ids)) {
-    # default to first available image for each sample
-    idx <- SpatialExperiment:::.get_img_idx(spe, TRUE, NULL)
+    sample_ids <- unique(spe$sample_id)
   } else {
-    if (length(image_ids) == 1) {
-      idx <- SpatialExperiment:::.get_img_idx(spe, TRUE, image_ids)
-    } else {
-      stopifnot(length(image_ids) == length(sample_ids))
-      idx <- mapply(s = sample_ids, i = image_ids, 
-                    function(s, i) SpatialExperiment:::.get_img_idx(spe, s, i))
-    }
+    # subset specified samples
+    spe <- spe[, spe$sample_id %in% sample_ids]
   }
+
   # subset selected images
-  imgData(spe) <- imgData(spe)[idx, ]
-  
-  # data frame for plotting
-  df_plot <- as.data.frame(spatialData(spe))
-  df_plot <- cbind(df_plot, sample_id = colData(spe)$sample_id)
-  if (!is.null(fill)) {
-    df_plot <- cbind(df_plot, colData(spe)[, fill, drop = FALSE])
-  } else {
-    fill <- "value"
-    df_plot[[fill]] <- factor(1)
-  }
+  img_df <- .sub_imgData(spe, sample_ids, image_ids)
+  rownames(img_df) <- img_df$sample_id
   
   # scale spatial coordinates
-  sfs <- setNames(scaleFactors(spe, sample_ids, image_ids), sample_ids)
-  for (i in seq_along(sample_ids)) {
-    ix <- df_plot$sample_id == sample_ids[i]
-    df_plot[ix, c(x_coord, y_coord)] <- df_plot[ix, c(x_coord, y_coord)] * sfs
-    if (flip_xy_Visium) {
-      # if required: flip x and y coordinates and reverse y scale to match
-      # orientation of images (sometimes required for Visium data)
-      x_coord_tmp <- df_plot[ix, y_coord]
-      y_coord_tmp <- df_plot[ix, x_coord]
-      y_coord_tmp <- (-1 * y_coord_tmp) + min(y_coord_tmp) + max(y_coord_tmp)
-      df_plot[ix, x_coord] <- x_coord_tmp
-      df_plot[ix, y_coord] <- y_coord_tmp
-    }
+  for (s in sample_ids) {
+    ix <- plt_df$sample_id == s
+    xy <- c(x_coord, y_coord)
+    sf <- img_df[s, "scaleFactor"]
+    plt_df[ix, xy] <- sf * plt_df[ix, xy]
+    # if required: flip x and y coordinates and reverse y scale to match
+    # orientation of images (sometimes required for Visium data)
+    if (flip_xy) plt_df <- .flip_xy(plt_df, x_coord, y_coord)
   }
   
   # construct image layers
-  # note: images could also be plotted using 'annotation_custom()', however this
-  # does not allow for faceting, so we instead construct a separate image layer
-  # for each sample
+  # note: images could also be plotted using 'annotation_custom()', 
+  # however, this does not allow for faceting, so we instead
+  # construct a separate image layer for each sample
   if (image) {
-    # split imgData by sample
-    dfs <- split(imgData(spe), imgData(spe)$sample_id)
-    # construct separate image layer for each sample
-    images <- lapply(dfs, function(.) layer(
-      data = as.data.frame(.), 
-      inherit.aes = FALSE, 
-      stat = "identity", 
-      position = "identity", 
-      geom = ggplot2::GeomCustomAnn, 
-      params = list(
-        #grob = imgGrob(.$data[[1]]), 
-        xmin = 0, xmax = .$width, 
-        ymin = 0, ymax = .$height)))
-  } else {
-    images <- NULL
-  }
+    images <- lapply(sample_ids, function(s) {
+      spi <- img_df[s, "data"]
+      img <- imgRaster(spi[[1]])
+      layer(
+        data = data.frame(sample_id = s),
+        inherit.aes = FALSE, 
+        stat = "identity", 
+        position = "identity", 
+        geom = ggplot2::GeomCustomAnn, 
+        params = list(
+          grob = rasterGrob(img),
+          xmin = 0, xmax = ncol(img),
+          ymin = 0, ymax = nrow(img))
+      )
+    })
+    xlim <- c(0, ncol(img))
+    ylim <- c(0, nrow(img))
+  } else images <- xlim <- ylim <- NULL
   
   # construct points and highlights
   if (spots) {
     # check whether 'fill' is continuous (numeric) or discrete (factor)
-    guide <- ifelse(is.numeric(df_plot[[fill]]), guide_colorbar, guide_legend)
+    guide <- ifelse(is.numeric(plt_df[[fill]]), guide_colorbar, guide_legend)
     points <- list(
       guides(fill = guide(
         title = fill, order = 1, override.aes = list(col = NA, size = 3))), 
       geom_point(shape = 21, size = 1, stroke = 0.25, alpha = 0.5))
     if (!is.null(highlight)) {
-      df_plot$highlight <- as.factor(df_plot[[highlight]])
+      plt_df$highlight <- as.factor(plt_df[[highlight]])
       highlights <- list(
         scale_color_manual(highlight, values = c("gray50", "black")), 
         guides(col = guide_legend(override.aes = list(
-          size = 2, stroke = 1, col = c("gray", "black")[seq_along(unique(df_plot$highlight))]))))
+          size = 2, stroke = 1, col = c("gray", "black")[
+            seq_along(unique(plt_df$highlight))]))))
     } else {
-      df_plot$highlight <- "transparent"
+      plt_df$highlight <- "transparent"
       highlights <- scale_color_identity()
     }
   } else {
@@ -204,37 +207,26 @@ plotVisium <- function(spe,
     highlights <- NULL
   }
   
-  # construct facets
-  if (!is.null(facets)) {
-    facets <- facet_wrap(facets)
-  } else {
-    facets <- NULL
-  }
-  
-  # create plot
-  p <- 
-    ggplot(df_plot, aes_string(x_coord, y_coord, fill = fill, col = "highlight")) + 
-      images + points + highlights + facets + 
-      coord_fixed() + 
-      theme_void() + 
-      theme(legend.key.size = unit(0.5, "lines"), 
-            strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines")))
-  
-  # colors
-  if (!is.null(fill)) {
-    if (is.factor(colData(spe)[[fill]])) {
-      p <- p + scale_fill_manual(values = palette)
-    }
-    if (is.numeric(colData(spe)[[fill]])) {
+  # color scale
+  scale <- if (fill != "foo") {
+    if (is.numeric(plt_df[[fill]])) {
       if (length(palette) == 1 && palette == "viridis") {
-        p <- p + scale_fill_viridis_c(trans = "log10")
+        scale_fill_viridis_c(trans = trans)
       } else {
-        p <- p + scale_fill_gradient(low = palette[1], high = palette[2], trans = "log10")
+        scale_fill_gradient(low = palette[1], high = palette[2], trans = trans)
       }
+    } else {
+      scale_fill_manual(values = palette)
     }
-  }
-  
-  # display plot
-  p
-}
+  } else scale_fill_identity()
 
+  # display plot
+  ggplot(plt_df, 
+    aes_string(x_coord, y_coord, fill = fill, col = "highlight")) + 
+    images + points + highlights + scale + 
+    coord_fixed(xlim = xlim, ylim = ylim) + 
+    theme_void() + theme(
+      legend.key.size = unit(0.5, "lines"), 
+      strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"))) +
+    if (!is.null(facets)) facet_wrap(facets)
+}
