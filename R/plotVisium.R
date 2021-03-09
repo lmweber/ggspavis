@@ -68,11 +68,13 @@
 #'   ggplot elements (e.g. title, customized formatting, etc).
 #' 
 #' 
-#' @importFrom SpatialExperiment spatialData imgData 'imgData<-' scaleFactors
+#' @importFrom SpatialExperiment spatialData spatialCoordsNames imgData
+#'   'imgData<-' scaleFactors
 #' @importFrom SingleCellExperiment colData
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
 #'   scale_fill_viridis_c scale_color_identity facet_wrap guides guide_colorbar
 #'   guide_legend theme_void element_text margin unit layer
+#' @importFrom grid rasterGrob
 #' @importFrom methods is as
 #' @importFrom stats setNames
 #' 
@@ -83,6 +85,7 @@
 #' @examples
 #' library(ggspavis)
 #' library(STexampleData)
+#' 
 #' spe <- load_data("Visium_mouseCoronal")
 #' 
 #' # color by x coordinate, highlight in-tissue spots
@@ -94,7 +97,7 @@
 #' # color by feature counts, don't include image
 #' rownames(sub) <- make.names(rowData(sub)$gene_name)
 #' plotVisium(sub, fill = "Gad2", assay = "counts", image = FALSE)
-
+#' 
 plotVisium <- function(spe, 
                        spots = TRUE, fill = NULL, highlight = NULL, 
                        facets = "sample_id", image = TRUE, 

@@ -93,6 +93,7 @@ options available to adjust the plot type and style.
 \examples{
 library(ggspavis)
 library(STexampleData)
+
 spe <- load_data("Visium_mouseCoronal")
 
 # color by x coordinate, highlight in-tissue spots
@@ -104,6 +105,7 @@ sub <- spe[, inTissue(spe)]
 # color by feature counts, don't include image
 rownames(sub) <- make.names(rowData(sub)$gene_name)
 plotVisium(sub, fill = "Gad2", assay = "counts", image = FALSE)
+
 }
 \author{
 Helena L. Crowell and Lukas M. Weber
