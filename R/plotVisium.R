@@ -69,7 +69,7 @@
 #' 
 #' 
 #' @importFrom SpatialExperiment spatialData spatialCoordsNames imgData
-#'   'imgData<-' scaleFactors
+#'   'imgData<-' imgRaster scaleFactors
 #' @importFrom SingleCellExperiment colData
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
 #'   scale_fill_viridis_c scale_color_identity facet_wrap guides guide_colorbar
