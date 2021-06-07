@@ -1,106 +1,87 @@
 #' plotSpots
 #' 
-#' Plots for spatially resolved transcriptomics datasets
+#' Plotting functions for spatially resolved transcriptomics data.
 #' 
-#' Function to plot spot-based spatially resolved transcriptomics data in
-#' spatial (x-y) coordinates.
+#' Function to plot spot-based spatially resolved transcriptomics data stored in
+#' a `SpatialExperiment` object.
 #' 
-#' This function generates a plot showing spatial coordinates (spots) in the x-y
-#' coordinates of the tissue slide, with optional colors for cluster labels,
-#' ground truth labels, or other quantities.
+#' This function generates a plot in spatial coordinates (x-y coordinates) of
+#' the tissue slide, along with annotation such as cluster labels or other
+#' values.
 #' 
 #' 
-#' @param spe (SpatialExperiment) Input data object.
+#' @param spe (SpatialExperiment) Input data, assumed to be a
+#'   `SpatialExperiment` object.
 #' 
-#' @param x_coord (character) Name of column in spatialData containing
+#' @param x_coord (character) Name of column in `spatialCoords` slot containing
 #'   x-coordinates. Default = "x".
 #' 
-#' @param y_coord (character) Name of column in spatialData containing
+#' @param y_coord (character) Name of column in `spatialCoords` slot containing
 #'   y-coordinates. Default = "y".
 #' 
-#' @param in_tissue (logical) Whether to plot only spots over tissue (TRUE) or
-#'   all spots (FALSE). Default = TRUE.
+#' @param in_tissue (logical) Whether to show only spots over tissue, or all
+#'   spots. Options are `TRUE` (show spots over tissue; requires a column
+#'   labelled `in_tissue` in `spatialData` slot identifying spots over tissue,
+#'   as in 10x Genomics Visium data), `FALSE` (show all spots), or a character
+#'   value with the name of a column in `spatialData` identifying the spots to
+#'   show.
 #' 
-#' @param discrete (character) Name of column in colData containing discrete
-#'   labels (e.g. cluster labels or ground truth labels) to show with colors.
-#'   Default = NULL.
+#' @param annotate (character) Name of column in `colData` containing values to
+#'   annotate spots with colors, e.g. cluster labels (discrete values) or total
+#'   UMI counts (continuous values). For discrete values such as cluster labels,
+#'   the column in `colData` should be formatted as a factor.
 #' 
-#' @param continuous (character) Name of column in colData containing continuous
-#'   values (e.g. total UMI counts) to show with colors. Default = NULL.
+#' @param palette (character) Color palette for annotation. Options for discrete
+#'   labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
+#'   hex values. For continuous values, provide a vector of length 2 for the low
+#'   and high range, e.g. `c("gray90", "navy")`. Default =
+#'   `"libd_layer_colors"`.
 #' 
-#' @param palette (character) Color palette. Options for discrete labels are
-#'   "libd_layer_colors", "Okabe-Ito", or a vector of hex codes for a custom
-#'   palette. Default = "libd_layer_colors". Options for continuous values are
-#'   "navy", or a vector of length two containing custom colors. Default =
-#'   "navy".
+#' @param y_reverse (logical) Whether to reverse `y` coordinates. Usually
+#'   required for 10x Genomics Visium data. Default = `TRUE`.
 #' 
-#' @param flip_xy_Visium (logical) Whether to switch x and y coordinates and
-#'   reverse y coordinates (sometimes required for 10x Visium platform if using
-#'   the default `pxl_row_in_fullres` and `pxl_col_in_fullres` columns as
-#'   coordinates). Default = FALSE.
+#' @param size (numeric) Point size for `geom_point()`. Default = 0.3.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
-#'   ggplot elements (e.g. title, customized formatting, etc).
+#'   ggplot elements (e.g. title, labels, formatting, etc).
 #' 
 #' 
-#' @importFrom rlang sym "!!"
-#' @importFrom SpatialExperiment spatialData
+#' @importFrom SpatialExperiment spatialData spatialCoords
 #' @importFrom SingleCellExperiment colData
-#' @importFrom ggplot2 ggplot aes geom_point coord_fixed ggtitle
-#'   scale_color_manual scale_color_gradient theme_bw theme element_blank
+#' @importFrom ggplot2 ggplot aes_string geom_point coord_fixed ggtitle theme_bw
+#'   theme element_blank scale_y_reverse scale_color_manual scale_color_gradient
 #' 
 #' @export
 #' 
 #' @examples
 #' # library(ggspavis)
-#' # library(STdata)
-#' # spe <- load_data("Visium_humanDLPFC")
-#' # plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
+#' # library(STexampleData)
+#' # spe <- Visium_humanDLPFC()
+#' # plotSpots(spe, annotate = "ground_truth")
 #' 
 plotSpots <- function(spe, 
-                      x_coord = "x", y_coord = "y", in_tissue = TRUE, 
-                      discrete = NULL, continuous = NULL, 
-                      palette = NULL, flip_xy_Visium = FALSE) {
+                      x_coord = "x", y_coord = "y", 
+                      in_tissue = TRUE, 
+                      annotate = NULL, palette = "libd_layer_colors", 
+                      y_reverse = TRUE, size = 0.3) {
   
-  # note: using quasiquotation to allow custom variable names in ggplot ("sym" and "!!")
-  
-  x_coord_sym <- sym(x_coord)
-  y_coord_sym <- sym(y_coord)
-  if (!is.null(discrete)) discrete_sym <- sym(discrete)
-  if (!is.null(continuous)) continuous_sym <- sym(continuous)
-  
-  if (!is.null(palette) && palette == "libd_layer_colors") {
+  if (palette == "libd_layer_colors") {
     palette <- c("#F0027F", "#377EB8", "#4DAF4A", "#984EA3", "#FFD700", "#FF7F00", "#1A1A1A", "#666666")
-  } else if (!is.null(palette) && palette == "Okabe-Ito") {
+  } else if (palette == "Okabe-Ito") {
     palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-  } else if (!is.null(palette) && palette == "navy") {
-    palette <- c("gray95", "navy")
   }
+  
+  df <- as.data.frame(cbind(colData(spe), spatialData(spe), spatialCoords(spe)))
   
   if (in_tissue) {
-    spe <- spe[, spatialData(spe)$in_tissue == 1]
+    df <- df[df$in_tissue == 1, ]
+  } else if (is.character(in_tissue)) {
+    df <- df[df[, in_tissue] == 1, ]
   }
   
-  if (flip_xy_Visium) {
-    x_coord_tmp <- spatialData(spe)[, y_coord]
-    y_coord_tmp <- -1 * spatialData(spe)[, x_coord] + max(spatialData(spe)[, x_coord]) + 1
-    df_plot <- data.frame(x_coord = x_coord_tmp, y_coord = y_coord_tmp)
-  }
-  
-  df_plot <- spatialData(spe)[, c(x_coord, y_coord), drop = FALSE]
-  
-  if (!is.null(discrete)) {
-    df_plot <- cbind(df_plot, colData(spe)[, discrete, drop = FALSE])
-  }
-  if (!is.null(continuous)) {
-    df_plot <- cbind(df_plot, colData(spe)[, continuous, drop = FALSE])
-  }
-  
-  df_plot <- as.data.frame(df_plot)
-  
-  p <- ggplot(df_plot, aes(x = !!x_coord_sym, y = !!y_coord_sym)) + 
-    geom_point(size = 0.5) + 
+  p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
+    geom_point(size = size) + 
     coord_fixed() + 
     ggtitle("Spatial coordinates") + 
     theme_bw() + 
@@ -109,17 +90,18 @@ plotSpots <- function(spe,
           axis.text = element_blank(), 
           axis.ticks = element_blank())
   
-  if (!is.null(discrete)) {
-    p <- p + aes(color = !!discrete_sym) + 
-      scale_color_manual(values = palette)
+  if (y_reverse) {
+    p <- p + scale_y_reverse()
   }
   
-  if (!is.null(continuous)) {
-    p <- p + aes(color = !!continuous_sym) + 
-      scale_color_gradient(low = palette[1], high = palette[2])
+  if (is.factor(df[, annotate])) {
+    p <- p + scale_color_manual(values = palette)
+  }
+  
+  if (is.numeric(df[, annotate])) {
+    p <- p + scale_color_gradient(low = palette[1], high = palette[2])
   }
   
   p
-  
 }
 

@@ -9,61 +9,64 @@ plotSpots(
   x_coord = "x",
   y_coord = "y",
   in_tissue = TRUE,
-  discrete = NULL,
-  continuous = NULL,
-  palette = NULL,
-  flip_xy_Visium = FALSE
+  annotate = NULL,
+  palette = "libd_layer_colors",
+  y_reverse = TRUE,
+  size = 0.3
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) Input data object.}
+\item{spe}{(SpatialExperiment) Input data, assumed to be a
+`SpatialExperiment` object.}
 
-\item{x_coord}{(character) Name of column in spatialData containing
+\item{x_coord}{(character) Name of column in `spatialCoords` slot containing
 x-coordinates. Default = "x".}
 
-\item{y_coord}{(character) Name of column in spatialData containing
+\item{y_coord}{(character) Name of column in `spatialCoords` slot containing
 y-coordinates. Default = "y".}
 
-\item{in_tissue}{(logical) Whether to plot only spots over tissue (TRUE) or
-all spots (FALSE). Default = TRUE.}
+\item{in_tissue}{(logical) Whether to show only spots over tissue, or all
+spots. Options are `TRUE` (show spots over tissue; requires a column
+labelled `in_tissue` in `spatialData` slot identifying spots over tissue,
+as in 10x Genomics Visium data), `FALSE` (show all spots), or a character
+value with the name of a column in `spatialData` identifying the spots to
+show.}
 
-\item{discrete}{(character) Name of column in colData containing discrete
-labels (e.g. cluster labels or ground truth labels) to show with colors.
-Default = NULL.}
+\item{annotate}{(character) Name of column in `colData` containing values to
+annotate spots with colors, e.g. cluster labels (discrete values) or total
+UMI counts (continuous values). For discrete values such as cluster labels,
+the column in `colData` should be formatted as a factor.}
 
-\item{continuous}{(character) Name of column in colData containing continuous
-values (e.g. total UMI counts) to show with colors. Default = NULL.}
+\item{palette}{(character) Color palette for annotation. Options for discrete
+labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
+hex values. For continuous values, provide a vector of length 2 for the low
+and high range, e.g. `c("gray90", "navy")`. Default =
+`"libd_layer_colors"`.}
 
-\item{palette}{(character) Color palette. Options for discrete labels are
-"libd_layer_colors", "Okabe-Ito", or a vector of hex codes for a custom
-palette. Default = "libd_layer_colors". Options for continuous values are
-"navy", or a vector of length two containing custom colors. Default =
-"navy".}
+\item{y_reverse}{(logical) Whether to reverse `y` coordinates. Usually
+required for 10x Genomics Visium data. Default = `TRUE`.}
 
-\item{flip_xy_Visium}{(logical) Whether to switch x and y coordinates and
-reverse y coordinates (sometimes required for 10x Visium platform if using
-the default `pxl_row_in_fullres` and `pxl_col_in_fullres` columns as
-coordinates). Default = FALSE.}
+\item{size}{(numeric) Point size for `geom_point()`. Default = 0.3.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, customized formatting, etc).
+  ggplot elements (e.g. title, labels, formatting, etc).
 }
 \description{
-Plots for spatially resolved transcriptomics datasets
+Plotting functions for spatially resolved transcriptomics data.
 }
 \details{
-Function to plot spot-based spatially resolved transcriptomics data in
-spatial (x-y) coordinates.
+Function to plot spot-based spatially resolved transcriptomics data stored in
+a `SpatialExperiment` object.
 
-This function generates a plot showing spatial coordinates (spots) in the x-y
-coordinates of the tissue slide, with optional colors for cluster labels,
-ground truth labels, or other quantities.
+This function generates a plot in spatial coordinates (x-y coordinates) of
+the tissue slide, along with annotation such as cluster labels or other
+values.
 }
 \examples{
 # library(ggspavis)
-# library(STdata)
-# spe <- load_data("Visium_humanDLPFC")
-# plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
+# library(STexampleData)
+# spe <- Visium_humanDLPFC()
+# plotSpots(spe, annotate = "ground_truth")
 
 }
