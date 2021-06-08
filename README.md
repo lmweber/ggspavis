@@ -2,14 +2,14 @@
 
 R package containing visualization functions for spatially resolved transcriptomics data.
 
+For use in our online book [OSTA](https://lmweber.org/OSTA-book/).
+
 
 ## Installation
 
-Currently, the package is available from GitHub. This will be extended and submitted to Bioconductor in the future.
-
-To install from GitHub including vignettes, use the following options:
+The package can be installed from GitHub (with argument `build_vignettes = TRUE` to build the vignette):
 
 ```
-remotes::install_github("lmweber/ggspavis", build_vignettes = TRUE, force = TRUE)
+remotes::install_github("lmweber/ggspavis", build_vignettes = TRUE)
 ```
 
