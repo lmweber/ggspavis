@@ -128,8 +128,8 @@ plotQC <- function(spe, type = c("bar", "scatter", "spots"),
     }
     if (marginal) {
       p <- p + 
-        geom_xsidehistogram(aes_string(y = metric_y)) + 
-        geom_ysidehistogram(aes_string(x = metric_x))
+        geom_xsidehistogram() + 
+        geom_ysidehistogram()
     }
   }
   
