@@ -9,43 +9,46 @@ plotMolecules(
   molecule = NULL,
   x_coord = "x",
   y_coord = "y",
-  palette = NULL
+  palette = c("gray90", "navy"),
+  size = 0.3
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) Input data object.}
+\item{spe}{(SpatialExperiment) Input data, assumed to be a
+`SpatialExperiment` object.}
 
-\item{molecule}{(character) Name of mRNA molecule to plot (matching to one of
-the row names of 'rowData').}
+\item{molecule}{(character) Name of mRNA molecule to plot (assumed to match
+one of the row names of `rowData`).}
 
-\item{x_coord}{(character) Name of column in 'spatialData' containing
-x-coordinates of the cell centroids. Default = 'x'.}
+\item{x_coord}{(character) Name of column in `spatialCoords` slot containing
+x-coordinates of the cell centroids. Default = "x".}
 
-\item{y_coord}{(character) Name of column in 'spatialData' containing
-y-coordinates of the cell centroids. Default = 'y'.}
+\item{y_coord}{(character) Name of column in `spatialCoords` slot containing
+y-coordinates of the cell centroids. Default = "y".}
 
-\item{palette}{(character) Color palette for points. Options are a single
-color name (e.g. 'red', 'navy', etc), or a vector of length two containing
-color names for each end of the scale. Default = 'navy'.}
+\item{palette}{(character) Color palette, provided as a vector of length 2
+for the low and high range. Default = `c("gray90", "navy")`.}
+
+\item{size}{(numeric) Point size for `geom_point()`. Default = 0.3.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, customized formatting, etc).
+  ggplot elements (e.g. title, labels, formatting, etc).
 }
 \description{
-Plots for spatially resolved transcriptomics datasets
+Plotting functions for spatially resolved transcriptomics data.
 }
 \details{
-Function to plot molecule-based spatially resolved transcriptomics data in
-spatial (x-y) coordinates.
+Function to plot molecule-based spatially resolved transcriptomics data
+stored in a `SpatialExperiment` object.
 
-This function generates a plot showing counts for a given molecule in the x-y
-coordinates of the tissue slide.
+This function generates a plot in spatial coordinates (x-y coordinates) of
+the tissue slide, for a selected molecule.
 }
 \examples{
 # library(ggspavis)
-# library(STdata)
-# spe <- load_data("seqFISH_mouseEmbryo")
+# library(STexampleData)
+# spe <- seqFISH_mouseEmbryo()
 # plotMolecules(spe, molecule = "Sox2")
 
 }

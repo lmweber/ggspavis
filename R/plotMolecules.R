@@ -1,73 +1,62 @@
 #' plotMolecules
 #' 
-#' Plots for spatially resolved transcriptomics datasets
+#' Plotting functions for spatially resolved transcriptomics data.
 #' 
-#' Function to plot molecule-based spatially resolved transcriptomics data in
-#' spatial (x-y) coordinates.
+#' Function to plot molecule-based spatially resolved transcriptomics data
+#' stored in a `SpatialExperiment` object.
 #' 
-#' This function generates a plot showing counts for a given molecule in the x-y
-#' coordinates of the tissue slide.
+#' This function generates a plot in spatial coordinates (x-y coordinates) of
+#' the tissue slide, for a selected molecule.
 #' 
 #' 
-#' @param spe (SpatialExperiment) Input data object.
+#' @param spe (SpatialExperiment) Input data, assumed to be a
+#'   `SpatialExperiment` object.
 #' 
-#' @param molecule (character) Name of mRNA molecule to plot (matching to one of
-#'   the row names of 'rowData').
+#' @param molecule (character) Name of mRNA molecule to plot (assumed to match
+#'   one of the row names of `rowData`).
 #' 
-#' @param x_coord (character) Name of column in 'spatialData' containing
-#'   x-coordinates of the cell centroids. Default = 'x'.
+#' @param x_coord (character) Name of column in `spatialCoords` slot containing
+#'   x-coordinates of the cell centroids. Default = "x".
 #' 
-#' @param y_coord (character) Name of column in 'spatialData' containing
-#'   y-coordinates of the cell centroids. Default = 'y'.
+#' @param y_coord (character) Name of column in `spatialCoords` slot containing
+#'   y-coordinates of the cell centroids. Default = "y".
 #' 
-#' @param palette (character) Color palette for points. Options are a single
-#'   color name (e.g. 'red', 'navy', etc), or a vector of length two containing
-#'   color names for each end of the scale. Default = 'navy'.
+#' @param palette (character) Color palette, provided as a vector of length 2
+#'   for the low and high range. Default = `c("gray90", "navy")`.
+#' 
+#' @param size (numeric) Point size for `geom_point()`. Default = 0.3.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
-#'   ggplot elements (e.g. title, customized formatting, etc).
+#'   ggplot elements (e.g. title, labels, formatting, etc).
 #' 
 #' 
-#' @importFrom SpatialExperiment spatialData
-#' @importFrom SingleCellExperiment colData counts
+#' @importFrom SpatialExperiment spatialCoords
+#' @importFrom SingleCellExperiment counts
 #' @importFrom ggplot2 ggplot aes_string geom_point scale_color_gradient
-#'   coord_fixed theme_void ggtitle
-#' @importFrom methods as
+#'   coord_fixed ggtitle theme_void
 #' 
 #' @export
 #' 
 #' @examples
 #' # library(ggspavis)
-#' # library(STdata)
-#' # spe <- load_data("seqFISH_mouseEmbryo")
+#' # library(STexampleData)
+#' # spe <- seqFISH_mouseEmbryo()
 #' # plotMolecules(spe, molecule = "Sox2")
 #' 
 plotMolecules <- function(spe, 
                           molecule =  NULL, 
                           x_coord = "x", y_coord = "y", 
-                          palette = NULL) {
+                          palette = c("gray90", "navy"), 
+                          size = 0.3) {
   
-  # set up color palette
-  if (is.null(palette)) {
-    palette <- "navy"
-  }
-  if (!is.null(palette) && length(palette) == 1) {
-    # if providing a single color name (e.g. 'navy' or 'red'), combine with gray
-    # for color scale; else if length(palette) > 1, use palette as provided
-    # (i.e. expecting a vector of length 2)
-    palette <- c("gray90", palette)
-  }
+  mRNA_counts <- as.numeric(counts(spe)[molecule, ])
+  stopifnot(length(mRNA_counts) == ncol(spe))
   
-  df_plot <- spatialData(spe)[, c(x_coord, y_coord), drop = FALSE]
-  mRNA_counts <- as.numeric(counts(spe)[molecule, , drop = FALSE])
-  stopifnot(length(mRNA_counts) == nrow(df_plot))
-  df_plot <- cbind(df_plot, sum = mRNA_counts)
+  df <- as.data.frame(cbind(spatialCoords(spe), sum = mRNA_counts))
   
-  df_plot <- as.data.frame(df_plot)
-  
-  p <- ggplot(df_plot, aes_string(x = "x", y = "y", color = "sum")) + 
-    geom_point(size = 0.5) + 
+  p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = "sum")) + 
+    geom_point(size = size) + 
     scale_color_gradient(low = palette[1], high = palette[2], trans = "sqrt") + 
     coord_fixed() + 
     ggtitle(molecule) + 
