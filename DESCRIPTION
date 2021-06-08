@@ -1,7 +1,7 @@
 Package: ggspavis
 Version: 0.99.0
 Title: Visualization functions for spatially resolved transcriptomics data
-Description: R package containing visualization functions for spatially resolved transcriptomics data.
+Description: Visualization functions for spatially resolved transcriptomics datasets stored in SpatialExperiment objects.
 Authors@R: c(
     person("Lukas M.", "Weber", email = "lukas.weber.edu@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3282-1730")), 
     person("Helena L.", "Crowell", email = "helena.crowell@uzh.ch", role = c("aut"), comment = c(ORCID = "0000-0002-4801-1767")))
@@ -10,17 +10,17 @@ BugReports: https://github.com/lmweber/ggspavis/issues
 License: MIT + file LICENSE
 biocViews:
     SingleCell
-Depends: R (>= 4.0.0)
+Depends: R
 Imports:
-    SingleCellExperiment, 
     SpatialExperiment, 
-    rlang, 
+    SingleCellExperiment, 
     ggplot2, 
     methods, 
     stats
 VignetteBuilder: knitr
 Suggests:
     BiocStyle, 
-    STdata, 
-    knitr
+    rmarkdown, 
+    knitr, 
+    STexampleData
 RoxygenNote: 7.1.1
