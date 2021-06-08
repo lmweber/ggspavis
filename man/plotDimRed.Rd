@@ -9,50 +9,50 @@ plotDimRed(
   type = c("UMAP", "PCA"),
   x_axis = NULL,
   y_axis = NULL,
-  discrete = NULL,
-  continuous = NULL,
-  palette = NULL
+  annotate = NULL,
+  palette = "libd_layer_colors",
+  size = 0.3
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) Input data object.}
+\item{spe}{(SpatialExperiment) Input data, assumed to be a
+`SpatialExperiment` object.}
 
 \item{type}{(character) Type of reduced dimension plot. Options are "UMAP" or
 "PCA". Default = "UMAP.}
 
-\item{x_axis}{(character) Name of column in reducedDim slot containing
+\item{x_axis}{(character) Name of column in `reducedDim` slot containing
 x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.}
 
-\item{y_axis}{(character) Name of column in reducedDim slot containing
+\item{y_axis}{(character) Name of column in `reducedDim` slot containing
 y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.}
 
-\item{discrete}{(character) Name of column in colData containing discrete
-labels (e.g. cluster labels or ground truth labels) to show with colors.
-Default = NULL.}
+\item{annotate}{(character) Name of column in `colData` containing values to
+annotate spots with colors, e.g. cluster labels (discrete values) or total
+UMI counts (continuous values). For discrete values such as cluster labels,
+the column in `colData` should be formatted as a factor.}
 
-\item{continuous}{(character) Name of column in colData containing continuous
-values (e.g. total UMI counts) to show with colors. Default = NULL.}
+\item{palette}{(character) Color palette for annotation. Options for discrete
+labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
+hex values. For continuous values, provide a vector of length 2 for the low
+and high range, e.g. `c("gray90", "navy")`. Default =
+`"libd_layer_colors"`.}
 
-\item{palette}{(character) Color palette. Options for discrete labels are
-"libd_layer_colors", "Okabe-Ito", or a vector of hex codes for a custom
-palette. Default = "libd_layer_colors". Options for continuous values are
-"navy", or a vector of length two containing custom colors. Default =
-"navy".}
+\item{size}{(numeric) Point size for `geom_point()`. Default = 0.3.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, customized formatting, etc).
+  ggplot elements (e.g. title, labels, formatting, etc).
 }
 \description{
-Plots for spatially resolved transcriptomics datasets
+Plotting functions for spatially resolved transcriptomics data.
 }
 \details{
-Function to plot spatially resolved transcriptomics data in reduced dimension
-coordinates.
+Function to plot spot-based spatially resolved transcriptomics data stored in
+a `SpatialExperiment` object.
 
-This function generates a plot showing spatial coordinates (spots) in reduced
-dimension coordinates (PCA or UMAP), with optional colors for cluster labels,
-ground truth labels, or other quantities.
+This function generates a plot in reduced dimension coordinates (PCA or
+UMAP), along with annotation such as cluster labels or other values.
 }
 \examples{
 # to do

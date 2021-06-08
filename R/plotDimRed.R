@@ -1,95 +1,79 @@
 #' plotDimRed
 #' 
-#' Plots for spatially resolved transcriptomics datasets
+#' Plotting functions for spatially resolved transcriptomics data.
 #' 
-#' Function to plot spatially resolved transcriptomics data in reduced dimension
-#' coordinates.
+#' Function to plot spot-based spatially resolved transcriptomics data stored in
+#' a `SpatialExperiment` object.
 #' 
-#' This function generates a plot showing spatial coordinates (spots) in reduced
-#' dimension coordinates (PCA or UMAP), with optional colors for cluster labels,
-#' ground truth labels, or other quantities.
+#' This function generates a plot in reduced dimension coordinates (PCA or
+#' UMAP), along with annotation such as cluster labels or other values.
 #' 
 #' 
-#' @param spe (SpatialExperiment) Input data object.
+#' @param spe (SpatialExperiment) Input data, assumed to be a
+#'   `SpatialExperiment` object.
 #' 
 #' @param type (character) Type of reduced dimension plot. Options are "UMAP" or
 #'   "PCA". Default = "UMAP.
 #' 
-#' @param x_axis (character) Name of column in reducedDim slot containing
+#' @param x_axis (character) Name of column in `reducedDim` slot containing
 #'   x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.
 #' 
-#' @param y_axis (character) Name of column in reducedDim slot containing
+#' @param y_axis (character) Name of column in `reducedDim` slot containing
 #'   y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.
 #' 
-#' @param discrete (character) Name of column in colData containing discrete
-#'   labels (e.g. cluster labels or ground truth labels) to show with colors.
-#'   Default = NULL.
+#' @param annotate (character) Name of column in `colData` containing values to
+#'   annotate spots with colors, e.g. cluster labels (discrete values) or total
+#'   UMI counts (continuous values). For discrete values such as cluster labels,
+#'   the column in `colData` should be formatted as a factor.
 #' 
-#' @param continuous (character) Name of column in colData containing continuous
-#'   values (e.g. total UMI counts) to show with colors. Default = NULL.
+#' @param palette (character) Color palette for annotation. Options for discrete
+#'   labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
+#'   hex values. For continuous values, provide a vector of length 2 for the low
+#'   and high range, e.g. `c("gray90", "navy")`. Default =
+#'   `"libd_layer_colors"`.
 #' 
-#' @param palette (character) Color palette. Options for discrete labels are
-#'   "libd_layer_colors", "Okabe-Ito", or a vector of hex codes for a custom
-#'   palette. Default = "libd_layer_colors". Options for continuous values are
-#'   "navy", or a vector of length two containing custom colors. Default =
-#'   "navy".
+#' @param size (numeric) Point size for `geom_point()`. Default = 0.3.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
-#'   ggplot elements (e.g. title, customized formatting, etc).
+#'   ggplot elements (e.g. title, labels, formatting, etc).
 #' 
 #' 
-#' @importFrom rlang sym "!!"
-#' @importFrom SingleCellExperiment reducedDim colData
-#' @importFrom ggplot2 ggplot aes geom_point xlab ylab ggtitle
-#'   scale_color_manual scale_color_gradient theme_bw theme element_blank
+#' @importFrom SingleCellExperiment colData reducedDim
+#' @importFrom ggplot2 ggplot aes_string geom_point xlab ylab ggtitle theme_bw
+#'   theme element_blank scale_color_manual scale_color_gradient
 #' 
 #' @export
 #' 
 #' @examples
 #' # to do
 #' 
-plotDimRed <- function(spe, type = c("UMAP", "PCA"), 
+plotDimRed <- function(spe, 
+                       type = c("UMAP", "PCA"), 
                        x_axis = NULL, y_axis = NULL, 
-                       discrete = NULL, continuous = NULL, 
-                       palette = NULL) {
+                       annotate = NULL, palette = "libd_layer_colors", 
+                       size = 0.3) {
   
-  # note: using quasiquotation to allow custom variable names in ggplot ("sym" and "!!")
-  
-  if (type == "UMAP" & is.null(x_axis) & is.null(y_axis)) {
-    x_axis <- "UMAP1"
-    y_axis <- "UMAP2"
-  } else if (type == "PCA" & is.null(x_axis) & is.null(y_axis)) {
-    x_axis <- "PC1"
-    y_axis <- "PC2"
+  if (is.null(x_axis) & is.null(y_axis)) {
+    if (type == "UMAP") {
+      x_axis <- "UMAP1"
+      y_axis <- "UMAP2"
+    } else if (type == "PCA") {
+      x_axis <- "PC1"
+      y_axis <- "PC2"
+    }
   }
-  x_axis_sym <- sym(x_axis)
-  y_axis_sym <- sym(y_axis)
   
-  if (!is.null(discrete)) discrete_sym <- sym(discrete)
-  if (!is.null(continuous)) continuous_sym <- sym(continuous)
-  
-  if (!is.null(palette) && palette == "libd_layer_colors") {
+  if (palette == "libd_layer_colors") {
     palette <- c("#F0027F", "#377EB8", "#4DAF4A", "#984EA3", "#FFD700", "#FF7F00", "#1A1A1A", "#666666")
-  } else if (!is.null(palette) && palette == "Okabe-Ito") {
+  } else if (palette == "Okabe-Ito") {
     palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-  } else if (!is.null(palette) && palette == "navy") {
-    palette <- c("gray95", "navy")
   }
   
-  df_plot <- reducedDim(spe, type)
+  df <- as.data.frame(cbind(colData(spe), reducedDim(spe, type)))
   
-  if (!is.null(discrete)) {
-    df_plot <- cbind(df_plot, colData(spe)[, discrete, drop = FALSE])
-  }
-  if (!is.null(continuous)) {
-    df_plot <- cbind(df_plot, colData(spe)[, continuous, drop = FALSE])
-  }
-  
-  df_plot <- as.data.frame(df_plot)
-  
-  p <- ggplot(df_plot, aes(x = !!x_axis_sym, y = !!y_axis_sym)) + 
-    geom_point(size = 0.5) + 
+  p <- ggplot(df, aes_string(x = x_axis, y = y_axis, color = annotate)) + 
+    geom_point(size = size) + 
     xlab(paste0(type, "1")) + 
     ylab(paste0(type, "2")) + 
     ggtitle("Reduced dimensions") + 
@@ -98,17 +82,14 @@ plotDimRed <- function(spe, type = c("UMAP", "PCA"),
           axis.text = element_blank(), 
           axis.ticks = element_blank())
   
-  if (!is.null(discrete)) {
-    p <- p + aes(color = !!discrete_sym) + 
-      scale_color_manual(values = palette)
+  if (is.factor(df[, annotate])) {
+    p <- p + scale_color_manual(values = palette)
   }
   
-  if (!is.null(continuous)) {
-    p <- p + aes(color = !!continuous_sym) + 
-      scale_color_gradient(low = palette[1], high = palette[2])
+  if (is.numeric(df[, annotate])) {
+    p <- p + scale_color_gradient(low = palette[1], high = palette[2])
   }
   
   p
-  
 }
 
