@@ -1,8 +1,10 @@
 ---
-title: "ggspavis package overview"
+title: "ggspavis overview"
 author: 
   - name: Lukas M. Weber
-    affiliation: "Johns Hopkins Bloomberg School of Public Health"
+    affiliation: "Johns Hopkins Bloomberg School of Public Health, Baltimore, USA"
+  - name: Helena L. Crowell
+    affiliation: "University of Zurich, Zurich, Switzerland"
 package: ggspavis
 output: 
   BiocStyle::html_document
@@ -19,24 +21,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-The `ggspavis` package contains a set of visualization functions for spatially resolved transcriptomics datasets.
+The `ggspavis` package contains a set of visualization functions for spatially resolved transcriptomics data, designed to work with the [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) Bioconductor object structure.
 
-Functions in this package are designed to work with the [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) Bioconductor object class.
-
-
-# Functions
-
-Currently the package contains the following plotting functions:
-
-- `?plotVisium`
-- `?plotSpots`
-- `?plotMolecules`
-- `?plotDimRed`
+These functions are used in our online book [OSTA](https://lmweber.org/OSTA-book/) and other work.
 
 
 # Examples
 
-We load some example datasets from the [STdata](https://github.com/lmweber/STdata) package, and create some example plots using the plotting functions from the `ggspavis` package.
+Load some example datasets from the [STexampleData](https://bioconductor.org/packages/STexampleData) package and create some example plots.
 
 ```{r, message=FALSE}
 library(SpatialExperiment)
@@ -49,15 +41,15 @@ library(ggspavis)
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- load_data("Visium_mouseCoronal")
+spe <- Visium_mouseCoronal()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
-# add some values in 'colData' to show using color scale
+# add some values in 'colData' to annotate spots
 colData(spe)$sum <- colSums(counts(spe))
 
 # example plots
-plotVisium(spe, fill = "sum")
+plotSpots(spe, annotate = "sum")
 plotVisium(spe, fill = "sum", palette = "red")
 ```
 
@@ -66,24 +58,13 @@ plotVisium(spe, fill = "sum", palette = "red")
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- load_data("Visium_humanDLPFC")
+spe <- Visium_humanDLPFC()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
 # example plots
+plotSpots(spe, annotate = "ground_truth", palette = "libd_layer_colors")
 plotVisium(spe, fill = "ground_truth")
-```
-
-```{r, message=FALSE, out.width="60%"}
-# add some values in 'colData' to show using color scale
-colData(spe)$sum <- colSums(counts(spe))
-
-plotVisium(spe, fill = "sum")
-```
-
-```{r, message=FALSE, out.width="65%"}
-# alternatively
-plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 ```
 
 
@@ -91,7 +72,7 @@ plotSpots(spe, discrete = "ground_truth", palette = "libd_layer_colors")
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- load_data("seqFISH_mouseEmbryo")
+spe <- seqFISH_mouseEmbryo()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
