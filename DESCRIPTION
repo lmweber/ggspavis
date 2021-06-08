@@ -10,11 +10,11 @@ BugReports: https://github.com/lmweber/ggspavis/issues
 License: MIT + file LICENSE
 biocViews:
     SingleCell
-Depends: R
 Imports:
     SpatialExperiment, 
     SingleCellExperiment, 
     ggplot2, 
+    ggside, 
     methods, 
     stats
 VignetteBuilder: knitr
