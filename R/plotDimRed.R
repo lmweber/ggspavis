@@ -64,9 +64,9 @@ plotDimRed <- function(spe,
     }
   }
   
-  if (palette == "libd_layer_colors") {
+  if (length(palette) == 1 && palette == "libd_layer_colors") {
     palette <- c("#F0027F", "#377EB8", "#4DAF4A", "#984EA3", "#FFD700", "#FF7F00", "#1A1A1A", "#666666")
-  } else if (palette == "Okabe-Ito") {
+  } else if (length(palette) == 1 && palette == "Okabe-Ito") {
     palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
   }
   
