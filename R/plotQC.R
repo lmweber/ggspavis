@@ -124,7 +124,7 @@ plotQC <- function(spe, type = c("bar", "scatter", "spots"),
       p <- p + geom_hline(yintercept = threshold_y, color = "red")
     }
     if (trend) {
-      p <- p + geom_smooth(method = "loess")
+      p <- p + geom_smooth(method = "loess", se = FALSE)
     }
     if (marginal) {
       p <- p + 
