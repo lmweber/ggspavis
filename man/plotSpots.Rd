@@ -38,10 +38,10 @@ UMI counts (continuous values). For discrete values such as cluster labels,
 the column in `colData` should be formatted as a factor.}
 
 \item{palette}{(character) Color palette for annotation. Options for discrete
-labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
-hex values. For continuous values, provide a vector of length 2 for the low
-and high range, e.g. `c("gray90", "navy")`. Default =
-`"libd_layer_colors"`.}
+labels (e.g. cluster labels) are "libd_layer_colors", "Okabe-Ito", or a
+vector of color names or hex values. For continuous values (e.g. total UMI
+counts), provide a vector of length 2 for the low and high range, e.g.
+`c("gray90", "navy")`. Default = `"libd_layer_colors"`.}
 
 \item{y_reverse}{(logical) Whether to reverse `y` coordinates. Usually
 required for 10x Genomics Visium data. Default = `TRUE`.}
