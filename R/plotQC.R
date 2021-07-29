@@ -7,47 +7,48 @@
 #' 
 #' The following types of QC plots are available:
 #' 
-#' - Barplot (`type = bar`) for a single QC metric, e.g. number of cells per
-#' spot. For number of cells per spot, the barplot highlights spots with zero
-#' cells.
-#' - Scatterplot (`type = scatter`) comparing two QC metrics, e.g. number of
-#' detected features vs. number of cells per spot, with optional vertical and
+#' - Barplot (\code{type} = "bar") for a single QC metric, e.g. number of cells
+#' per spot. For number of cells per spot, the barplot highlights spots with
+#' zero cells.
+#' - Scatterplot (\code{type} = "scatter") comparing two QC metrics, e.g. number
+#' of detected features vs. number of cells per spot, with optional vertical and
 #' horizontal lines highlighting QC filtering thresholds.
-#' - Spots (`type = spots`) i.e. spots in spatial (x-y) coordinates,
+#' - Spots (\code{type} = "spots") i.e. spots in spatial (x-y) coordinates,
 #' highlighting discarded spots that do not meet filtering thresholds.
 #' 
 #' 
 #' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   `SpatialExperiment` object.
+#'   \code{SpatialExperiment} object.
 #' 
-#' @param type (character) Type of QC plot. Options are `bar`, `scatter`, and
-#'   `spots`. See details in description.
+#' @param type (character) Type of QC plot. Options are "bar", "scatter", and
+#'   "spots". See details in description.
 #' 
-#' @param x_coord (character) Name of column in `spatialCoords` containing
+#' @param x_coord (character) Name of column in \code{spatialCoords} containing
 #'   x-coordinates. Default = "x". Required for spot-based plots.
 #' 
-#' @param y_coord (character) Name of column in `spatialCoords` containing
+#' @param y_coord (character) Name of column in \code{spatialCoords} containing
 #'   y-coordinates. Default = "y". Required for spot-based plots.
 #' 
 #' @param in_tissue (logical) Whether to show only spots over tissue, or all
-#'   spots. Options are `TRUE` (show spots over tissue; requires a column
-#'   labelled `in_tissue` in `spatialData` identifying spots over tissue, which
-#'   is the standard format for 10x Genomics Visium data), `FALSE` (show all
-#'   spots), or a character value with the name of a column in `spatialData`
+#'   spots. Options are TRUE (show spots over tissue; requires a column labelled
+#'   "in_tissue" in \code{spatialData} identifying spots over tissue, which is
+#'   the standard format for 10x Genomics Visium data), FALSE (show all spots),
+#'   or a character value with the name of a column in \code{spatialData}
 #'   identifying the spots to show.
 #' 
-#' @param metric_x (character) Name of column in `colData` containing QC metric
-#'   to plot on x-axis (e.g. "cell_count" for number of cells per spot). Default
-#'   = "cell_count". Required for barplots and scatterplots.
+#' @param metric_x (character) Name of column in \code{colData} containing QC
+#'   metric to plot on x-axis (e.g. "cell_count" for number of cells per spot).
+#'   Default = "cell_count". Required for barplots and scatterplots.
 #' 
-#' @param metric_y (character) Name of column in `colData` containing QC metric
-#'   to plot on y-axis (e.g. "sum" for number of detected transcripts, or
+#' @param metric_y (character) Name of column in \code{colData} containing QC
+#'   metric to plot on y-axis (e.g. "sum" for number of detected transcripts, or
 #'   "detected" for number of detected genes). Default = "sum". Required for
 #'   scatterplots.
 #' 
-#' @param discard (character) Name of column in `colData` identifying discarded
-#'   spots that do not meet filtering thresholds, which will be highlighted on a
-#'   spot-based plot. Default = "discard". Optional for spot-based plots.
+#' @param discard (character) Name of column in \code{colData} identifying
+#'   discarded spots that do not meet filtering thresholds, which will be
+#'   highlighted on a spot-based plot. Default = "discard". Optional for
+#'   spot-based plots.
 #' 
 #' @param highlight_zeros (logical) Whether to highlight bar for x = 0 (e.g.
 #'   zero cells per spot). Default = TRUE. Optional for barplots.
@@ -66,8 +67,8 @@
 #' @param marginal (logical) Whether to display marginal histograms for
 #'   scatterplots. Default = TRUE. Optional for scatterplots.
 #' 
-#' @param y_reverse (logical) Whether to reverse `y` coordinates, which is often
-#'   required for 10x Genomics Visium data. Default = `TRUE`.
+#' @param y_reverse (logical) Whether to reverse y coordinates, which is often
+#'   required for 10x Genomics Visium data. Default = TRUE.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as

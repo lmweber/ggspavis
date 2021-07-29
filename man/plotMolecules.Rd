@@ -15,21 +15,21 @@ plotMolecules(
 }
 \arguments{
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
-`SpatialExperiment` object.}
+\code{SpatialExperiment} object.}
 
 \item{molecule}{(character) Name of mRNA molecule to plot (assumed to match
-one of the row names of `rowData`).}
+one of the row names of \code{rowData}).}
 
-\item{x_coord}{(character) Name of column in `spatialCoords` containing
+\item{x_coord}{(character) Name of column in \code{spatialCoords} containing
 x-coordinates of the cell centroids. Default = "x".}
 
-\item{y_coord}{(character) Name of column in `spatialCoords` containing
+\item{y_coord}{(character) Name of column in \code{spatialCoords} containing
 y-coordinates of the cell centroids. Default = "y".}
 
 \item{palette}{(character) Color palette, provided as a vector of length 2
-for the low and high range. Default = `c("gray90", "navy")`.}
+for the low and high range. Default = \code{c("gray90", "navy")}.}
 
-\item{size}{(numeric) Point size for `geom_point()`. Default = 0.3.}
+\item{size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
@@ -40,7 +40,7 @@ Plotting functions for spatially resolved transcriptomics data.
 }
 \details{
 Function to plot molecule-based spatially resolved transcriptomics data
-stored in a `SpatialExperiment` object.
+stored in a \code{SpatialExperiment} object.
 
 This function generates a plot in spatial coordinates (e.g. x-y coordinates
 on a tissue slide), for a selected molecule.

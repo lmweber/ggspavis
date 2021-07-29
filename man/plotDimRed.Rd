@@ -16,29 +16,30 @@ plotDimRed(
 }
 \arguments{
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
-`SpatialExperiment` object.}
+\code{SpatialExperiment} object.}
 
 \item{type}{(character) Type of reduced dimension plot. Options are "UMAP" or
 "PCA". Default = "UMAP".}
 
-\item{x_axis}{(character) Name of column in `reducedDim` containing
+\item{x_axis}{(character) Name of column in \code{reducedDim} containing
 x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.}
 
-\item{y_axis}{(character) Name of column in `reducedDim` containing
+\item{y_axis}{(character) Name of column in \code{reducedDim} containing
 y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.}
 
-\item{annotate}{(character) Name of column in `colData` containing values to
-annotate spots with colors, e.g. cluster labels (discrete values) or total
-UMI counts (continuous values). For discrete values such as cluster labels,
-the column in `colData` should be formatted as a factor.}
+\item{annotate}{(character) Name of column in \code{colData} containing
+values to annotate spots with colors, e.g. cluster labels (discrete values)
+or total UMI counts (continuous values). For discrete values such as
+cluster labels, the column in \code{colData} should be formatted as a
+factor.}
 
 \item{palette}{(character) Color palette for annotation. Options for discrete
 labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
 hex values. For continuous values, provide a vector of length 2 for the low
-and high range, e.g. `c("gray90", "navy")`. Default =
-`"libd_layer_colors"`.}
+and high range, e.g. \code{c("gray90", "navy")}. Default =
+\code{"libd_layer_colors"}.}
 
-\item{size}{(numeric) Point size for `geom_point()`. Default = 0.3.}
+\item{size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
@@ -49,7 +50,7 @@ Plotting functions for spatially resolved transcriptomics data.
 }
 \details{
 Function to plot spot-based spatially resolved transcriptomics data stored in
-a `SpatialExperiment` object.
+a \code{SpatialExperiment} object.
 
 This function generates a plot in reduced dimension coordinates (PCA or
 UMAP), along with annotation such as cluster labels or total UMI counts.

@@ -3,28 +3,28 @@
 #' Plotting functions for spatially resolved transcriptomics data.
 #' 
 #' Function to plot molecule-based spatially resolved transcriptomics data
-#' stored in a `SpatialExperiment` object.
+#' stored in a \code{SpatialExperiment} object.
 #' 
 #' This function generates a plot in spatial coordinates (e.g. x-y coordinates
 #' on a tissue slide), for a selected molecule.
 #' 
 #' 
 #' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   `SpatialExperiment` object.
+#'   \code{SpatialExperiment} object.
 #' 
 #' @param molecule (character) Name of mRNA molecule to plot (assumed to match
-#'   one of the row names of `rowData`).
+#'   one of the row names of \code{rowData}).
 #' 
-#' @param x_coord (character) Name of column in `spatialCoords` containing
+#' @param x_coord (character) Name of column in \code{spatialCoords} containing
 #'   x-coordinates of the cell centroids. Default = "x".
 #' 
-#' @param y_coord (character) Name of column in `spatialCoords` containing
+#' @param y_coord (character) Name of column in \code{spatialCoords} containing
 #'   y-coordinates of the cell centroids. Default = "y".
 #' 
 #' @param palette (character) Color palette, provided as a vector of length 2
-#'   for the low and high range. Default = `c("gray90", "navy")`.
+#'   for the low and high range. Default = \code{c("gray90", "navy")}.
 #' 
-#' @param size (numeric) Point size for `geom_point()`. Default = 0.3.
+#' @param size (numeric) Point size for \code{geom_point()}. Default = 0.3.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as

@@ -3,7 +3,7 @@
 #' Plotting functions for spatially resolved transcriptomics data.
 #' 
 #' Function to plot spot-based spatially resolved transcriptomics data stored in
-#' a `SpatialExperiment` object.
+#' a \code{SpatialExperiment} object.
 #' 
 #' This function generates a plot in spatial coordinates (e.g. x-y coordinates
 #' on a tissue slide), along with annotation such as cluster labels or total UMI
@@ -11,36 +11,37 @@
 #' 
 #' 
 #' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   `SpatialExperiment` object.
+#'   \code{SpatialExperiment} object.
 #' 
-#' @param x_coord (character) Name of column in `spatialCoords` containing
+#' @param x_coord (character) Name of column in \code{spatialCoords} containing
 #'   x-coordinates. Default = "x".
 #' 
-#' @param y_coord (character) Name of column in `spatialCoords` containing
+#' @param y_coord (character) Name of column in \code{spatialCoords} containing
 #'   y-coordinates. Default = "y".
 #' 
 #' @param in_tissue (logical) Whether to show only spots over tissue, or all
-#'   spots. Options are `TRUE` (show spots over tissue; requires a column
-#'   labelled `in_tissue` in `spatialData` identifying spots over tissue, which
-#'   is the standard format for 10x Genomics Visium data), `FALSE` (show all
-#'   spots), or a character value with the name of a column in `spatialData`
+#'   spots. Options are TRUE (show spots over tissue; requires a column labelled
+#'   "in_tissue" in \code{spatialData} identifying spots over tissue, which is
+#'   the standard format for 10x Genomics Visium data), FALSE (show all spots),
+#'   or a character value with the name of a column in \code{spatialData}
 #'   identifying the spots to show.
 #' 
-#' @param annotate (character) Name of column in `colData` containing values to
-#'   annotate spots with colors, e.g. cluster labels (discrete values) or total
-#'   UMI counts (continuous values). For discrete values such as cluster labels,
-#'   the column in `colData` should be formatted as a factor.
+#' @param annotate (character) Name of column in \code{colData} containing
+#'   values to annotate spots with colors, e.g. cluster labels (discrete values)
+#'   or total UMI counts (continuous values). For discrete values such as
+#'   cluster labels, the column in \code{colData} should be formatted as a
+#'   factor.
 #' 
 #' @param palette (character) Color palette for annotation. Options for discrete
 #'   labels (e.g. cluster labels) are "libd_layer_colors", "Okabe-Ito", or a
 #'   vector of color names or hex values. For continuous values (e.g. total UMI
 #'   counts), provide a vector of length 2 for the low and high range, e.g.
-#'   `c("gray90", "navy")`. Default = `"libd_layer_colors"`.
+#'   \code{c("gray90", "navy")}. Default = \code{"libd_layer_colors"}.
 #' 
-#' @param y_reverse (logical) Whether to reverse `y` coordinates, which is often
-#'   required for 10x Genomics Visium data. Default = `TRUE`.
+#' @param y_reverse (logical) Whether to reverse y coordinates, which is often
+#'   required for 10x Genomics Visium data. Default = TRUE.
 #' 
-#' @param size (numeric) Point size for `geom_point()`. Default = 0.3.
+#' @param size (numeric) Point size for \code{geom_point()}. Default = 0.3.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
