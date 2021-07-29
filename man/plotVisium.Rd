@@ -103,7 +103,7 @@ sub <- spe[, as.logical(spatialData(spe)$in_tissue)]
 
 # color by feature counts, don't include image
 rownames(sub) <- make.names(rowData(sub)$gene_name)
-plotVisium(sub, fill = "Gad2", assay = "counts", image = FALSE)
+plotVisium(sub, fill = "Gad2", assay = "counts")
 
 }
 \author{

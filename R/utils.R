@@ -48,7 +48,11 @@
 
 .y_reverse <- function(df, ix, y, img) {
     y_tmp <- df[ix, y]
-    y_tmp <- nrow(img) - y_tmp
+    if (!is.null(img)) {
+        y_tmp <- nrow(img) - y_tmp
+    } else {
+        y_tmp <- max(y_tmp) - y_tmp
+    }
     df[ix, y] <- y_tmp
     return(df)
 }
