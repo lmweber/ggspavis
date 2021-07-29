@@ -15,7 +15,7 @@ plotVisium(
   trans = "identity",
   x_coord = "x",
   y_coord = "y",
-  flip_xy = FALSE,
+  y_reverse = FALSE,
   sample_ids = NULL,
   image_ids = NULL,
   palette = NULL
@@ -27,39 +27,39 @@ plotVisium(
 \item{spots}{(logical) Whether to display spots (spatial barcodes) as points.
 Default = TRUE.}
 
-\item{fill}{(character) Column in 'colData' to use to fill points by color.
-If 'fill' contains a numeric column (e.g. total UMI counts), a continuous
-color scale will be used. If 'fill' contains a factor (e.g. cluster
-labels), a discrete color scale will be used. Default = NULL.}
+\item{fill}{(character) Column in \code{colData} to use to fill points by
+color. If \code{fill} contains a numeric column (e.g. total UMI counts), a
+continuous color scale will be used. If \code{fill} contains a factor (e.g.
+cluster labels), a discrete color scale will be used. Default = NULL.}
 
-\item{highlight}{(character) Column in 'spatialData' to use to highlight
-points by outlining them. For example, 'in_tissue' will highlight spots
-overlapping with tissue. Default = 'in_tissue'. Set to NULL to disable.}
+\item{highlight}{(character) Column in \code{spatialData} to use to highlight
+points by outlining them. For example, \code{in_tissue} will highlight
+spots overlapping with tissue. Default = \code{in_tissue}. Set to NULL to
+disable.}
 
-\item{facets}{(character) Column in 'colData' to use to facet plots, i.e.
-show multiple panels of plots. Default = 'sample_id'. Set to NULL to
+\item{facets}{(character) Column in \code{colData} to use to facet plots,
+i.e. show multiple panels of plots. Default = "sample_id". Set to NULL to
 disable.}
 
 \item{image}{(logical) Whether to show histology image as background. Default
 = TRUE.}
 
-\item{assay}{(character) Name of assay data to use 
-when \code{fill} is in \code{rownames(spe)}.
-Should be one of \code{assayNames(spe)}.}
+\item{assay}{(character) Name of assay data to use when \code{fill} is in
+\code{rownames(spe)}. Should be one of \code{assayNames(spe)}.}
 
-\item{trans}{Transformation to apply for continuous scales.
-Ignored unless \code{fill} is numeric, e.g. feature expression.
-(See \code{\link{ggplot2}{continuous_scale}} for valid options)}
+\item{trans}{Transformation to apply for continuous scales. Ignored unless
+\code{fill} is numeric, e.g. feature expression. (See
+\code{\link{ggplot2}{continuous_scale}} for valid options.)}
 
-\item{x_coord}{(character) Column in 'spatialData' containing x-coordinates.
-Default = 'x'.}
+\item{x_coord}{(character) Column in \code{spatialCoords} containing
+x-coordinates. Default = "x".}
 
-\item{y_coord}{(character) Column in 'spatialData' containing y-coordinates.
-Default = 'y'.}
+\item{y_coord}{(character) Column in \code{spatialCoords} containing
+y-coordinates. Default = "y".}
 
-\item{flip_xy}{(logical) Whether to flip x and y coordinates and
-reverse y scale to match orientation of histology images. This is sometimes
-required for Visium data, depending on the orientation of the raw data.}
+\item{y_reverse}{(logical) Whether to reverse y coordinates, which may be
+required for Visium data, depending on the orientation of the raw data.
+Default = FALSE.}
 
 \item{sample_ids}{(character) Samples to show, if multiple samples are
 available. Default = NULL (show all samples).}
@@ -68,11 +68,11 @@ available. Default = NULL (show all samples).}
 available. Default = NULL (show all images).}
 
 \item{palette}{(character) Color palette for points. Options for discrete
-labels are 'libd_layer_colors', 'Okabe-Ito', or a custom vector of hex
-color codes. Options for continuous values are 'viridis', a single color
-name (e.g. 'red', 'navy', etc), or a vector of length two containing color
-names for each end of the scale. Default = 'libd_layer_colors' for discrete
-data, and 'viridis' for continuous data.}
+labels are "libd_layer_colors", "Okabe-Ito", or a custom vector of hex
+color codes. Options for continuous values are "viridis", a single color
+name (e.g. "red", "navy", etc), or a vector of length two containing color
+names for each end of the scale. Default = "libd_layer_colors" for discrete
+data, and "viridis" for continuous data.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
@@ -83,8 +83,8 @@ Plots for spatially resolved transcriptomics data from the 10x Genomics
 Visium platform
 }
 \details{
-Function to plot spatially resolved transcriptomics data from the spot-based
-10x Genomics Visium platform.
+Function to generate plots for spatially resolved transcriptomics datasets
+from the 10x Genomics Visium spatially platform.
 
 This function generates a plot for spot-based spatially resolved
 transcriptomics data from the 10x Genomics Visium platform, with several
@@ -100,7 +100,7 @@ spe <- load_data("Visium_mouseCoronal")
 plotVisium(spe, fill = "x", highlight = "in_tissue")
 
 # subset in-tissue spots
-sub <- spe[, inTissue(spe)]
+sub <- spe[, spatialData(spe)$in_tissue]
 
 # color by feature counts, don't include image
 rownames(sub) <- make.names(rowData(sub)$gene_name)
@@ -108,5 +108,5 @@ plotVisium(sub, fill = "Gad2", assay = "counts", image = FALSE)
 
 }
 \author{
-Helena L. Crowell and Lukas M. Weber
+Helena L. Crowell with modifications by Lukas M. Weber
 }
