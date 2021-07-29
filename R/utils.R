@@ -46,11 +46,9 @@
     imgData(spe)[idx, ]
 }
 
-.y_reverse <- function(df, x, y) {
-    x_tmp <- df[ix, y]
-    y_tmp <- df[ix, x]
-    y_tmp <- (-1 * y_tmp) + min(y_tmp) + max(y_tmp)
-    df[ix, x] <- x_tmp
+.y_reverse <- function(df, ix, y, img) {
+    y_tmp <- df[ix, y]
+    y_tmp <- nrow(img) - y_tmp
     df[ix, y] <- y_tmp
     return(df)
 }

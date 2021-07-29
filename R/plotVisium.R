@@ -23,8 +23,7 @@
 #' 
 #' @param highlight (character) Column in \code{spatialData} to use to highlight
 #'   points by outlining them. For example, \code{in_tissue} will highlight
-#'   spots overlapping with tissue. Default = \code{in_tissue}. Set to NULL to
-#'   disable.
+#'   spots overlapping with tissue. Default = NULL.
 #' 
 #' @param facets (character) Column in \code{colData} to use to facet plots,
 #'   i.e. show multiple panels of plots. Default = "sample_id". Set to NULL to
@@ -46,9 +45,9 @@
 #' @param y_coord (character) Column in \code{spatialCoords} containing
 #'   y-coordinates. Default = "y".
 #' 
-#' @param y_reverse (logical) Whether to reverse y coordinates, which may be
+#' @param y_reverse (logical) Whether to reverse y coordinates, which is often 
 #'   required for Visium data, depending on the orientation of the raw data.
-#'   Default = FALSE.
+#'   Default = TRUE.
 #' 
 #' @param palette (character) Color palette for points. Options for discrete
 #'   labels are "libd_layer_colors", "Okabe-Ito", or a custom vector of hex
@@ -103,7 +102,7 @@ plotVisium <- function(spe,
                        spots = TRUE, fill = NULL, highlight = NULL, 
                        facets = "sample_id", image = TRUE, 
                        assay = "logcounts", trans = "identity", 
-                       x_coord = "x", y_coord = "y", y_reverse = FALSE, 
+                       x_coord = "x", y_coord = "y", y_reverse = TRUE, 
                        sample_ids = NULL, image_ids = NULL, palette = NULL) {
   
   # check validity of input arguments
@@ -158,7 +157,7 @@ plotVisium <- function(spe,
     plt_df[ix, xy] <- sf * plt_df[ix, xy]
     # reverse y coordinates to match orientation of images 
     # (sometimes required for Visium data)
-    if (y_reverse) plt_df <- .y_reverse(plt_df, x_coord, y_coord)
+    if (y_reverse) plt_df <- .y_reverse(plt_df, ix, y_coord, img)
   }
   
   # construct image layers

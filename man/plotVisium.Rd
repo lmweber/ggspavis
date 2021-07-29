@@ -15,7 +15,7 @@ plotVisium(
   trans = "identity",
   x_coord = "x",
   y_coord = "y",
-  y_reverse = FALSE,
+  y_reverse = TRUE,
   sample_ids = NULL,
   image_ids = NULL,
   palette = NULL
@@ -34,8 +34,7 @@ cluster labels), a discrete color scale will be used. Default = NULL.}
 
 \item{highlight}{(character) Column in \code{spatialData} to use to highlight
 points by outlining them. For example, \code{in_tissue} will highlight
-spots overlapping with tissue. Default = \code{in_tissue}. Set to NULL to
-disable.}
+spots overlapping with tissue. Default = NULL.}
 
 \item{facets}{(character) Column in \code{colData} to use to facet plots,
 i.e. show multiple panels of plots. Default = "sample_id". Set to NULL to
@@ -57,9 +56,9 @@ x-coordinates. Default = "x".}
 \item{y_coord}{(character) Column in \code{spatialCoords} containing
 y-coordinates. Default = "y".}
 
-\item{y_reverse}{(logical) Whether to reverse y coordinates, which may be
+\item{y_reverse}{(logical) Whether to reverse y coordinates, which is often 
 required for Visium data, depending on the orientation of the raw data.
-Default = FALSE.}
+Default = TRUE.}
 
 \item{sample_ids}{(character) Samples to show, if multiple samples are
 available. Default = NULL (show all samples).}
