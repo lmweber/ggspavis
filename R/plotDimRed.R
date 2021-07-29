@@ -6,19 +6,19 @@
 #' a `SpatialExperiment` object.
 #' 
 #' This function generates a plot in reduced dimension coordinates (PCA or
-#' UMAP), along with annotation such as cluster labels or other values.
+#' UMAP), along with annotation such as cluster labels or total UMI counts.
 #' 
 #' 
 #' @param spe (SpatialExperiment) Input data, assumed to be a
 #'   `SpatialExperiment` object.
 #' 
 #' @param type (character) Type of reduced dimension plot. Options are "UMAP" or
-#'   "PCA". Default = "UMAP.
+#'   "PCA". Default = "UMAP".
 #' 
-#' @param x_axis (character) Name of column in `reducedDim` slot containing
+#' @param x_axis (character) Name of column in `reducedDim` containing
 #'   x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.
 #' 
-#' @param y_axis (character) Name of column in `reducedDim` slot containing
+#' @param y_axis (character) Name of column in `reducedDim` containing
 #'   y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.
 #' 
 #' @param annotate (character) Name of column in `colData` containing values to

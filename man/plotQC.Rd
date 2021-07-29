@@ -28,18 +28,18 @@ plotQC(
 \item{type}{(character) Type of QC plot. Options are `bar`, `scatter`, and
 `spots`. See details in description.}
 
-\item{x_coord}{(character) Name of column in `spatialCoords` slot containing
+\item{x_coord}{(character) Name of column in `spatialCoords` containing
 x-coordinates. Default = "x". Required for spot-based plots.}
 
-\item{y_coord}{(character) Name of column in `spatialCoords` slot containing
+\item{y_coord}{(character) Name of column in `spatialCoords` containing
 y-coordinates. Default = "y". Required for spot-based plots.}
 
 \item{in_tissue}{(logical) Whether to show only spots over tissue, or all
 spots. Options are `TRUE` (show spots over tissue; requires a column
-labelled `in_tissue` in `spatialData` slot identifying spots over tissue,
-as in 10x Genomics Visium data), `FALSE` (show all spots), or a character
-value with the name of a column in `spatialData` identifying the spots to
-show. Required for spot-based plots.}
+labelled `in_tissue` in `spatialData` identifying spots over tissue, which
+is the standard format for 10x Genomics Visium data), `FALSE` (show all
+spots), or a character value with the name of a column in `spatialData`
+identifying the spots to show.}
 
 \item{metric_x}{(character) Name of column in `colData` containing QC metric
 to plot on x-axis (e.g. "cell_count" for number of cells per spot). Default
@@ -71,9 +71,8 @@ scatterplots. Default = TRUE. Optional for scatterplots.}
 \item{marginal}{(logical) Whether to display marginal histograms for
 scatterplots. Default = TRUE. Optional for scatterplots.}
 
-\item{y_reverse}{(logical) Whether to reverse `y` coordinates. Usually
-required for 10x Genomics Visium data. Default = `TRUE`. Optional for
-spot-based plots.}
+\item{y_reverse}{(logical) Whether to reverse `y` coordinates, which is often
+required for 10x Genomics Visium data. Default = `TRUE`.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as

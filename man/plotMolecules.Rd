@@ -20,10 +20,10 @@ plotMolecules(
 \item{molecule}{(character) Name of mRNA molecule to plot (assumed to match
 one of the row names of `rowData`).}
 
-\item{x_coord}{(character) Name of column in `spatialCoords` slot containing
+\item{x_coord}{(character) Name of column in `spatialCoords` containing
 x-coordinates of the cell centroids. Default = "x".}
 
-\item{y_coord}{(character) Name of column in `spatialCoords` slot containing
+\item{y_coord}{(character) Name of column in `spatialCoords` containing
 y-coordinates of the cell centroids. Default = "y".}
 
 \item{palette}{(character) Color palette, provided as a vector of length 2
@@ -42,8 +42,8 @@ Plotting functions for spatially resolved transcriptomics data.
 Function to plot molecule-based spatially resolved transcriptomics data
 stored in a `SpatialExperiment` object.
 
-This function generates a plot in spatial coordinates (x-y coordinates) of
-the tissue slide, for a selected molecule.
+This function generates a plot in spatial coordinates (e.g. x-y coordinates
+on a tissue slide), for a selected molecule.
 }
 \examples{
 # library(ggspavis)

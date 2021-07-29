@@ -5,8 +5,8 @@
 #' Function to plot molecule-based spatially resolved transcriptomics data
 #' stored in a `SpatialExperiment` object.
 #' 
-#' This function generates a plot in spatial coordinates (x-y coordinates) of
-#' the tissue slide, for a selected molecule.
+#' This function generates a plot in spatial coordinates (e.g. x-y coordinates
+#' on a tissue slide), for a selected molecule.
 #' 
 #' 
 #' @param spe (SpatialExperiment) Input data, assumed to be a
@@ -15,10 +15,10 @@
 #' @param molecule (character) Name of mRNA molecule to plot (assumed to match
 #'   one of the row names of `rowData`).
 #' 
-#' @param x_coord (character) Name of column in `spatialCoords` slot containing
+#' @param x_coord (character) Name of column in `spatialCoords` containing
 #'   x-coordinates of the cell centroids. Default = "x".
 #' 
-#' @param y_coord (character) Name of column in `spatialCoords` slot containing
+#' @param y_coord (character) Name of column in `spatialCoords` containing
 #'   y-coordinates of the cell centroids. Default = "y".
 #' 
 #' @param palette (character) Color palette, provided as a vector of length 2

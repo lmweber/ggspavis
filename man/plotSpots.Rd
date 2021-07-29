@@ -19,18 +19,18 @@ plotSpots(
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
 `SpatialExperiment` object.}
 
-\item{x_coord}{(character) Name of column in `spatialCoords` slot containing
+\item{x_coord}{(character) Name of column in `spatialCoords` containing
 x-coordinates. Default = "x".}
 
-\item{y_coord}{(character) Name of column in `spatialCoords` slot containing
+\item{y_coord}{(character) Name of column in `spatialCoords` containing
 y-coordinates. Default = "y".}
 
 \item{in_tissue}{(logical) Whether to show only spots over tissue, or all
 spots. Options are `TRUE` (show spots over tissue; requires a column
-labelled `in_tissue` in `spatialData` slot identifying spots over tissue,
-as in 10x Genomics Visium data), `FALSE` (show all spots), or a character
-value with the name of a column in `spatialData` identifying the spots to
-show.}
+labelled `in_tissue` in `spatialData` identifying spots over tissue, which
+is the standard format for 10x Genomics Visium data), `FALSE` (show all
+spots), or a character value with the name of a column in `spatialData`
+identifying the spots to show.}
 
 \item{annotate}{(character) Name of column in `colData` containing values to
 annotate spots with colors, e.g. cluster labels (discrete values) or total
@@ -43,7 +43,7 @@ vector of color names or hex values. For continuous values (e.g. total UMI
 counts), provide a vector of length 2 for the low and high range, e.g.
 `c("gray90", "navy")`. Default = `"libd_layer_colors"`.}
 
-\item{y_reverse}{(logical) Whether to reverse `y` coordinates. Usually
+\item{y_reverse}{(logical) Whether to reverse `y` coordinates, which is often
 required for 10x Genomics Visium data. Default = `TRUE`.}
 
 \item{size}{(numeric) Point size for `geom_point()`. Default = 0.3.}
@@ -59,9 +59,9 @@ Plotting functions for spatially resolved transcriptomics data.
 Function to plot spot-based spatially resolved transcriptomics data stored in
 a `SpatialExperiment` object.
 
-This function generates a plot in spatial coordinates (x-y coordinates) of
-the tissue slide, along with annotation such as cluster labels or other
-values.
+This function generates a plot in spatial coordinates (e.g. x-y coordinates
+on a tissue slide), along with annotation such as cluster labels or total UMI
+counts.
 }
 \examples{
 # library(ggspavis)
