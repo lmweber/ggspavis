@@ -21,9 +21,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-The `ggspavis` package contains a set of visualization functions for spatially resolved transcriptomics data, designed to work with the [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) Bioconductor object structure.
+The `ggspavis` package contains a set of visualization functions for spatially resolved transcriptomics data, designed to work with the [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) Bioconductor object class.
 
-These functions are used in our online book [OSTA](https://lmweber.org/OSTA-book/) and other work.
+These plotting functions are used in our online book [OSTA](https://lmweber.org/OSTA-book/) and other work.
 
 
 # Examples
