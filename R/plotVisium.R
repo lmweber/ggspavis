@@ -149,17 +149,6 @@ plotVisium <- function(spe,
   img_df <- .sub_imgData(spe, sample_ids, image_ids)
   rownames(img_df) <- img_df$sample_id
   
-  # scale spatial coordinates
-  for (s in sample_ids) {
-    ix <- plt_df$sample_id == s
-    xy <- c(x_coord, y_coord)
-    sf <- img_df[s, "scaleFactor"]
-    plt_df[ix, xy] <- sf * plt_df[ix, xy]
-    # reverse y coordinates to match orientation of images 
-    # (sometimes required for Visium data)
-    if (y_reverse) plt_df <- .y_reverse(plt_df, ix, y_coord, img)
-  }
-  
   # construct image layers
   # note: images could also be plotted using 'annotation_custom()', 
   # however, this does not allow for faceting, so we instead 
@@ -184,7 +173,19 @@ plotVisium <- function(spe,
     xlim <- c(0, ncol(img))
     ylim <- c(0, nrow(img))
   } else {
+    img <- NULL
     images <- xlim <- ylim <- NULL
+  }
+  
+  # scale spatial coordinates
+  for (s in sample_ids) {
+    ix <- plt_df$sample_id == s
+    xy <- c(x_coord, y_coord)
+    sf <- img_df[s, "scaleFactor"]
+    plt_df[ix, xy] <- sf * plt_df[ix, xy]
+    # reverse y coordinates to match orientation of images 
+    # (sometimes required for Visium data)
+    if (y_reverse) plt_df <- .y_reverse(plt_df, ix, y_coord, img)
   }
   
   # construct points and highlights
