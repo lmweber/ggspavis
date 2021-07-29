@@ -72,8 +72,9 @@
 #'   imgData 'imgData<-' imgRaster scaleFactors
 #' @importFrom SingleCellExperiment colData
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
-#'   scale_fill_viridis_c scale_color_identity facet_wrap guides guide_colorbar
-#'   guide_legend theme_void element_text margin unit layer
+#'   scale_fill_viridis_c scale_color_identity scale_fill_identity facet_wrap
+#'   guides guide_colorbar guide_legend theme_void element_text margin unit
+#'   layer
 #' @importFrom grid rasterGrob
 #' @importFrom methods is as
 #' @importFrom stats setNames
@@ -92,7 +93,7 @@
 #' plotVisium(spe, fill = "x", highlight = "in_tissue")
 #' 
 #' # subset in-tissue spots
-#' sub <- spe[, spatialData(spe)$in_tissue]
+#' sub <- spe[, as.logical(spatialData(spe)$in_tissue)]
 #' 
 #' # color by feature counts, don't include image
 #' rownames(sub) <- make.names(rowData(sub)$gene_name)
@@ -157,7 +158,7 @@ plotVisium <- function(spe,
     plt_df[ix, xy] <- sf * plt_df[ix, xy]
     # reverse y coordinates to match orientation of images 
     # (sometimes required for Visium data)
-    if (y_reverse) plt_df <- .flip_xy(plt_df, x_coord, y_coord)
+    if (y_reverse) plt_df <- .y_reverse(plt_df, x_coord, y_coord)
   }
   
   # construct image layers
@@ -180,6 +181,7 @@ plotVisium <- function(spe,
           ymin = 0, ymax = nrow(img))
       )
     })
+    img <- img_df$data[[1]]
     xlim <- c(0, ncol(img))
     ylim <- c(0, nrow(img))
   } else {

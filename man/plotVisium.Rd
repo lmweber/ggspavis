@@ -100,7 +100,7 @@ spe <- load_data("Visium_mouseCoronal")
 plotVisium(spe, fill = "x", highlight = "in_tissue")
 
 # subset in-tissue spots
-sub <- spe[, spatialData(spe)$in_tissue]
+sub <- spe[, as.logical(spatialData(spe)$in_tissue)]
 
 # color by feature counts, don't include image
 rownames(sub) <- make.names(rowData(sub)$gene_name)
