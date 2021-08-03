@@ -41,7 +41,10 @@ library(ggspavis)
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- Visium_mouseCoronal()
+spe <- load_data("Visium_mouseCoronal")
+
+# alternatively: load from ExperimentHub
+# spe <- Visium_mouseCoronal()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
@@ -50,7 +53,7 @@ colData(spe)$sum <- colSums(counts(spe))
 
 # example plots
 plotSpots(spe, annotate = "sum")
-plotVisium(spe, fill = "sum", palette = "red")
+plotVisium(spe, fill = "sum", trans = "log", highlight = "in_tissue")
 ```
 
 
@@ -58,13 +61,16 @@ plotVisium(spe, fill = "sum", palette = "red")
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- Visium_humanDLPFC()
+spe <- load_data("Visium_humanDLPFC")
+
+# alternatively: load from ExperimentHub
+# Visium_humanDLPFC()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
 # example plots
 plotSpots(spe, annotate = "ground_truth", palette = "libd_layer_colors")
-plotVisium(spe, fill = "ground_truth")
+plotVisium(spe, fill = "ground_truth", highlight = "in_tissue")
 ```
 
 
@@ -72,7 +78,10 @@ plotVisium(spe, fill = "ground_truth")
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- seqFISH_mouseEmbryo()
+spe <- load_data("seqFISH_mouseEmbryo")
+
+# alternatively: load from ExperimentHub
+# seqFISH_mouseEmbryo()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
