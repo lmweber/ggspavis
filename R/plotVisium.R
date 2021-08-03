@@ -84,7 +84,6 @@
 #' @author Helena L. Crowell with modifications by Lukas M. Weber
 #' 
 #' @examples
-#' library(ggspavis)
 #' library(STexampleData)
 #' 
 #' spe <- load_data("Visium_mouseCoronal")

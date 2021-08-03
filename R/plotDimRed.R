@@ -47,7 +47,6 @@
 #' @export
 #' 
 #' @examples
-#' library(ggspavis)
 #' library(STexampleData)
 #' spe <- load_data("Visium_humanDLPFC")
 #' # add random data in reducedDims

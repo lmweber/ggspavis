@@ -85,7 +85,6 @@
 #' @export
 #' 
 #' @examples
-#' library(ggspavis)
 #' library(STexampleData)
 #' spe <- load_data("Visium_humanDLPFC")
 #' plotQC(spe, type = "bar", metric_x = "cell_count")

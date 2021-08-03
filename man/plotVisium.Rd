@@ -90,7 +90,6 @@ transcriptomics data from the 10x Genomics Visium platform, with several
 options available to adjust the plot type and style.
 }
 \examples{
-library(ggspavis)
 library(STexampleData)
 
 spe <- load_data("Visium_mouseCoronal")
