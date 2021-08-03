@@ -46,9 +46,9 @@ This function generates a plot in spatial coordinates (e.g. x-y coordinates
 on a tissue slide), for a selected molecule.
 }
 \examples{
-# library(ggspavis)
-# library(STexampleData)
-# spe <- seqFISH_mouseEmbryo()
-# plotMolecules(spe, molecule = "Sox2")
+library(ggspavis)
+library(STexampleData)
+spe <- seqFISH_mouseEmbryo()
+plotMolecules(spe, molecule = "Sox2")
 
 }

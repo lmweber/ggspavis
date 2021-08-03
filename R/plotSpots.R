@@ -56,10 +56,10 @@
 #' @export
 #' 
 #' @examples
-#' # library(ggspavis)
-#' # library(STexampleData)
-#' # spe <- Visium_humanDLPFC()
-#' # plotSpots(spe, annotate = "ground_truth")
+#' library(ggspavis)
+#' library(STexampleData)
+#' spe <- load_data("Visium_humanDLPFC")
+#' plotSpots(spe, annotate = "ground_truth")
 #' 
 plotSpots <- function(spe, 
                       x_coord = "x", y_coord = "y", 

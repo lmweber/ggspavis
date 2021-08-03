@@ -56,6 +56,13 @@ This function generates a plot in reduced dimension coordinates (PCA or
 UMAP), along with annotation such as cluster labels or total UMI counts.
 }
 \examples{
-# to do
+library(ggspavis)
+library(STexampleData)
+spe <- load_data("Visium_humanDLPFC")
+# add random data in reducedDims
+dat <- matrix(ncol = 2, runif(ncol(spe) * 2))
+colnames(dat) <- paste0("PC", 1:2)
+reducedDims(spe, type = "PCA") <- list(PCA = dat)
+plotDimRed(spe, type = "PCA")
 
 }

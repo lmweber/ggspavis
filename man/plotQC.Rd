@@ -98,6 +98,11 @@ horizontal lines highlighting QC filtering thresholds.
 highlighting discarded spots that do not meet filtering thresholds.
 }
 \examples{
-# to do
+library(ggspavis)
+library(STexampleData)
+spe <- load_data("Visium_humanDLPFC")
+plotQC(spe, type = "bar", metric_x = "cell_count")
+colData(spe)$sum <- colSums(counts(spe))
+plotQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
 
 }

@@ -47,7 +47,14 @@
 #' @export
 #' 
 #' @examples
-#' # to do
+#' library(ggspavis)
+#' library(STexampleData)
+#' spe <- load_data("Visium_humanDLPFC")
+#' # add random data in reducedDims
+#' dat <- matrix(ncol = 2, runif(ncol(spe) * 2))
+#' colnames(dat) <- paste0("PC", 1:2)
+#' reducedDims(spe, type = "PCA") <- list(PCA = dat)
+#' plotDimRed(spe, type = "PCA")
 #' 
 plotDimRed <- function(spe, 
                        type = c("UMAP", "PCA"), 

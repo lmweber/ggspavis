@@ -39,10 +39,10 @@
 #' @export
 #' 
 #' @examples
-#' # library(ggspavis)
-#' # library(STexampleData)
-#' # spe <- seqFISH_mouseEmbryo()
-#' # plotMolecules(spe, molecule = "Sox2")
+#' library(ggspavis)
+#' library(STexampleData)
+#' spe <- seqFISH_mouseEmbryo()
+#' plotMolecules(spe, molecule = "Sox2")
 #' 
 plotMolecules <- function(spe, 
                           molecule =  NULL, 

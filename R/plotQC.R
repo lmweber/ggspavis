@@ -77,15 +77,20 @@
 #' 
 #' @importFrom SpatialExperiment spatialData spatialCoords
 #' @importFrom SingleCellExperiment colData
-#' @importFrom ggplot2 ggplot aes_string geom_bar geom_point coord_fixed ggtitle
-#'   theme_bw theme element_blank scale_y_reverse scale_fill_manual
-#'   scale_color_manual
+#' @importFrom ggplot2 ggplot aes_string geom_bar geom_point geom_smooth 
+#'   coord_fixed labs ggtitle theme_bw theme element_blank scale_y_reverse 
+#'   scale_fill_manual scale_color_manual
 #' @importFrom ggside geom_xsidehistogram geom_ysidehistogram
 #' 
 #' @export
 #' 
 #' @examples
-#' # to do
+#' library(ggspavis)
+#' library(STexampleData)
+#' spe <- load_data("Visium_humanDLPFC")
+#' plotQC(spe, type = "bar", metric_x = "cell_count")
+#' colData(spe)$sum <- colSums(counts(spe))
+#' plotQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
 #' 
 plotQC <- function(spe, type = c("bar", "scatter", "spots"), 
                    x_coord = "x", y_coord = "y", in_tissue = TRUE, 
@@ -106,7 +111,7 @@ plotQC <- function(spe, type = c("bar", "scatter", "spots"),
     if (highlight_zeros) {
       df$is_zero <- factor(df[, metric_x] == 0)
       p <- p + 
-        geom_bar(aes(fill = is_zero)) + 
+        geom_bar(data = df, aes_string(fill = "is_zero")) + 
         scale_fill_manual(values = c("gray70", "firebrick2"))
     }
   }
