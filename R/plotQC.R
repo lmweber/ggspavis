@@ -78,8 +78,8 @@
 #' @importFrom SpatialExperiment spatialData spatialCoords
 #' @importFrom SingleCellExperiment colData
 #' @importFrom ggplot2 ggplot aes_string geom_bar geom_point geom_smooth 
-#'   coord_fixed labs ggtitle theme_bw theme element_blank scale_y_reverse 
-#'   scale_fill_manual scale_color_manual
+#'   geom_hline geom_vline coord_fixed labs ggtitle theme_bw theme element_blank 
+#'   scale_y_reverse scale_fill_manual scale_color_manual
 #' @importFrom ggside geom_xsidehistogram geom_ysidehistogram
 #' 
 #' @export
