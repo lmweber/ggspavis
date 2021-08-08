@@ -57,7 +57,7 @@ UMAP), along with annotation such as cluster labels or total UMI counts.
 }
 \examples{
 library(STexampleData)
-spe <- load_data("Visium_humanDLPFC")
+spe <- Visium_humanDLPFC()
 # add random data in reducedDims
 dat <- matrix(ncol = 2, runif(ncol(spe) * 2))
 colnames(dat) <- paste0("PC", 1:2)

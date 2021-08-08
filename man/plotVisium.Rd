@@ -92,7 +92,7 @@ options available to adjust the plot type and style.
 \examples{
 library(STexampleData)
 
-spe <- load_data("Visium_mouseCoronal")
+spe <- Visium_mouseCoronal()
 
 # color by x coordinate, highlight in-tissue spots
 plotVisium(spe, fill = "x", highlight = "in_tissue")

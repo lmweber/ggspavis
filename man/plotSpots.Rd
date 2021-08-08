@@ -66,7 +66,7 @@ counts.
 }
 \examples{
 library(STexampleData)
-spe <- load_data("Visium_humanDLPFC")
+spe <- Visium_humanDLPFC()
 plotSpots(spe, annotate = "ground_truth")
 
 }

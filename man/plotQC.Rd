@@ -99,7 +99,7 @@ highlighting discarded spots that do not meet filtering thresholds.
 }
 \examples{
 library(STexampleData)
-spe <- load_data("Visium_humanDLPFC")
+spe <- Visium_humanDLPFC()
 plotQC(spe, type = "bar", metric_x = "cell_count")
 colData(spe)$sum <- colSums(counts(spe))
 plotQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
