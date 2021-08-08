@@ -9,7 +9,7 @@ package: ggspavis
 output: 
   BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{ggspavis package overview}
+  %\VignetteIndexEntry{ggspavis overview}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -41,10 +41,7 @@ library(ggspavis)
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- load_data("Visium_mouseCoronal")
-
-# alternatively: load from ExperimentHub
-# spe <- Visium_mouseCoronal()
+spe <- Visium_mouseCoronal()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
@@ -61,10 +58,7 @@ plotVisium(spe, fill = "sum", trans = "log", highlight = "in_tissue")
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- load_data("Visium_humanDLPFC")
-
-# alternatively: load from ExperimentHub
-# Visium_humanDLPFC()
+spe <- Visium_humanDLPFC()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
@@ -78,10 +72,7 @@ plotVisium(spe, fill = "ground_truth", highlight = "in_tissue")
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- load_data("seqFISH_mouseEmbryo")
-
-# alternatively: load from ExperimentHub
-# seqFISH_mouseEmbryo()
+spe <- seqFISH_mouseEmbryo()
 ```
 
 ```{r, message=FALSE, out.width="60%"}
