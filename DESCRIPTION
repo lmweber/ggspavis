@@ -1,5 +1,5 @@
 Package: ggspavis
-Version: 0.99.1
+Version: 0.99.2
 Title: Visualization functions for spatially resolved transcriptomics data
 Description: Visualization functions for spatially resolved transcriptomics 
     datasets stored in SpatialExperiment format. Includes functions to create 
