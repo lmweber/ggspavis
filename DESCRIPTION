@@ -28,5 +28,6 @@ Suggests:
     BiocStyle, 
     rmarkdown, 
     knitr, 
-    STexampleData
+    STexampleData, 
+    BumpyMatrix
 RoxygenNote: 7.1.1
