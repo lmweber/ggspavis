@@ -10,7 +10,7 @@ These plotting functions are used in our online book [OSTA](https://lmweber.org/
 
 ## Installation
 
-The package can be installed from GitHub and will be submitted to Bioconductor.
+The package can be installed from GitHub and has been submitted to [Bioconductor](https://github.com/Bioconductor/Contributions/issues/2220).
 
 ```
 remotes::install_github("lmweber/ggspavis", build_vignettes = TRUE)
