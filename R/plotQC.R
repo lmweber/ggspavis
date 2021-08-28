@@ -100,6 +100,8 @@ plotQC <- function(spe, type = c("bar", "scatter", "spots"),
   
   type <- match.arg(type)
   
+  stopifnot(is.character(x_coord) & is.character(y_coord))
+  
   df <- as.data.frame(cbind(colData(spe), spatialData(spe), spatialCoords(spe)))
   
   if (type == "bar") {

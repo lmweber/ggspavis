@@ -66,6 +66,8 @@ plotSpots <- function(spe,
                       annotate = NULL, palette = "libd_layer_colors", 
                       y_reverse = TRUE, size = 0.3) {
   
+  stopifnot(is.character(x_coord) & is.character(y_coord))
+  
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
   
