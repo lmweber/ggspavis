@@ -61,6 +61,8 @@ plotDimRed <- function(spe,
                        annotate = NULL, palette = "libd_layer_colors", 
                        size = 0.3) {
   
+  type <- match.arg(type)
+  
   if (is.null(x_axis) & is.null(y_axis)) {
     if (type == "UMAP") {
       x_axis <- "UMAP1"

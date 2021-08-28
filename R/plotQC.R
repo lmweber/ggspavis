@@ -98,6 +98,8 @@ plotQC <- function(spe, type = c("bar", "scatter", "spots"),
                    threshold_x = NULL, threshold_y = NULL, 
                    trend = TRUE, marginal = TRUE, y_reverse = TRUE) {
   
+  type <- match.arg(type)
+  
   df <- as.data.frame(cbind(colData(spe), spatialData(spe), spatialCoords(spe)))
   
   if (type == "bar") {
