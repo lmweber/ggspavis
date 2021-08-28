@@ -19,12 +19,10 @@
 #' @param y_coord (character) Name of column in \code{spatialCoords} containing
 #'   y-coordinates. Default = "y".
 #' 
-#' @param in_tissue (logical) Whether to show only spots over tissue, or all
-#'   spots. Options are TRUE (show spots over tissue; requires a column labelled
-#'   "in_tissue" in \code{spatialData} identifying spots over tissue, which is
-#'   the standard format for 10x Genomics Visium data), FALSE (show all spots),
-#'   or a character value with the name of a column in \code{spatialData}
-#'   identifying the spots to show.
+#' @param in_tissue (character) Name of column in \code{spatialData} identifying
+#'   spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
+#'   argument is provided, only spots over tissue will be shown. Alternatively,
+#'   set to NULL to display all spots. Default = "in_tissue".
 #' 
 #' @param annotate (character) Name of column in \code{colData} containing
 #'   values to annotate spots with colors, e.g. cluster labels (discrete values)
@@ -62,20 +60,19 @@
 #' 
 plotSpots <- function(spe, 
                       x_coord = "x", y_coord = "y", 
-                      in_tissue = TRUE, 
+                      in_tissue = "in_tissue", 
                       annotate = NULL, palette = "libd_layer_colors", 
                       y_reverse = TRUE, size = 0.3) {
   
   stopifnot(is.character(x_coord) & is.character(y_coord))
+  if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
   
   df <- as.data.frame(cbind(colData(spe), spatialData(spe), spatialCoords(spe)))
   
-  if (in_tissue) {
-    df <- df[df$in_tissue == 1, ]
-  } else if (is.character(in_tissue)) {
+  if (!is.null(in_tissue)) {
     df <- df[df[, in_tissue] == 1, ]
   }
   
