@@ -49,6 +49,8 @@ plotMolecules <- function(spe,
                           palette = c("gray90", "navy"), 
                           size = 0.3) {
   
+  if (!is.null(molecule)) stopifnot(is.character(molecule))
+  
   mRNA_counts <- as.numeric(counts(spe)[molecule, ])
   stopifnot(length(mRNA_counts) == ncol(spe))
   
