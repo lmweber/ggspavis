@@ -8,7 +8,7 @@ plotSpots(
   spe,
   x_coord = "x",
   y_coord = "y",
-  in_tissue = TRUE,
+  in_tissue = "in_tissue",
   annotate = NULL,
   palette = "libd_layer_colors",
   y_reverse = TRUE,
@@ -25,12 +25,10 @@ x-coordinates. Default = "x".}
 \item{y_coord}{(character) Name of column in \code{spatialCoords} containing
 y-coordinates. Default = "y".}
 
-\item{in_tissue}{(logical) Whether to show only spots over tissue, or all
-spots. Options are TRUE (show spots over tissue; requires a column labelled
-"in_tissue" in \code{spatialData} identifying spots over tissue, which is
-the standard format for 10x Genomics Visium data), FALSE (show all spots),
-or a character value with the name of a column in \code{spatialData}
-identifying the spots to show.}
+\item{in_tissue}{(character) Name of column in \code{spatialData} identifying
+spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
+argument is provided, only spots over tissue will be shown. Alternatively,
+set to NULL to display all spots. Default = "in_tissue".}
 
 \item{annotate}{(character) Name of column in \code{colData} containing
 values to annotate spots with colors, e.g. cluster labels (discrete values)
