@@ -1,12 +1,13 @@
-####################################################
-# utility functions for use in plotVisium() function
-####################################################
+###################
+# utility functions
+###################
 
 .get_pal <- function(pal, val) {
     # (if missing) default to 'viridis' for continuous 
     # and 'libd_layer_colors' for discrete scales
-    if (is.null(pal)) 
+    if (is.null(pal)) {
         pal <- ifelse(is.numeric(val), "viridis", "libd_layer_colors")
+    }
     # if length(palette) > 1, use palette as provided 
     # (either multiple colors for discrete labels, 
     # or length 2 for continuous gradient)

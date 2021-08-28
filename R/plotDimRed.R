@@ -99,11 +99,8 @@ plotDimRed <- function(spe,
     }
   }
   
-  if (length(palette) == 1 && palette == "libd_layer_colors") {
-    palette <- c("#F0027F", "#377EB8", "#4DAF4A", "#984EA3", "#FFD700", "#FF7F00", "#1A1A1A", "#666666")
-  } else if (length(palette) == 1 && palette == "Okabe-Ito") {
-    palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-  }
+  # accepts "libd_layer_colors" and "Okabe-Ito"
+  palette <- .get_pal(palette)
   
   df <- as.data.frame(cbind(colData(spe), reducedDim(spe, type)))
   
