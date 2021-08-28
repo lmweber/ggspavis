@@ -49,11 +49,37 @@
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
-#' # add random data in reducedDims
-#' dat <- matrix(ncol = 2, runif(ncol(spe) * 2))
-#' colnames(dat) <- paste0("PC", 1:2)
-#' reducedDims(spe, type = "PCA") <- list(PCA = dat)
-#' plotDimRed(spe, type = "PCA")
+#' 
+#' # use small subset of data for this example
+#' # for longer examples see our online book OSTA
+#' spe <- spe[, spatialData(spe)$in_tissue == 1]
+#' set.seed(100)
+#' n <- 200
+#' spe <- spe[, sample(seq_len(ncol(spe)), n)]
+#' 
+#' # calculate log-transformed normalized counts
+#' library(scran)
+#' set.seed(100)
+#' qclus <- quickCluster(spe)
+#' spe <- computeSumFactors(spe, cluster = qclus)
+#' spe <- logNormCounts(spe)
+#' 
+#' # identify top highly variable genes (HVGs)
+#' is_mito <- grepl("(^MT-)|(^mt-)", rowData(spe)$gene_name)
+#' spe <- spe[!is_mito, ]
+#' dec <- modelGeneVar(spe)
+#' top_hvgs <- getTopHVGs(dec, prop = 0.1)
+#' 
+#' # run dimensionality reduction
+#' library(scater)
+#' set.seed(100)
+#' spe <- runPCA(spe, subset_row = top_hvgs)
+#' set.seed(100)
+#' spe <- runUMAP(spe, dimred = "PCA")
+#' colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+#' 
+#' # generate plot
+#' plotDimRed(spe, type = "UMAP", annotate = "ground_truth")
 #' 
 plotDimRed <- function(spe, 
                        type = c("UMAP", "PCA"), 

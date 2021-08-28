@@ -36,5 +36,7 @@ Suggests:
     rmarkdown, 
     knitr, 
     STexampleData, 
-    BumpyMatrix
+    BumpyMatrix, 
+    scater, 
+    scran
 RoxygenNote: 7.1.1
