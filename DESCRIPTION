@@ -6,8 +6,14 @@ Description: Visualization functions for spatially resolved transcriptomics
     several types of plots for data from from spot-based (e.g. 10x Genomics 
     Visium) and molecule-based (e.g. seqFISH) technological platforms.
 Authors@R: c(
-    person("Lukas M.", "Weber", email = "lukas.weber.edu@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3282-1730")), 
-    person("Helena L.", "Crowell", email = "helena.crowell@uzh.ch", role = c("aut"), comment = c(ORCID = "0000-0002-4801-1767")))
+    person("Lukas M.", "Weber", 
+        email = "lukas.weber.edu@gmail.com", 
+        role = c("aut", "cre"), 
+        comment = c(ORCID = "0000-0002-3282-1730")), 
+    person("Helena L.", "Crowell", 
+        email = "helena.crowell@uzh.ch", 
+        role = c("aut"), 
+        comment = c(ORCID = "0000-0002-4801-1767")))
 URL: https://github.com/lmweber/ggspavis
 BugReports: https://github.com/lmweber/ggspavis/issues
 License: MIT + file LICENSE
