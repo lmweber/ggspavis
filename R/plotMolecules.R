@@ -58,7 +58,7 @@ plotMolecules <- function(spe,
   # providing a single value e.g. "navy" will create a vector c("gray95", "navy")
   palette <- .get_pal(palette)
   
-  df <- as.data.frame(cbind(spatialCoords(spe), sum = mRNA_counts))
+  df <- cbind.data.frame(spatialCoords(spe), sum = mRNA_counts)
   
   p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = "sum")) + 
     geom_point(size = size) + 

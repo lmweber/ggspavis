@@ -102,7 +102,7 @@ plotDimRed <- function(spe,
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
   
-  df <- as.data.frame(cbind(colData(spe), reducedDim(spe, type)))
+  df <- cbind.data.frame(colData(spe), reducedDim(spe, type))
   
   p <- ggplot(df, aes_string(x = x_axis, y = y_axis, color = annotate)) + 
     geom_point(size = size) + 

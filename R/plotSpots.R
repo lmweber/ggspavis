@@ -70,7 +70,7 @@ plotSpots <- function(spe,
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
   
-  df <- as.data.frame(cbind(colData(spe), spatialData(spe), spatialCoords(spe)))
+  df <- cbind.data.frame(colData(spe), spatialData(spe), spatialCoords(spe))
   
   if (!is.null(in_tissue)) {
     df <- df[df[, in_tissue] == 1, ]
