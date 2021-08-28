@@ -14,11 +14,12 @@ License: MIT + file LICENSE
 biocViews:
     SingleCell, 
     Transcriptomics
+Depends:
+    ggplot2
 Imports:
     SpatialExperiment, 
     SingleCellExperiment, 
     SummarizedExperiment, 
-    ggplot2, 
     ggside, 
     grid, 
     methods, 
