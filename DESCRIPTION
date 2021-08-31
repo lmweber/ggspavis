@@ -39,6 +39,7 @@ Suggests:
     BumpyMatrix, 
     scater, 
     scran, 
+    uwot, 
     testthat (>= 3.0.0)
 RoxygenNote: 7.1.1
 Config/testthat/edition: 3
