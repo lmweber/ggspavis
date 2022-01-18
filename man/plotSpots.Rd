@@ -25,7 +25,7 @@ x-coordinates. Default = "x".}
 \item{y_coord}{(character) Name of column in \code{spatialCoords} containing
 y-coordinates. Default = "y".}
 
-\item{in_tissue}{(character) Name of column in \code{spatialData} identifying
+\item{in_tissue}{(character) Name of column in \code{colData} identifying
 spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
 argument is provided, only spots over tissue will be shown. Alternatively,
 set to NULL to display all spots. Default = "in_tissue".}

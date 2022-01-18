@@ -19,7 +19,7 @@
 #' @param y_coord (character) Name of column in \code{spatialCoords} containing
 #'   y-coordinates. Default = "y".
 #' 
-#' @param in_tissue (character) Name of column in \code{spatialData} identifying
+#' @param in_tissue (character) Name of column in \code{colData} identifying
 #'   spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
 #'   argument is provided, only spots over tissue will be shown. Alternatively,
 #'   set to NULL to display all spots. Default = "in_tissue".
@@ -46,8 +46,8 @@
 #'   ggplot elements (e.g. title, labels, formatting, etc).
 #' 
 #' 
-#' @importFrom SpatialExperiment spatialData spatialCoords
-#' @importFrom SingleCellExperiment colData
+#' @importFrom SpatialExperiment spatialCoords
+#' @importFrom SummarizedExperiment colData
 #' @importFrom ggplot2 ggplot aes_string geom_point coord_fixed ggtitle theme_bw
 #'   theme element_blank scale_y_reverse scale_color_manual scale_color_gradient
 #' 
@@ -70,7 +70,7 @@ plotSpots <- function(spe,
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
   
-  df <- cbind.data.frame(colData(spe), spatialData(spe), spatialCoords(spe))
+  df <- cbind.data.frame(colData(spe), int_colData(spe)$spatialData, spatialCoords(spe))
   
   if (!is.null(in_tissue)) {
     df <- df[df[, in_tissue] == 1, ]
