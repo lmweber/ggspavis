@@ -61,7 +61,7 @@ spe <- Visium_humanDLPFC()
 
 # use small subset of data for this example
 # for longer examples see our online book OSTA
-spe <- spe[, spatialData(spe)$in_tissue == 1]
+spe <- spe[, int_colData(spe)$spatialData$in_tissue == 1]
 set.seed(100)
 n <- 200
 spe <- spe[, sample(seq_len(ncol(spe)), n)]

@@ -32,7 +32,7 @@ color. If \code{fill} contains a numeric column (e.g. total UMI counts), a
 continuous color scale will be used. If \code{fill} contains a factor (e.g.
 cluster labels), a discrete color scale will be used. Default = NULL.}
 
-\item{highlight}{(character) Column in \code{spatialData} to use to highlight
+\item{highlight}{(character) Column in \code{colData} to use to highlight
 points by outlining them. For example, \code{in_tissue} will highlight
 spots overlapping with tissue. Default = NULL.}
 
@@ -98,7 +98,7 @@ spe <- Visium_mouseCoronal()
 plotVisium(spe, fill = "x", highlight = "in_tissue")
 
 # subset in-tissue spots
-sub <- spe[, as.logical(spatialData(spe)$in_tissue)]
+sub <- spe[, as.logical(int_colData(spe)$spatialData$in_tissue)]
 
 # color by feature counts, don't include image
 rownames(sub) <- make.names(rowData(sub)$gene_name)

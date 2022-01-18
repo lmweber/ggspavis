@@ -21,7 +21,7 @@
 #'   continuous color scale will be used. If \code{fill} contains a factor (e.g.
 #'   cluster labels), a discrete color scale will be used. Default = NULL.
 #' 
-#' @param highlight (character) Column in \code{spatialData} to use to highlight
+#' @param highlight (character) Column in \code{colData} to use to highlight
 #'   points by outlining them. For example, \code{in_tissue} will highlight
 #'   spots overlapping with tissue. Default = NULL.
 #' 
@@ -67,10 +67,9 @@
 #'   ggplot elements (e.g. title, customized formatting, etc).
 #' 
 #' 
-#' @importFrom SpatialExperiment spatialData spatialCoords spatialCoordsNames
-#'   imgData 'imgData<-' imgRaster scaleFactors
-#' @importFrom SingleCellExperiment colData
-#' @importFrom SummarizedExperiment assayNames
+#' @importFrom SpatialExperiment spatialCoords spatialCoordsNames imgData
+#'   'imgData<-' imgRaster scaleFactors
+#' @importFrom SummarizedExperiment colData assayNames
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
 #'   scale_fill_viridis_c scale_color_identity scale_fill_identity facet_wrap
 #'   guides guide_colorbar guide_legend theme_void element_text margin unit
@@ -92,7 +91,7 @@
 #' plotVisium(spe, fill = "x", highlight = "in_tissue")
 #' 
 #' # subset in-tissue spots
-#' sub <- spe[, as.logical(spatialData(spe)$in_tissue)]
+#' sub <- spe[, as.logical(int_colData(spe)$spatialData$in_tissue)]
 #' 
 #' # color by feature counts, don't include image
 #' rownames(sub) <- make.names(rowData(sub)$gene_name)
@@ -116,7 +115,7 @@ plotVisium <- function(spe,
     c(x_coord, y_coord) %in% spatialCoordsNames(spe))
   
   # set up data for plotting
-  plt_df <- data.frame(colData(spe), spatialData(spe), spatialCoords(spe))
+  plt_df <- data.frame(colData(spe), int_colData(spe)$spatialData, spatialCoords(spe))
   if (!is.null(fill)) {
     # check validity of 'fill' argument
     stopifnot(is.character(fill), length(fill) == 1)
