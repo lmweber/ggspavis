@@ -26,9 +26,7 @@
 #' 
 #' @param annotate (character) Name of column in \code{colData} containing
 #'   values to annotate spots with colors, e.g. cluster labels (discrete values)
-#'   or total UMI counts (continuous values). For discrete values such as
-#'   cluster labels, the column in \code{colData} should be formatted as a
-#'   factor.
+#'   or total UMI counts (continuous values).
 #' 
 #' @param palette (character) Color palette for annotation. Options for discrete
 #'   labels (e.g. cluster labels) are "libd_layer_colors", "Okabe-Ito", or a
@@ -56,7 +54,8 @@
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
-#' plotSpots(spe, annotate = "ground_truth")
+#' # note: x/y axes are reversed in this dataset
+#' plotSpots(spe, x_coord = "y", y_coord = "x", annotate = "ground_truth")
 #' 
 plotSpots <- function(spe, 
                       x_coord = "x", y_coord = "y", 
@@ -70,7 +69,7 @@ plotSpots <- function(spe,
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
   
-  df <- cbind.data.frame(colData(spe), int_colData(spe)$spatialData, spatialCoords(spe))
+  df <- cbind.data.frame(colData(spe), spatialCoords(spe))
   
   if (!is.null(in_tissue)) {
     df <- df[df[, in_tissue] == 1, ]
@@ -90,7 +89,7 @@ plotSpots <- function(spe,
     p <- p + scale_y_reverse()
   }
   
-  if (is.factor(df[, annotate])) {
+  if (is.factor(df[, annotate]) | is.character(df[, annotate])) {
     p <- p + scale_color_manual(values = palette)
   }
   

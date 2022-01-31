@@ -49,8 +49,10 @@ spe <- Visium_mouseCoronal()
 colData(spe)$sum <- colSums(counts(spe))
 
 # example plots
-plotSpots(spe, annotate = "sum")
-plotVisium(spe, fill = "sum", trans = "log", highlight = "in_tissue")
+# note: x/y axes are reversed in this dataset
+plotSpots(spe, x_coord = "y", y_coord = "x", annotate = "sum")
+plotVisium(spe, x_coord = "y", y_coord = "x", 
+           fill = "sum", trans = "log", highlight = "in_tissue")
 ```
 
 
@@ -63,8 +65,11 @@ spe <- Visium_humanDLPFC()
 
 ```{r, message=FALSE, out.width="60%"}
 # example plots
-plotSpots(spe, annotate = "ground_truth", palette = "libd_layer_colors")
-plotVisium(spe, fill = "ground_truth", highlight = "in_tissue")
+# note: x/y axes are reversed in this dataset
+plotSpots(spe, x_coord = "y", y_coord = "x", 
+          annotate = "ground_truth", palette = "libd_layer_colors")
+plotVisium(spe, x_coord = "y", y_coord = "x", 
+           fill = "ground_truth", highlight = "in_tissue")
 ```
 
 
@@ -78,5 +83,12 @@ spe <- seqFISH_mouseEmbryo()
 ```{r, message=FALSE, out.width="60%"}
 # example plots
 plotMolecules(spe, molecule = "Sox2")
+```
+
+
+# Session information
+
+```{r}
+sessionInfo()
 ```
 

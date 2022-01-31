@@ -29,9 +29,7 @@ y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.}
 
 \item{annotate}{(character) Name of column in \code{colData} containing
 values to annotate spots with colors, e.g. cluster labels (discrete values)
-or total UMI counts (continuous values). For discrete values such as
-cluster labels, the column in \code{colData} should be formatted as a
-factor.}
+or total UMI counts (continuous values).}
 
 \item{palette}{(character) Color palette for annotation. Options for discrete
 labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
@@ -61,7 +59,7 @@ spe <- Visium_humanDLPFC()
 
 # use small subset of data for this example
 # for longer examples see our online book OSTA
-spe <- spe[, int_colData(spe)$spatialData$in_tissue == 1]
+spe <- spe[, colData(spe)$in_tissue == 1]
 set.seed(100)
 n <- 200
 spe <- spe[, sample(seq_len(ncol(spe)), n)]

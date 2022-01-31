@@ -32,9 +32,7 @@ set to NULL to display all spots. Default = "in_tissue".}
 
 \item{annotate}{(character) Name of column in \code{colData} containing
 values to annotate spots with colors, e.g. cluster labels (discrete values)
-or total UMI counts (continuous values). For discrete values such as
-cluster labels, the column in \code{colData} should be formatted as a
-factor.}
+or total UMI counts (continuous values).}
 
 \item{palette}{(character) Color palette for annotation. Options for discrete
 labels (e.g. cluster labels) are "libd_layer_colors", "Okabe-Ito", or a
@@ -65,6 +63,7 @@ counts.
 \examples{
 library(STexampleData)
 spe <- Visium_humanDLPFC()
-plotSpots(spe, annotate = "ground_truth")
+# note: x/y axes are reversed in this dataset
+plotSpots(spe, x_coord = "y", y_coord = "x", annotate = "ground_truth")
 
 }

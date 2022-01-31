@@ -100,7 +100,7 @@ plotQC <- function(spe, type = c("bar", "scatter", "spots"),
   stopifnot(is.character(x_coord) & is.character(y_coord))
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   
-  df <- cbind.data.frame(colData(spe), int_colData(spe)$spatialData, spatialCoords(spe))
+  df <- cbind.data.frame(colData(spe), spatialCoords(spe))
   
   if (type == "bar") {
     p <- ggplot(df, aes_string(x = metric_x)) + 
