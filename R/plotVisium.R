@@ -88,17 +88,14 @@
 #' spe <- Visium_mouseCoronal()
 #' 
 #' # color by x coordinate, highlight in-tissue spots
-#' # note: x/y axes are reversed in this dataset
-#' plotVisium(spe, x_coord = "y", y_coord = "x", 
-#'            fill = "x", highlight = "in_tissue")
+#' plotVisium(spe, fill = "x", highlight = "in_tissue")
 #' 
 #' # subset in-tissue spots
 #' sub <- spe[, as.logical(colData(spe)$in_tissue)]
 #' 
 #' # color by feature counts, don't include image
 #' rownames(sub) <- make.names(rowData(sub)$gene_name)
-#' plotVisium(sub, x_coord = "y", y_coord = "x", 
-#'            fill = "Gad2", assay = "counts")
+#' plotVisium(sub, fill = "Gad2", assay = "counts")
 #' 
 plotVisium <- function(spe, 
                        spots = TRUE, fill = NULL, highlight = NULL, 

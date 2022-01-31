@@ -63,7 +63,6 @@ counts.
 \examples{
 library(STexampleData)
 spe <- Visium_humanDLPFC()
-# note: x/y axes are reversed in this dataset
-plotSpots(spe, x_coord = "y", y_coord = "x", annotate = "ground_truth")
+plotSpots(spe, annotate = "ground_truth")
 
 }
