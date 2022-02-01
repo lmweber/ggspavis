@@ -27,20 +27,22 @@ BiocManager::install("ggspavis")
 
 ### Development version
 
-To install the development version, there are two options.
-
-(i) Install the [appropriate version of R (R-release between April and October, or R-devel between October and April)](http://bioconductor.org/developers/how-to/useDevel/), then install the Bioconductor package installer and the development version of the `ggspavis` package as follows.
-
-```
-install.packages("BiocManager")
-BiocManager::install("ggspavis", version = "devel")
-```
-
-(ii) Alternatively, if you do not want to install R-devel (since this may cause issues with other packages), you can use the latest release version of R from [CRAN](https://cran.r-project.org/) and install the development version of the `ggspavis` package from GitHub as follows.
+The latest development version (compatible with the latest [STexampleData](https://github.com/lmweber/STexampleData/) objects) can be installed from GitHub, as follows:
 
 ```
 install.packages("remotes")
 remotes::install_github("lmweber/ggspavis", build_vignettes = TRUE)
+```
+
+Alternatively, the development version can also be installed through the `devel` version of Bioconductor:
+
+- First, install the [appropriate version of R (R-release between April and October, or R-devel between October and April)](http://bioconductor.org/developers/how-to/useDevel/)
+
+- Then, install the Bioconductor package installer and the development version of the `ggspavis` package:
+
+```
+install.packages("BiocManager")
+BiocManager::install("ggspavis", version = "devel")
 ```
 
 
