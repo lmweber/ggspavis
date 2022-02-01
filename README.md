@@ -18,7 +18,7 @@ The `ggspavis` package can be installed from Bioconductor. Note that Bioconducto
 
 ### Release version
 
-To install the stable release version, install the latest release version of R from [CRAN](https://cran.r-project.org/), then install the Bioconductor package installer and the `ggspavis` package as follows.
+To install the stable release version, install the latest release version of R from [CRAN](https://cran.r-project.org/), then install the Bioconductor package installer and the `ggspavis` package:
 
 ```
 install.packages("BiocManager")
@@ -27,7 +27,7 @@ BiocManager::install("ggspavis")
 
 ### Development version
 
-The latest development version (compatible with the latest [STexampleData](https://github.com/lmweber/STexampleData/) objects) can be installed from GitHub, as follows:
+The latest development version (compatible with the latest [STexampleData](https://github.com/lmweber/STexampleData/) objects) can be installed from GitHub:
 
 ```
 install.packages("remotes")
