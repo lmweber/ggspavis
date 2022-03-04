@@ -88,7 +88,7 @@
 #' spe <- Visium_mouseCoronal()
 #' 
 #' # color by x coordinate, highlight in-tissue spots
-#' plotVisium(spe, fill = "x", highlight = "in_tissue")
+#' plotVisium(spe, fill = "pxl_col_in_fullres", highlight = "in_tissue")
 #' 
 #' # subset in-tissue spots
 #' sub <- spe[, as.logical(colData(spe)$in_tissue)]
