@@ -1,5 +1,7 @@
 # ggspavis
 
+[![R build status](https://github.com/lmweber/ggspavis/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/lmweber/ggspavis/actions)
+
 The `ggspavis` package contains visualization functions for spatially resolved transcriptomics data stored in [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) R/Bioconductor format.
 
 The `ggspavis` package is available from [Bioconductor](https://bioconductor.org/packages/ggspavis).
