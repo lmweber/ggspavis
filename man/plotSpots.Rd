@@ -6,8 +6,8 @@
 \usage{
 plotSpots(
   spe,
-  x_coord = "x",
-  y_coord = "y",
+  x_coord = NULL,
+  y_coord = NULL,
   in_tissue = "in_tissue",
   annotate = NULL,
   palette = "libd_layer_colors",
@@ -20,10 +20,10 @@ plotSpots(
 \code{SpatialExperiment} object.}
 
 \item{x_coord}{(character) Name of column in \code{spatialCoords} containing
-x-coordinates. Default = "x".}
+x-coordinates. Default = NULL, which selects the first column.}
 
 \item{y_coord}{(character) Name of column in \code{spatialCoords} containing
-y-coordinates. Default = "y".}
+y-coordinates. Default = NULL, which selects the second column.}
 
 \item{in_tissue}{(character) Name of column in \code{colData} identifying
 spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this

@@ -13,8 +13,8 @@ plotVisium(
   image = TRUE,
   assay = "logcounts",
   trans = "identity",
-  x_coord = "x",
-  y_coord = "y",
+  x_coord = NULL,
+  y_coord = NULL,
   y_reverse = TRUE,
   sample_ids = NULL,
   image_ids = NULL,
@@ -51,10 +51,10 @@ disable.}
 \code{\link{ggplot2}{continuous_scale}} for valid options.)}
 
 \item{x_coord}{(character) Column in \code{spatialCoords} containing
-x-coordinates. Default = "x".}
+x-coordinates. Default = NULL, which selects the first column.}
 
 \item{y_coord}{(character) Column in \code{spatialCoords} containing
-y-coordinates. Default = "y".}
+y-coordinates. Default = NULL, which selects the second column.}
 
 \item{y_reverse}{(logical) Whether to reverse y coordinates, which is often 
 required for Visium data, depending on the orientation of the raw data.

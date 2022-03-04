@@ -7,8 +7,8 @@
 plotMolecules(
   spe,
   molecule = NULL,
-  x_coord = "x",
-  y_coord = "y",
+  x_coord = NULL,
+  y_coord = NULL,
   palette = c("gray90", "navy"),
   size = 0.3
 )
@@ -21,10 +21,12 @@ plotMolecules(
 one of the row names of \code{rowData}).}
 
 \item{x_coord}{(character) Name of column in \code{spatialCoords} containing
-x-coordinates of the cell centroids. Default = "x".}
+x-coordinates of the cell centroids. Default = NULL, which selects the
+first column.}
 
 \item{y_coord}{(character) Name of column in \code{spatialCoords} containing
-y-coordinates of the cell centroids. Default = "y".}
+y-coordinates of the cell centroids. Default = NULL, which selects the
+second column.}
 
 \item{palette}{(character) Color palette, provided as a vector of length 2
 for the low and high range. Default = \code{c("gray90", "navy")}.}

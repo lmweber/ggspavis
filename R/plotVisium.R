@@ -40,10 +40,10 @@
 #'   \code{\link{ggplot2}{continuous_scale}} for valid options.)
 #' 
 #' @param x_coord (character) Column in \code{spatialCoords} containing
-#'   x-coordinates. Default = "x".
+#'   x-coordinates. Default = NULL, which selects the first column.
 #' 
 #' @param y_coord (character) Column in \code{spatialCoords} containing
-#'   y-coordinates. Default = "y".
+#'   y-coordinates. Default = NULL, which selects the second column.
 #' 
 #' @param y_reverse (logical) Whether to reverse y coordinates, which is often 
 #'   required for Visium data, depending on the orientation of the raw data.
@@ -101,7 +101,7 @@ plotVisium <- function(spe,
                        spots = TRUE, fill = NULL, highlight = NULL, 
                        facets = "sample_id", image = TRUE, 
                        assay = "logcounts", trans = "identity", 
-                       x_coord = "x", y_coord = "y", y_reverse = TRUE, 
+                       x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
                        sample_ids = NULL, image_ids = NULL, palette = NULL) {
   
   # check validity of input arguments
@@ -111,8 +111,10 @@ plotVisium <- function(spe,
     is.logical(image), length(image) == 1, 
     is.logical(y_reverse), length(y_reverse) == 1, 
     is.character(x_coord), length(x_coord) == 1, 
-    is.character(y_coord), length(y_coord) == 1, 
-    c(x_coord, y_coord) %in% spatialCoordsNames(spe))
+    is.character(y_coord), length(y_coord) == 1)
+  
+  if (is.null(x_coord)) x_coord <- spatialCoordsNames(spe)[1]
+  if (is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]
   
   # set up data for plotting
   plt_df <- data.frame(colData(spe), spatialCoords(spe))

@@ -24,10 +24,12 @@
 #'   "spots". See details in description.
 #' 
 #' @param x_coord (character) Name of column in \code{spatialCoords} containing
-#'   x-coordinates. Default = "x". Required for spot-based plots.
+#'   x-coordinates. Default = NULL, which selects the first column. Used for
+#'   spot-based plots.
 #' 
 #' @param y_coord (character) Name of column in \code{spatialCoords} containing
-#'   y-coordinates. Default = "y". Required for spot-based plots.
+#'   y-coordinates. Default = NULL, which selects the second column. Used for
+#'   spot-based plots.
 #' 
 #' @param in_tissue (character) Name of column in \code{colData} identifying
 #'   spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
@@ -90,15 +92,17 @@
 #' plotQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
 #' 
 plotQC <- function(spe, type = c("bar", "scatter", "spots"), 
-                   x_coord = "x", y_coord = "y", in_tissue = "in_tissue", 
+                   x_coord = NULL, y_coord = NULL, in_tissue = "in_tissue", 
                    metric_x = "cell_count", metric_y = "sum", 
                    discard = "discard", highlight_zeros = TRUE, 
                    threshold_x = NULL, threshold_y = NULL, 
                    trend = TRUE, marginal = TRUE, y_reverse = TRUE) {
   
   type <- match.arg(type)
-  stopifnot(is.character(x_coord) & is.character(y_coord))
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
+  
+  if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
+  if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
   
   df <- cbind.data.frame(colData(spe), spatialCoords(spe))
   

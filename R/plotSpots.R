@@ -14,10 +14,10 @@
 #'   \code{SpatialExperiment} object.
 #' 
 #' @param x_coord (character) Name of column in \code{spatialCoords} containing
-#'   x-coordinates. Default = "x".
+#'   x-coordinates. Default = NULL, which selects the first column.
 #' 
 #' @param y_coord (character) Name of column in \code{spatialCoords} containing
-#'   y-coordinates. Default = "y".
+#'   y-coordinates. Default = NULL, which selects the second column.
 #' 
 #' @param in_tissue (character) Name of column in \code{colData} identifying
 #'   spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
@@ -57,13 +57,15 @@
 #' plotSpots(spe, annotate = "ground_truth")
 #' 
 plotSpots <- function(spe, 
-                      x_coord = "x", y_coord = "y", 
+                      x_coord = NULL, y_coord = NULL, 
                       in_tissue = "in_tissue", 
                       annotate = NULL, palette = "libd_layer_colors", 
                       y_reverse = TRUE, size = 0.3) {
   
-  stopifnot(is.character(x_coord) & is.character(y_coord))
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
+  
+  if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
+  if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
   
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
