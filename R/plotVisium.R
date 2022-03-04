@@ -109,9 +109,7 @@ plotVisium <- function(spe,
     is(spe, "SpatialExperiment"), 
     is.logical(spots), length(spots) == 1, 
     is.logical(image), length(image) == 1, 
-    is.logical(y_reverse), length(y_reverse) == 1, 
-    is.character(x_coord), length(x_coord) == 1, 
-    is.character(y_coord), length(y_coord) == 1)
+    is.logical(y_reverse), length(y_reverse) == 1)
   
   if (is.null(x_coord)) x_coord <- spatialCoordsNames(spe)[1]
   if (is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]
