@@ -102,7 +102,8 @@ plotVisium <- function(spe,
                        facets = "sample_id", image = TRUE, 
                        assay = "logcounts", trans = "identity", 
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
-                       sample_ids = NULL, image_ids = NULL, palette = NULL) {
+                       sample_ids = NULL, image_ids = NULL, palette = NULL,
+                       alpha = 0.5) {
   
   # check validity of input arguments
   stopifnot(
@@ -194,7 +195,7 @@ plotVisium <- function(spe,
     points <- list(
       guides(fill = guide(
         title = fill, order = 1, override.aes = list(col = NA, size = 3))), 
-      geom_point(shape = 21, size = 1, stroke = 0.25, alpha = 0.5))
+      geom_point(shape = 21, size = 1, stroke = 0.25, alpha = alpha))
     if (!is.null(highlight)) {
       plt_df$highlight <- as.factor(plt_df[[highlight]])
       highlights <- list(
