@@ -18,7 +18,8 @@ plotVisium(
   y_reverse = TRUE,
   sample_ids = NULL,
   image_ids = NULL,
-  palette = NULL
+  palette = NULL,
+  alpha = 0.5
 )
 }
 \arguments{
@@ -72,6 +73,8 @@ color codes. Options for continuous values are "viridis", a single color
 name (e.g. "red", "navy", etc), or a vector of length two containing color
 names for each end of the scale. Default = "libd_layer_colors" for discrete
 data, and "viridis" for continuous data.}
+
+\item{alpha}{(numeric) Transparent level for the color on each spot.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
