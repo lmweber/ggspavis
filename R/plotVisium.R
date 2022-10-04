@@ -61,6 +61,8 @@
 #' 
 #' @param image_ids (character) Images to show, if multiple images are
 #'   available. Default = NULL (show all images).
+#'   
+#' @param alpha (numeric) Transparent level for the color on each spot.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
