@@ -32,11 +32,12 @@
 #' plotGE(spe, gene_id = "ENSG00000243485", Visium = TRUE) 
 #' # Equivalently 
 #' plotGE(spe, gene_name = "MIR1302-2HG", Visium = TRUE) 
+
 plotGE <- function(spe, gene_id = NULL, gene_name= NULL,
                    log_count = FALSE,
                    Visium = FALSE,   # TODO: future argment to use plotVisium
                    ...){
-  
+
   miss_gene_id <- is.null(gene_id)
   miss_gene_name <- is.null(gene_name)
   
