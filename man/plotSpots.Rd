@@ -8,6 +8,7 @@ plotSpots(
   spe,
   x_coord = NULL,
   y_coord = NULL,
+  sample_id = "sample_id",
   in_tissue = "in_tissue",
   annotate = NULL,
   palette = "libd_layer_colors",
@@ -24,6 +25,10 @@ x-coordinates. Default = NULL, which selects the first column.}
 
 \item{y_coord}{(character) Name of column in \code{spatialCoords} containing
 y-coordinates. Default = NULL, which selects the second column.}
+
+\item{sample_id}{(character) Name of column in \code{colData} containing
+sample IDs. For datasets with multiple samples, this is used to plot
+multiple panels (one per sample) using facetting.}
 
 \item{in_tissue}{(character) Name of column in \code{colData} identifying
 spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this

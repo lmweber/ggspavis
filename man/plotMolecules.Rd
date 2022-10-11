@@ -9,6 +9,7 @@ plotMolecules(
   molecule = NULL,
   x_coord = NULL,
   y_coord = NULL,
+  sample_id = "sample_id",
   palette = c("gray90", "navy"),
   size = 0.3
 )
@@ -27,6 +28,10 @@ first column.}
 \item{y_coord}{(character) Name of column in \code{spatialCoords} containing
 y-coordinates of the cell centroids. Default = NULL, which selects the
 second column.}
+
+\item{sample_id}{(character) Name of column in \code{colData} containing
+sample IDs. For datasets with multiple samples, this is used to plot
+multiple panels (one per sample) using facetting.}
 
 \item{palette}{(character) Color palette, provided as a vector of length 2
 for the low and high range. Default = \code{c("gray90", "navy")}.}

@@ -19,6 +19,10 @@
 #' @param y_coord (character) Name of column in \code{spatialCoords} containing
 #'   y-coordinates. Default = NULL, which selects the second column.
 #' 
+#' @param sample_id (character) Name of column in \code{colData} containing
+#'   sample IDs. For datasets with multiple samples, this is used to plot
+#'   multiple panels (one per sample) using facetting.
+#' 
 #' @param in_tissue (character) Name of column in \code{colData} identifying
 #'   spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
 #'   argument is provided, only spots over tissue will be shown. Alternatively,
@@ -46,8 +50,9 @@
 #' 
 #' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SummarizedExperiment colData
-#' @importFrom ggplot2 ggplot aes_string geom_point coord_fixed ggtitle theme_bw
-#'   theme element_blank scale_y_reverse scale_color_manual scale_color_gradient
+#' @importFrom ggplot2 ggplot aes_string facet_wrap geom_point coord_fixed
+#'   ggtitle theme_bw theme element_blank scale_y_reverse scale_color_manual
+#'   scale_color_gradient
 #' 
 #' @export
 #' 
@@ -58,6 +63,7 @@
 #' 
 plotSpots <- function(spe, 
                       x_coord = NULL, y_coord = NULL, 
+                      sample_id = "sample_id", 
                       in_tissue = "in_tissue", 
                       annotate = NULL, palette = "libd_layer_colors", 
                       y_reverse = TRUE, size = 0.3) {
@@ -66,6 +72,8 @@ plotSpots <- function(spe,
   
   if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
   if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
+  
+  n_samples <- length(table(colData(spe)[, sample_id]))
   
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
@@ -85,6 +93,10 @@ plotSpots <- function(spe,
           axis.title = element_blank(), 
           axis.text = element_blank(), 
           axis.ticks = element_blank())
+  
+  if (n_samples > 1) {
+    p <- p + facet_wrap(~ sample_id)
+  }
   
   if (y_reverse) {
     p <- p + scale_y_reverse()

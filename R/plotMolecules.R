@@ -23,6 +23,10 @@
 #'   y-coordinates of the cell centroids. Default = NULL, which selects the
 #'   second column.
 #' 
+#' @param sample_id (character) Name of column in \code{colData} containing
+#'   sample IDs. For datasets with multiple samples, this is used to plot
+#'   multiple panels (one per sample) using facetting.
+#' 
 #' @param palette (character) Color palette, provided as a vector of length 2
 #'   for the low and high range. Default = \code{c("gray90", "navy")}.
 #' 
@@ -35,8 +39,8 @@
 #' 
 #' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SingleCellExperiment counts
-#' @importFrom ggplot2 ggplot aes_string geom_point scale_color_gradient
-#'   coord_fixed ggtitle theme_void
+#' @importFrom ggplot2 ggplot aes_string facet_wrap geom_point
+#'   scale_color_gradient coord_fixed ggtitle theme_void
 #' 
 #' @export
 #' 
@@ -48,6 +52,7 @@
 plotMolecules <- function(spe, 
                           molecule =  NULL, 
                           x_coord = NULL, y_coord = NULL, 
+                          sample_id = "sample_id", 
                           palette = c("gray90", "navy"), 
                           size = 0.3) {
   
@@ -55,6 +60,8 @@ plotMolecules <- function(spe,
   
   if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
   if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
+  
+  n_samples <- length(table(colData(spe)[, sample_id]))
   
   mRNA_counts <- as.numeric(counts(spe)[molecule, ])
   stopifnot(length(mRNA_counts) == ncol(spe))
@@ -70,6 +77,10 @@ plotMolecules <- function(spe,
     coord_fixed() + 
     ggtitle(molecule) + 
     theme_void()
+  
+  if (n_samples > 1) {
+    p <- p + facet_wrap(~ sample_id)
+  }
   
   p
 }
