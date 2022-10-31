@@ -21,7 +21,8 @@
 #'   ggplot elements (e.g. title, customized formatting, etc).
 #'
 #' @importFrom SpatialExperiment 'colData<-'
-#' @importFrom SummarizedExperiment rowData
+#' @importFrom SummarizedExperiment rowData assayNames
+#' @importFrom SingleCellExperiment logcounts
 #'
 #' @export
 #'
@@ -32,6 +33,12 @@
 #' plotGE(spe, gene_id = "ENSG00000243485", Visium = TRUE) 
 #' # Equivalently 
 #' plotGE(spe, gene_name = "MIR1302-2HG", Visium = TRUE) 
+#' 
+#' Plot Log Transcformed data
+#' \dontrun{
+#' log_spe <- scuttle::logNormCounts(spe)
+#' plotGE(log_spe, gene_id = "ENSG00000243485", log_count = TRUE, Visium = TRUE)
+#' } 
 
 plotGE <- function(spe, gene_id = NULL, gene_name= NULL,
                    log_count = FALSE,
@@ -100,10 +107,11 @@ plotGE <- function(spe, gene_id = NULL, gene_name= NULL,
   tmp_spe <- spe[gene_id,]
   
   colData(tmp_spe)$UMI <- counts(spe)[gene_id,]
-  
+  # browser()
   if(log_count){
-    stop("not implemented")
-    # TODO: Check if logcounts exits 
+    if("logcounts" %in% assayNames(spe))
+      colData(tmp_spe)$UMI <- logcounts(spe)[gene_id,]
+    else stop("Please include logcounts in the spe object.")
   }
   
   
@@ -111,9 +119,4 @@ plotGE <- function(spe, gene_id = NULL, gene_name= NULL,
     plotVisium(tmp_spe, fill = "UMI", ...)
   else
     plotSpots(tmp_spe, annotate = "UMI", ...)
-  
-  # if(log_count)
-    
-
-  # TODO: change the plot title to indicate which gene is plotted and if logcounts are plotted
 }
