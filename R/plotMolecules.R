@@ -53,6 +53,7 @@ plotMolecules <- function(spe,
                           molecule =  NULL, 
                           x_coord = NULL, y_coord = NULL, 
                           sample_id = "sample_id", 
+                          assay_name = "counts",
                           palette = c("gray90", "navy"), 
                           size = 0.3) {
   
@@ -63,7 +64,7 @@ plotMolecules <- function(spe,
   
   n_samples <- length(table(colData(spe)[, sample_id]))
   
-  mRNA_counts <- as.numeric(counts(spe)[molecule, ])
+  mRNA_counts <- as.numeric(assay(spe, assay_name)[molecule, ])
   stopifnot(length(mRNA_counts) == ncol(spe))
   
   # providing a single value e.g. "navy" will create a vector c("gray95", "navy")
@@ -72,14 +73,19 @@ plotMolecules <- function(spe,
   df <- cbind.data.frame(spatialCoords(spe), sum = mRNA_counts)
   
   p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = "sum")) + 
-    geom_point(size = size) + 
-    scale_color_gradient(low = palette[1], high = palette[2], trans = "sqrt") + 
-    coord_fixed() + 
-    ggtitle(molecule) + 
+    geom_point(size = size) +
+    coord_fixed() +
+    ggtitle(molecule) +
     theme_void()
   
   if (n_samples > 1) {
     p <- p + facet_wrap(~ sample_id)
+  }
+  
+  if(length(palette) == 1 && palette == "viridis"){
+    p <- p + scale_colour_viridis_c()
+  }else if(length(palette) == 2){
+    p <- p + scale_color_gradient(low = palette[1], high = palette[2], trans = "sqrt") 
   }
   
   p
