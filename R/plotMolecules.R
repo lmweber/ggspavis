@@ -53,7 +53,7 @@ plotMolecules <- function(spe,
                           molecule =  NULL, 
                           x_coord = NULL, y_coord = NULL, 
                           sample_id = "sample_id", 
-                          assay_name = "counts",
+                          assay = "counts",
                           palette = c("gray90", "navy"), 
                           size = 0.3) {
   
@@ -64,7 +64,7 @@ plotMolecules <- function(spe,
   
   n_samples <- length(table(colData(spe)[, sample_id]))
   
-  mRNA_counts <- as.numeric(assay(spe, assay_name)[molecule, ])
+  mRNA_counts <- as.numeric(assay(spe, assay)[molecule, ])
   stopifnot(length(mRNA_counts) == ncol(spe))
   
   # providing a single value e.g. "navy" will create a vector c("gray95", "navy")

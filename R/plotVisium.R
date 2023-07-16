@@ -217,6 +217,9 @@ plotVisium <- function(spe,
     if (is.numeric(plt_df[[fill]])) {
       if (length(palette) == 1 && palette == "viridis") {
         scale_fill_viridis_c(trans = trans)
+      } else if (length(palette) == 1 && palette == "seuratlike") {
+        scale_fill_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
+                             trans = trans, limits = c(min(plt_df[[fill]]), max(plt_df[[fill]])))
       } else {
         scale_fill_gradient(low = palette[1], high = palette[2], trans = trans)
       }

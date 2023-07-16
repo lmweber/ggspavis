@@ -21,6 +21,7 @@
                 "#F0E442", "#0072B2", "#D55E00", "#CC79A7"), 
             # use 'scale_fill_viridis_c' instead of hex codes or color names
             "viridis" = pal, 
+            "seuratlike" = pal,
             # if providing a single color name (e.g. 'navy' or 'red'), 
             # combine with 'gray95' for continuous color scale
             c("gray95", pal)
