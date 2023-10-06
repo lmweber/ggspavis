@@ -82,7 +82,7 @@
 plotDimRed <- function(spe, 
                        type = c("UMAP", "PCA"), 
                        x_axis = NULL, y_axis = NULL, 
-                       annotate = NULL, palette = "libd_layer_colors", 
+                       annotate = NULL, palette = NULL, 
                        size = 0.3) {
   
   type <- match.arg(type)

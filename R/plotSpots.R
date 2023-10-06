@@ -65,7 +65,7 @@ plotSpots <- function(spe,
                       x_coord = NULL, y_coord = NULL, 
                       sample_id = "sample_id", 
                       in_tissue = "in_tissue", 
-                      annotate = NULL, palette = "libd_layer_colors", 
+                      annotate = NULL, palette = NULL, 
                       y_reverse = TRUE, size = 0.3) {
   
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
@@ -102,13 +102,17 @@ plotSpots <- function(spe,
     p <- p + scale_y_reverse()
   }
   
-  if (is.factor(df[, annotate]) | is.character(df[, annotate])) {
-    p <- p + scale_color_manual(values = palette)
-  }
+  # if (is.factor(df[, annotate]) | is.character(df[, annotate])) {
+  #   p <- p + scale_color_manual(values = palette)
+  # }
+  # 
+  # if (is.numeric(df[, annotate])) {
+  #   p <- p + scale_color_gradient(low = palette[1], high = palette[2])
+  # }
   
-  if (is.numeric(df[, annotate])) {
-    p <- p + scale_color_gradient(low = palette[1], high = palette[2])
-  }
+
+
+  
   
   p
 }

@@ -77,7 +77,8 @@ plotMolecules <- function(spe,
     geom_point(size = size) +
     coord_fixed() +
     ggtitle(molecule) +
-    theme_void()
+    theme_void() + 
+    scale_y_reverse()
   
   scale <- 
     if (length(palette) == 1 && palette == "viridis") {
