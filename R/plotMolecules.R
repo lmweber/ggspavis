@@ -29,6 +29,7 @@
 #' 
 #' @param palette (character) Color palette, provided as a vector of length 2
 #'   for the low and high range. Default = \code{c("gray90", "navy")}.
+#'   Can also be pre-decided gradient, such as \code{"viridis"} or \code{"seuratlike"}
 #' 
 #' @param size (numeric) Point size for \code{geom_point()}. Default = 0.3.
 #' 
@@ -54,7 +55,7 @@ plotMolecules <- function(spe,
                           x_coord = NULL, y_coord = NULL, 
                           sample_id = "sample_id", 
                           assay = "counts",
-                          palette = c("gray90", "navy"), 
+                          palette = NULL, 
                           size = 0.3) {
   
   if (!is.null(molecule)) stopifnot(is.character(molecule))
@@ -67,10 +68,10 @@ plotMolecules <- function(spe,
   mRNA_counts <- as.numeric(assay(spe, assay)[molecule, ])
   stopifnot(length(mRNA_counts) == ncol(spe))
   
-  # providing a single value e.g. "navy" will create a vector c("gray95", "navy")
-  palette <- .get_pal(palette)
-  
   df <- cbind.data.frame(spatialCoords(spe), sum = mRNA_counts)
+  
+  # providing a single value e.g. "navy" will create a vector c("gray95", "navy")
+  palette <- .get_pal(palette, df[["sum"]])
   
   p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = "sum")) + 
     geom_point(size = size) +
@@ -78,14 +79,21 @@ plotMolecules <- function(spe,
     ggtitle(molecule) +
     theme_void()
   
+  scale <- 
+    if (length(palette) == 1 && palette == "viridis") {
+      scale_color_viridis_c(trans = "sqrt")
+    } else if (length(palette) == 1 && palette == "seuratlike") {
+      scale_color_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
+                           limits = c(min(df[["sum"]]), max(df[["sum"]])))
+    } else if (length(palette) == 2){
+      scale_color_gradient(low = palette[1], high = palette[2], trans = "sqrt")
+    }
+  
+  p <- p + scale
+  
+  
   if (n_samples > 1) {
     p <- p + facet_wrap(~ sample_id)
-  }
-  
-  if(length(palette) == 1 && palette == "viridis"){
-    p <- p + scale_colour_viridis_c()
-  }else if(length(palette) == 2){
-    p <- p + scale_color_gradient(low = palette[1], high = palette[2], trans = "sqrt") 
   }
   
   p
