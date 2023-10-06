@@ -38,6 +38,7 @@ plotVisium(sub, annotate = "Xkr4", assay = "counts")
 plotMolecules(sub, molecule = "Gad2")
 
 
+# Test plotVisium() -------------------------------------------------------
 # Test 1, unknown palette
 plotVisium(vis, annotate = "cluster_factor")
 
@@ -48,6 +49,13 @@ spe <- Visium_humanDLPFC()
 plotVisium(spe, annotate = "ground_truth", palette = "libd_layer_colors")
 plotVisium(spe, annotate = "ground_truth", palette = "libd_layer_colors", highlight = "in_tissue")
 
+
+
+# Test plotSpots() ----------------------------------------------------------
+
+
+
+# Test plotDimRed() -------------------------------------------------------
 
 
 

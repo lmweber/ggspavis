@@ -95,14 +95,15 @@ plotDimRed <- function(spe,
       x_axis <- "PC1"
       y_axis <- "PC2"
     }
+    # TODO: make it flexible for any reduced dim
   }
   
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
   
-  df <- cbind.data.frame(colData(spe), reducedDim(spe, type))
+  plt_df <- cbind.data.frame(colData(spe), reducedDim(spe, type))
   
-  p <- ggplot(df, aes_string(x = x_axis, y = y_axis, color = annotate)) + 
+  p <- ggplot(plt_df, aes_string(x = x_axis, y = y_axis, color = annotate)) + 
     geom_point(size = size) + 
     xlab(paste0(type, "1")) + 
     ylab(paste0(type, "2")) + 
@@ -112,13 +113,28 @@ plotDimRed <- function(spe,
           axis.text = element_blank(), 
           axis.ticks = element_blank())
   
-  if (is.factor(df[, annotate]) | is.character(df[, annotate])) {
-    p <- p + scale_color_manual(values = palette)
+  scale <- if(is.numeric(plt_df[[annotate]])){
+    if(is.null(palette)){ # for continuous feature, turn length(palette) = 0 to length(palette) = 1
+      palette <- "seuratlike"
+    }
+    if(length(palette) == 1 && palette == "viridis"){
+      scale_fill_viridis_c()
+    }else if(length(palette) == 1 && palette == "seuratlike"){
+      scale_fill_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
+                           limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
+    }else{
+      scale_fill_gradient(low = palette[1], high = palette[2])
+    }
+  }else if(is.factor(plt_df[[annotate]])){
+    if(is.null(palette)){ # for categorical feature, automate palette
+      scale_fill_manual(name = annotate,
+                        values = scales::hue_pal()(length(unique(plt_df[[annotate]])))) 
+    }else if(!is.null(palette)){
+      scale_fill_manual(values = palette)
+    }
   }
   
-  if (is.numeric(df[, annotate])) {
-    p <- p + scale_color_gradient(low = palette[1], high = palette[2])
-  }
+  p <- p + scale
   
   p
 }

@@ -52,9 +52,12 @@ plotVisium(vis, fill = "cluster_factor")
 1. Remove plotMolecules()
 plot Visium is for with HE on Visium only, plot Spot is for without HE and any technology, xe, cos, mer, vis, etc.
 2. plotVisium add option for any number of factor cluster with no default palette
-2. plotVisium add option for two more palettes on cont var (sum, or any gene) with no default palette
+2. plotVisium add option for two more palettes ("viridis" and "seuratlike") on cont var (sum or any gene) with default "seuratlike"
+# Maybe need to rename seuratlike as rainbow, and put as default 
+3. same update for plotSpots and plotDimRed
 
 3. unify the feature name (plotVisium::fill, plotSpots::annotate, plotDimRed::annotate) as just annotate
+4. Unify df to all plt_df inside the functions
 
 
 

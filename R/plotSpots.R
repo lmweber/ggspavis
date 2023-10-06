@@ -78,13 +78,13 @@ plotSpots <- function(spe,
   # accepts "libd_layer_colors" and "Okabe-Ito"
   palette <- .get_pal(palette)
   
-  df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
   
   if (!is.null(in_tissue)) {
-    df <- df[df[, in_tissue] == 1, ]
+    plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
   }
   
-  p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
+  p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
     geom_point(size = size) + 
     coord_fixed() + 
     ggtitle("Spatial coordinates") + 
@@ -102,16 +102,28 @@ plotSpots <- function(spe,
     p <- p + scale_y_reverse()
   }
   
-  # if (is.factor(df[, annotate]) | is.character(df[, annotate])) {
-  #   p <- p + scale_color_manual(values = palette)
-  # }
-  # 
-  # if (is.numeric(df[, annotate])) {
-  #   p <- p + scale_color_gradient(low = palette[1], high = palette[2])
-  # }
+  scale <- if(is.numeric(plt_df[[annotate]])){
+    if(is.null(palette)){ # for continuous feature, turn length(palette) = 0 to length(palette) = 1
+      palette <- "seuratlike"
+    }
+    if(length(palette) == 1 && palette == "viridis"){
+      scale_fill_viridis_c()
+    }else if(length(palette) == 1 && palette == "seuratlike"){
+      scale_fill_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
+                           limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
+    }else{
+      scale_fill_gradient(low = palette[1], high = palette[2])
+    }
+  }else if(is.factor(plt_df[[annotate]])){
+    if(is.null(palette)){ # for categorical feature, automate palette
+      scale_fill_manual(name = annotate,
+                        values = scales::hue_pal()(length(unique(plt_df[[annotate]])))) 
+    }else if(!is.null(palette)){
+      scale_fill_manual(values = palette)
+    }
+  }
   
-
-
+  p <- p + scale
   
   
   p
