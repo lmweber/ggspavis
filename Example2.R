@@ -29,12 +29,24 @@ sub <- spe[, as.logical(colData(spe)$in_tissue)]
 
 # color by feature counts, don't include image
 rownames(sub) <- make.names(rowData(sub)$gene_name)
-plotVisium(sub, fill = "Gad2", assay = "counts")
+plotVisium(sub, annotate = "Gad2", assay = "counts")
 
-plotVisium(sub, fill = "Xkr4", assay = "counts")
+plotVisium(sub, annotate = "Xkr4", assay = "counts")
+
+
 
 plotMolecules(sub, molecule = "Gad2")
 
+
+# Test 1, unknown palette
+plotVisium(vis, annotate = "cluster_factor")
+
+# Test 2, known palette
+library(STexampleData)
+
+spe <- Visium_humanDLPFC()
+plotVisium(spe, annotate = "ground_truth", palette = "libd_layer_colors")
+plotVisium(spe, annotate = "ground_truth", palette = "libd_layer_colors", highlight = "in_tissue")
 
 
 

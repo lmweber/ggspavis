@@ -100,7 +100,7 @@
 plotVisium <- function(spe, 
                        spots = TRUE, annotate = NULL, highlight = NULL, 
                        facets = "sample_id", image = TRUE, 
-                       assay = "logcounts", trans = "identity", 
+                       assay = "counts", trans = "identity", 
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
                        sample_ids = NULL, image_ids = NULL, palette = NULL) {
   
@@ -198,10 +198,10 @@ plotVisium <- function(spe,
     if(!is.null(highlight)){
       plt_df$highlight <- as.factor(plt_df[[highlight]])
       highlights <- list(
-        scale_color_manual(highlight, values = c("gray50", "black")), 
+        scale_color_manual(highlight, values = c("#e0e0e0", "black")), 
         guides(col = guide_legend(override.aes = list(
           size = 2, stroke = 1, 
-          col = c("gray", "black")[seq_along(unique(plt_df$highlight))]))))
+          col = c("#e0e0e0", "black")[seq_along(unique(plt_df$highlight))]))))
     }else{
       plt_df$highlight <- "transparent"
       highlights <- scale_color_identity()
@@ -214,7 +214,7 @@ plotVisium <- function(spe,
   
   # color scale
   scale <- if(annotate != "foo"){
-    if (is.numeric(plt_df[[annotate]])){
+    if(is.numeric(plt_df[[annotate]])){
       if(is.null(palette)){ # for continuous feature, turn length(palette) = 0 to length(palette) = 1
         palette <- "seuratlike"
       }
@@ -229,7 +229,7 @@ plotVisium <- function(spe,
     }else if(is.factor(plt_df[[annotate]])){
       if(is.null(palette)){ # for categorical feature, automate palette
         scale_fill_manual(name = annotate,
-                          values = scales::hue_pal()(length(unique(df[[annotate]])))) 
+                          values = scales::hue_pal()(length(unique(plt_df[[annotate]])))) 
       }else if(!is.null(palette)){
         scale_fill_manual(values = palette)
       }

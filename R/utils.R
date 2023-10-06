@@ -4,7 +4,7 @@
 
 .get_pal <- function(pal, val) {
     # if length(pal) == 0, leave pal as NULL and let these functions automate:
-    # plotSpots(), plotMolecules(), plotVisium(), plotDimRed()
+    # plotSpots(), plotVisium(), plotDimRed()
 
     if (length(pal) == 1) {
         pal <- switch(pal, 
