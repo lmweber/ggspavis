@@ -65,34 +65,52 @@ plotSpots <- function(spe,
                       x_coord = NULL, y_coord = NULL, 
                       sample_id = "sample_id", 
                       in_tissue = "in_tissue", 
+                      trans = "identity",
+                      assay = "counts", legend.position = "right", 
                       annotate = NULL, palette = NULL, 
                       y_reverse = TRUE, size = 0.3) {
   
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
+  stopifnot(legend.position %in% c("left", "right", "top", "bottom"))
   
   if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
   if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
   
   n_samples <- length(table(colData(spe)[, sample_id]))
   
-  # accepts "libd_layer_colors" and "Okabe-Ito"
-  palette <- .get_pal(palette)
-  
   plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  
+  if(!annotate %in% c(names(plt_df), rownames(spe))){
+    stop("'annotate' should be in rownames(spe) or names(colData(spe))")
+  }
+  # (optionally) add feature assay data to 'plt_df'
+  if(annotate %in% rownames(spe)){
+    stopifnot(is.character(assay))
+    plt_df[[annotate]] <- assay(spe, assay)[annotate, ]
+  }
   
   if (!is.null(in_tissue)) {
     plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
   }
   
+  if(is.numeric(plt_df[[annotate]]) & is.null(palette)){
+    palette <- "seuratlike" # for continuous feature, turn length(palette) = 0 to length(palette) = 1
+  }
+  # accepts "libd_layer_colors" and "Okabe-Ito"
+  palette <- .get_pal(palette)
+  
   p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
     geom_point(size = size) + 
     coord_fixed() + 
-    ggtitle("Spatial coordinates") + 
     theme_bw() + 
-    theme(panel.grid = element_blank(), 
-          axis.title = element_blank(), 
-          axis.text = element_blank(), 
-          axis.ticks = element_blank())
+    theme(panel.border = element_blank(),
+          panel.grid = element_blank(),
+          axis.title = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          plot.title = element_text(hjust = 0.5),
+          legend.position = legend.position
+          ) 
   
   if (n_samples > 1) {
     p <- p + facet_wrap(~ sample_id)
@@ -103,28 +121,29 @@ plotSpots <- function(spe,
   }
   
   scale <- if(is.numeric(plt_df[[annotate]])){
-    if(is.null(palette)){ # for continuous feature, turn length(palette) = 0 to length(palette) = 1
-      palette <- "seuratlike"
-    }
     if(length(palette) == 1 && palette == "viridis"){
-      scale_fill_viridis_c()
+      scale_color_viridis_c(trans = trans) #TODO: add trans also to plotSpots
     }else if(length(palette) == 1 && palette == "seuratlike"){
-      scale_fill_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
-                           limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
+      scale_color_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
+                            trans = trans, limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
     }else{
-      scale_fill_gradient(low = palette[1], high = palette[2])
+      scale_color_gradient(low = palette[1], high = palette[2], trans = trans)
     }
   }else if(is.factor(plt_df[[annotate]])){
     if(is.null(palette)){ # for categorical feature, automate palette
-      scale_fill_manual(name = annotate,
+      scale_color_manual(name = annotate,
                         values = scales::hue_pal()(length(unique(plt_df[[annotate]])))) 
     }else if(!is.null(palette)){
-      scale_fill_manual(values = palette)
+      scale_color_manual(values = palette)
     }
   }
   
-  p <- p + scale
-  
+  if(is.numeric(plt_df[[annotate]])){ # continuous display plot title but no legend title
+    p <- p + scale + ggtitle(annotate) + labs(color = NULL) 
+  }else if(is.factor(plt_df[[annotate]])){ # categorical disply legend title but no plot title
+    p <- p + scale + 
+      guides(colour = guide_legend(override.aes = list(size = 3)))
+  }
   
   p
 }

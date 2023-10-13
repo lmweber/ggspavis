@@ -80,61 +80,76 @@
 #' plotDimRed(spe, type = "UMAP", annotate = "ground_truth")
 #' 
 plotDimRed <- function(spe, 
-                       type = c("UMAP", "PCA"), 
-                       x_axis = NULL, y_axis = NULL, 
+                       type = c("UMAP", "PCA", "TSNE"), 
+                       assay = "counts",
                        annotate = NULL, palette = NULL, 
                        size = 0.3) {
   
-  type <- match.arg(type)
-  
-  if (is.null(x_axis) & is.null(y_axis)) {
-    if (type == "UMAP") {
-      x_axis <- "UMAP1"
-      y_axis <- "UMAP2"
-    } else if (type == "PCA") {
-      x_axis <- "PC1"
-      y_axis <- "PC2"
-    }
-    # TODO: make it flexible for any reduced dim
+  # check validity of input arguments
+  if(!type %in% reducedDimNames(spe)){
+    stop("Reduced dimension 'type' does not exist in reducedDimNames(spe)")
   }
-  
-  # accepts "libd_layer_colors" and "Okabe-Ito"
-  palette <- .get_pal(palette)
+  # no matter colnames(reducedDim()) null or not, reorganize for plotting
+  colnames(reducedDim(spe, type)) <- paste0(type, "_", 1:ncol(reducedDim(spe, type)))
   
   plt_df <- cbind.data.frame(colData(spe), reducedDim(spe, type))
   
-  p <- ggplot(plt_df, aes_string(x = x_axis, y = y_axis, color = annotate)) + 
+  if(!annotate %in% c(names(plt_df), rownames(spe))){
+    stop("'annotate' should be in rownames(spe) or names(colData(spe))")
+  }
+  # (optionally) add feature assay data to 'plt_df'
+  if(annotate %in% rownames(spe)){
+    stopifnot(is.character(assay))
+    plt_df[[annotate]] <- assay(spe, assay)[annotate, ]
+  }
+  
+  if(is.numeric(plt_df[[annotate]]) & is.null(palette)){
+    palette <- "blue" # for continuous feature, turn length(palette) = 0 to length(palette) = 1
+  }
+  # accepts "libd_layer_colors" and "Okabe-Ito", or arbitrary color palette for NULL 
+  palette <- .get_pal(palette)
+  
+  p <- ggplot(plt_df, aes_string(x = paste0(type, "_1"), 
+                                 y = paste0(type, "_2"), color = annotate)) + 
     geom_point(size = size) + 
-    xlab(paste0(type, "1")) + 
-    ylab(paste0(type, "2")) + 
-    ggtitle("Reduced dimensions") + 
+    xlab(paste0(type, "_1")) + 
+    ylab(paste0(type, "_2")) + 
+    # ggtitle("Reduced dimensions") + 
     theme_bw() + 
     theme(panel.grid = element_blank(), 
-          axis.text = element_blank(), 
-          axis.ticks = element_blank())
+          #axis.text = element_blank(), 
+          #axis.ticks = element_blank(),
+          panel.border = element_blank(),
+          plot.title = element_text(hjust = 0.5),
+          axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
+          axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black")
+          )
+
   
   scale <- if(is.numeric(plt_df[[annotate]])){
-    if(is.null(palette)){ # for continuous feature, turn length(palette) = 0 to length(palette) = 1
-      palette <- "seuratlike"
-    }
     if(length(palette) == 1 && palette == "viridis"){
-      scale_fill_viridis_c()
+      scale_color_viridis_c()
     }else if(length(palette) == 1 && palette == "seuratlike"){
-      scale_fill_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
+      scale_color_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
                            limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
     }else{
-      scale_fill_gradient(low = palette[1], high = palette[2])
+      scale_color_gradient(low = palette[1], high = palette[2])
     }
   }else if(is.factor(plt_df[[annotate]])){
     if(is.null(palette)){ # for categorical feature, automate palette
-      scale_fill_manual(name = annotate,
+      scale_color_manual(name = annotate,
                         values = scales::hue_pal()(length(unique(plt_df[[annotate]])))) 
     }else if(!is.null(palette)){
-      scale_fill_manual(values = palette)
+      scale_color_manual(values = palette)
     }
   }
   
-  p <- p + scale
+  if(is.numeric(plt_df[[annotate]])){ # continuous display plot title but no legend title
+    p <- p + scale + ggtitle(annotate) + labs(color = NULL) 
+  }else if(is.factor(plt_df[[annotate]])){ # categorical disply legend title but no plot title
+    p <- p + scale + 
+      guides(colour = guide_legend(override.aes = list(size = 3)))
+  }
   
   p
 }

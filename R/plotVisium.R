@@ -100,9 +100,9 @@
 plotVisium <- function(spe, 
                        spots = TRUE, annotate = NULL, highlight = NULL, 
                        facets = "sample_id", image = TRUE, 
-                       assay = "counts", trans = "identity", 
+                       assay = "counts", trans = "identity", legend.position = "right",
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
-                       sample_ids = NULL, image_ids = NULL, palette = NULL) {
+                       sample_ids = NULL, image_ids = NULL, palette = NULL, size = 1) {
   
   # check validity of input arguments
   stopifnot(
@@ -110,6 +110,8 @@ plotVisium <- function(spe,
     is.logical(spots), length(spots) == 1, 
     is.logical(image), length(image) == 1, 
     is.logical(y_reverse), length(y_reverse) == 1)
+  
+  stopifnot(legend.position %in% c("left", "right", "top", "bottom"))
   
   if(is.null(x_coord)) x_coord <- spatialCoordsNames(spe)[1]
   if(is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]
@@ -125,9 +127,11 @@ plotVisium <- function(spe,
     # (optionally) add feature assay data to 'plt_df'
     if(annotate %in% rownames(spe)){
       stopifnot(
-        is.character(assay), 
-        length(grep(assay, assayNames(spe))) == 1)
+        is.character(assay))
       plt_df[[annotate]] <- assay(spe, assay)[annotate, ]
+    }
+    if(is.numeric(plt_df[[annotate]]) & is.null(palette)){
+      palette <- "seuratlike" # for continuous feature, turn length(palette) = 0 to length(palette) = 1
     }
     # get color palette
     palette <- .get_pal(palette, plt_df[[annotate]])
@@ -194,7 +198,7 @@ plotVisium <- function(spe,
     points <- list(
       guides(fill = guide(
         title = annotate, order = 1, override.aes = list(col = NA, size = 3))), 
-      geom_point(shape = 21, size = 1, stroke = 0.25, alpha = 0.5))
+      geom_point(shape = 21, size = size, stroke = 0.25, alpha = 0.5))
     if(!is.null(highlight)){
       plt_df$highlight <- as.factor(plt_df[[highlight]])
       highlights <- list(
@@ -215,9 +219,6 @@ plotVisium <- function(spe,
   # color scale
   scale <- if(annotate != "foo"){
     if(is.numeric(plt_df[[annotate]])){
-      if(is.null(palette)){ # for continuous feature, turn length(palette) = 0 to length(palette) = 1
-        palette <- "seuratlike"
-      }
       if(length(palette) == 1 && palette == "viridis"){
         scale_fill_viridis_c(trans = trans)
       }else if(length(palette) == 1 && palette == "seuratlike"){
@@ -245,7 +246,8 @@ plotVisium <- function(spe,
     coord_fixed(xlim = xlim, ylim = ylim) + 
     theme_void() + 
     theme(legend.key.size = unit(0.5, "lines"), 
-          strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"))) +
+          strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines")),
+          legend.position = legend.position) +
     if (!is.null(facets)) facet_wrap(facets)
   
   return(p)
