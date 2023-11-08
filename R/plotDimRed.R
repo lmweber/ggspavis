@@ -12,8 +12,8 @@
 #' @param spe (SpatialExperiment) Input data, assumed to be a
 #'   \code{SpatialExperiment} object.
 #' 
-#' @param type (character) Type of reduced dimension plot. Options are "UMAP" or
-#'   "PCA". Default = "UMAP".
+#' @param type (character) Type of reduced dimension plot. Options can be "UMAP",
+#' "PCA", or any self-defined reduced dimension names. Default = "UMAP".
 #' 
 #' @param x_axis (character) Name of column in \code{reducedDim} containing
 #'   x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.
@@ -80,11 +80,15 @@
 #' plotDimRed(spe, type = "UMAP", annotate = "ground_truth")
 #' 
 plotDimRed <- function(spe, 
-                       type = c("UMAP", "PCA", "TSNE"), 
+                       type = c("UMAP", "PCA"), 
                        assay = "counts",
                        annotate = NULL, palette = NULL, 
                        size = 0.3) {
   
+  # check validity of input arguments
+  if(length(type) != 1){
+    stop("Please specify reduced dimension type")
+  }
   # check validity of input arguments
   if(!type %in% reducedDimNames(spe)){
     stop("Reduced dimension 'type' does not exist in reducedDimNames(spe)")
