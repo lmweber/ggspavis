@@ -72,13 +72,14 @@ plotSpots <- function(spe,
   
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   stopifnot(legend.position %in% c("left", "right", "top", "bottom"))
-  
+
   if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
   if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
   
   n_samples <- length(table(colData(spe)[, sample_id]))
   
   plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  if(is.character(plt_df[[annotate]])) plt_df[[annotate]] <- as.factor(plt_df[[annotate]])
   
   if(!annotate %in% c(names(plt_df), rownames(spe))){
     stop("'annotate' should be in rownames(spe) or names(colData(spe))")

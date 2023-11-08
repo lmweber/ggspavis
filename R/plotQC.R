@@ -7,9 +7,9 @@
 #' 
 #' The following types of QC plots are available:
 #' 
-#' - Barplot (\code{type} = "bar") for a single QC metric, e.g. number of cells
-#' per spot. For number of cells per spot, the barplot highlights spots with
-#' zero cells.
+#' - Histogram (\code{type} = "bar") for a single QC metric, e.g. number of counts
+#' per spot. For number of counts per spot, the histogram highlights spots with
+#' derived flags, e.g. low library size.
 #' - Scatterplot (\code{type} = "scatter") comparing two QC metrics, e.g. number
 #' of detected features vs. number of cells per spot, with optional vertical and
 #' horizontal lines highlighting QC filtering thresholds.
@@ -20,7 +20,7 @@
 #' @param spe (SpatialExperiment) Input data, assumed to be a
 #'   \code{SpatialExperiment} object.
 #' 
-#' @param type (character) Type of QC plot. Options are "bar", "scatter", and
+#' @param type (character) Type of QC plot. Options are "hist", "scatter", and
 #'   "spots". See details in description.
 #' 
 #' @param x_coord (character) Name of column in \code{spatialCoords} containing
@@ -38,20 +38,20 @@
 #' 
 #' @param metric_x (character) Name of column in \code{colData} containing QC
 #'   metric to plot on x-axis (e.g. "cell_count" for number of cells per spot).
-#'   Default = "cell_count". Required for barplots and scatterplots.
+#'   Default = "cell_count". Required for histogram and scatterplots.
 #' 
 #' @param metric_y (character) Name of column in \code{colData} containing QC
 #'   metric to plot on y-axis (e.g. "sum" for number of detected transcripts, or
-#'   "detected" for number of detected genes). Default = "sum". Required for
-#'   scatterplots.
+#'   "high_mito" for binary ). Default = "sum". Required for
+#'   histogram and scatterplots.
 #' 
 #' @param discard (character) Name of column in \code{colData} identifying
 #'   discarded spots that do not meet filtering thresholds, which will be
 #'   highlighted on a spot-based plot. Default = "discard". Optional for
 #'   spot-based plots.
-#' 
-#' @param highlight_zeros (logical) Whether to highlight bar for x = 0 (e.g.
-#'   zero cells per spot). Default = TRUE. Optional for barplots.
+#'   
+#' @param nbins (numeric) Adjusting the histogram bin width. Optional for
+#'   spot-based and scatterplots.
 #' 
 #' @param threshold_x (numeric) Filtering threshold for QC metric on x-axis,
 #'   which will be highlighted with a vertical bar. Default = NULL. Optional for
@@ -77,7 +77,7 @@
 #' 
 #' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SummarizedExperiment colData
-#' @importFrom ggplot2 ggplot aes_string geom_bar geom_point geom_smooth 
+#' @importFrom ggplot2 ggplot aes_string geom_histogram geom_point geom_smooth 
 #'   geom_hline geom_vline coord_fixed labs ggtitle theme_bw theme element_blank 
 #'   scale_y_reverse scale_fill_manual scale_color_manual
 #' @importFrom ggside geom_xsidehistogram geom_ysidehistogram
@@ -87,14 +87,14 @@
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
-#' plotQC(spe, type = "bar", metric_x = "cell_count")
+#' plotQC(spe, type = "hist", metric_x = "cell_count")
 #' colData(spe)$sum <- colSums(counts(spe))
 #' plotQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
 #' 
-plotQC <- function(spe, type = c("bar", "scatter", "spots"), 
+plotQC <- function(spe, type = c("hist", "scatter", "spots"), 
                    x_coord = NULL, y_coord = NULL, in_tissue = "in_tissue", 
                    metric_x = "cell_count", metric_y = "sum", 
-                   discard = "discard", highlight_zeros = TRUE, 
+                   discard = "discard", nbins = 100, 
                    threshold_x = NULL, threshold_y = NULL, 
                    trend = TRUE, marginal = TRUE, y_reverse = TRUE) {
   
@@ -106,19 +106,17 @@ plotQC <- function(spe, type = c("bar", "scatter", "spots"),
   
   df <- cbind.data.frame(colData(spe), spatialCoords(spe))
   
-  if (type == "bar") {
-    p <- ggplot(df, aes_string(x = metric_x)) + 
-      geom_bar(fill = "gray70") + 
-      labs(x = metric_x) + 
-      ggtitle("QC metrics") + 
-      theme_bw()
+  if (type == "hist") {
+    stopifnot(is.logical(df[, metric_y]))
+    stopifnot(is.numeric(nbins))
     
-    if (highlight_zeros) {
-      df$is_zero <- factor(df[, metric_x] == 0)
-      p <- p + 
-        geom_bar(data = df, aes_string(fill = "is_zero")) + 
-        scale_fill_manual(values = c("gray70", "firebrick2"))
-    }
+    p <- ggplot(df, aes_string(x = metric_x, fill = metric_y)) +
+      geom_histogram(color = "#e9ecef", alpha = 0.6, position = 'identity', bins = nbins) +
+      scale_fill_manual(values = c("gray70", "firebrick2")) +
+      theme_bw() +
+      labs(fill = metric_y) + xlab(metric_x) +
+      theme(plot.title = element_text(hjust = 0.5, face = "plain", size = 12)) + 
+      ggtitle("QC metrics")
   }
   
   if (type == "scatter") {
