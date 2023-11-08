@@ -32,9 +32,17 @@ Load some example datasets from the [STexampleData](https://bioconductor.org/pac
 library(SpatialExperiment)
 library(STexampleData)
 library(spatialLIBD)
-library(ggspavis)
+# library(ggspavis)
+source(here::here("R/plotSpots.R"))
+source(here::here("R/plotVisium.R"))
+source(here::here("R/plotQC.R"))
+source(here::here("R/plotDimRed.R"))
+source(here::here("R/utils.R"))
 library(patchwork)
 library(grid)
+
+library(ggplot2)
+library(ggside)
 ```
 
 ## 10x Genomics Visium: Mouse coronal brain section
@@ -50,7 +58,7 @@ colData(spe)$sum <- colSums(counts(spe))
 
 With `plotVisium()` annotated by a continuous variable, you can adjust palette, legend.position, scaling of the variable, and whether to highlight spots that are in tissue, etc.
 
-```{r, message=FALSE, warning=FALSE, out.width="60%"}
+```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=4.5}
 plotVisium(spe, annotate = "sum", highlight = "in_tissue", legend.position = "left") |
 plotVisium(spe, annotate = "sum", highlight = "in_tissue", palette = "darkred")+
   guides(fill = guide_colorbar(title = "Libsize"))
@@ -58,25 +66,22 @@ plotVisium(spe, annotate = "sum", highlight = "in_tissue", palette = "darkred")+
 
 `plotVisium()` can also be used to visualize gene expression.
 
-```{r, out.width="60%"}
+```{r, fig.width=10, fig.height=4.5}
 plotVisium(spe, annotate = "Gapdh", highlight = "in_tissue") | plotVisium(spe, annotate = "Mbp", highlight = "in_tissue")
 ```
 
 Same for `plotSpots()`, and here for Visium we by default subset to spots that are in tissue. Palettes in `plotSpots()` can be changed like in `plotVisium()`.
 
-```{r, out.width="60%"}
+```{r, fig.width=10, fig.height=4.5}
 plotSpots(spe, annotate = "Gapdh") | plotSpots(spe, annotate = "Mbp", palette = "viridis")
 ```
 
 `plotVisium()` and `plotSpots()` can also be used to visualize categorical variables, such as clusters on spatial coordinates with specified eight-level palettes (e.g. `libd_layer_colors` or `Okabe-Ito`) or NULL (for which the palette decision will be automated). We will introduce these functionality using Visium Human DLPFC data.
 
 ## 10x Genomics Visium: Human brain (DLPFC)
-
-The first step of `spatialLIBD::fetch_data()` will take a bit of time. The same data set is also stored in `STexampleData::Visium_humanDLPFC()`, but we use the `spatialLIBD` version for the already existing PCA and UMAP reduced dimensions stored in the `spe` object.
-
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
-spe <- spatialLIBD::fetch_data(type = "spe")[, spe$sample_id == "151673"]
+spe <- Visium_humanDLPFC()
 rownames(spe) <- rowData(spe)$gene_name
 colData(spe)$libsize <- colSums(counts(spe))
 ```
@@ -84,13 +89,13 @@ colData(spe)$libsize <- colSums(counts(spe))
 First, we check the ground truth annotation with the `spatialLIBD` palette, highlighting the spots that are in tissue.
 
 ```{r, message=FALSE, out.width="60%"}
-plotVisium(spe, annotate = "layer_guess_reordered", highlight = "in_tissue", palette = "libd_layer_colors")
+plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue", palette = "libd_layer_colors")
 ```
 
 For `plotSpots()` on this Visium data, we leave the palette as NULL, and because "ground_truth" is categorical, eight distinct colors are generated. On the other hand, a NULL palette on a continuous variable means taking the default three-color gradient of "blue-beige-red".
 
-```{r, out.width="60%"}
-plotSpots(spe, annotate = "layer_guess_reordered") | plotSpots(spe, annotate = "libsize") + ggtitle("Library size")
+```{r, fig.width=10, fig.height=4.5}
+plotSpots(spe, annotate = "ground_truth") | plotSpots(spe, annotate = "libsize") + ggtitle("Library size")
 ```
 
 We first derive some QC flags needed for plotting.
@@ -120,15 +125,25 @@ plotQC(spe, metric_x = "subsets_mito_percent", metric_y = "high_mito", type = "h
 
 We can also use scatterplot to check the trend between two variables. Below is a demonstration of how mitochondria percentage varies with library size. We can also highlight spots by putting some threshold on x and/or y axis. For example, spots with low library size but has high mitochondria percentage are of particular interest.
 
-```{r, fig.width=4.5, fig.height=4.5, warning=FALSE, message=FALSE}
+```{r, out.width="60%", warning=FALSE, message=FALSE}
 plotQC(spe, type = "scatter", metric_x = "subsets_mito_percent", metric_y = "sum", threshold_x = 30, threshold_y = 400)
 ```
 
 Now we can perform QC, library size log normalization, and simple clustering. The reduced dimension and clustering results are already stored in this `spe` object.
 
+The same data set of `STexampleData::Visium_humanDLPFC()` is also stored in `spatialLIBD::fetch_data()`, but we use the `spatialLIBD` version for the already existing PCA and UMAP reduced dimensions stored in the `spe` object. The first step of `spatialLIBD::fetch_data()` will take some time.
+
+```{r, message = FALSE, warning=FALSE}
+# load data in SpatialExperiment format
+spe <- spatialLIBD::fetch_data(type = "spe")
+spe <- spe[, spe$sample_id == "151673"]
+rownames(spe) <- rowData(spe)$gene_name
+colData(spe)$libsize <- colSums(counts(spe))
+```
+
 We can compare the ground truth annotation with clustering result with `plotSpots()` (or `plotVisium()` overlaying H&E).
 
-```{r, out.width="60%"}
+```{r, fig.width=10, fig.height=4.5}
 spe$Cluster <- factor(spe$Cluster)
 plotSpots(spe, annotate = "layer_guess_reordered") |
   plotSpots(spe, annotate = "Cluster")
@@ -136,7 +151,7 @@ plotSpots(spe, annotate = "layer_guess_reordered") |
 
 We can now visualize the categorical clustering result or continuous gene expression value on UMAP with `plotDimRed()`
 
-```{r, fig.width=8, fig.height=4}
+```{r, fig.width=8, fig.height=4, warning = FALSE}
 plotDimRed(spe, type = "UMAP_neighbors15", annotate = "Cluster") | 
   plotDimRed(spe, type = "UMAP_neighbors15", annotate = "MBP")
 ```
