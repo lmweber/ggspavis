@@ -13,7 +13,11 @@ Authors@R: c(
     person("Helena L.", "Crowell", 
         email = "helena.crowell@uzh.ch", 
         role = c("aut"), 
-        comment = c(ORCID = "0000-0002-4801-1767")))
+        comment = c(ORCID = "0000-0002-4801-1767")),
+    person("Estella Y.", "Dong", 
+        email = "estelladong729@gmail.com", 
+        role = c("aut"), 
+        comment = c(ORCID = "0000-0003-3839-7958")))
 URL: https://github.com/lmweber/ggspavis
 BugReports: https://github.com/lmweber/ggspavis/issues
 License: MIT + file LICENSE
