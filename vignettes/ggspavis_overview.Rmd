@@ -5,6 +5,8 @@ author:
     affiliation: "Johns Hopkins Bloomberg School of Public Health, Baltimore, USA"
   - name: Helena L. Crowell
     affiliation: "University of Zurich, Zurich, Switzerland"
+  - name: Estella Yixing Dong
+    affiliation: "University of Lausanne, Lausanne, Switzerland"
 package: ggspavis
 output: 
   BiocStyle::html_document

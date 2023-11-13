@@ -123,7 +123,7 @@ plotSpots <- function(spe,
   
   scale <- if(is.numeric(plt_df[[annotate]])){
     if(length(palette) == 1 && palette == "viridis"){
-      scale_color_viridis_c(trans = trans) #TODO: add trans also to plotSpots
+      scale_color_viridis_c(trans = trans) 
     }else if(length(palette) == 1 && palette == "seuratlike"){
       scale_color_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
                             trans = trans, limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
