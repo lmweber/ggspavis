@@ -6,14 +6,14 @@
 \usage{
 plotQC(
   spe,
-  type = c("bar", "scatter", "spots"),
+  type = c("hist", "scatter", "spots"),
   x_coord = NULL,
   y_coord = NULL,
   in_tissue = "in_tissue",
   metric_x = "cell_count",
   metric_y = "sum",
   discard = "discard",
-  highlight_zeros = TRUE,
+  nbins = 100,
   threshold_x = NULL,
   threshold_y = NULL,
   trend = TRUE,
@@ -25,7 +25,7 @@ plotQC(
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
 \code{SpatialExperiment} object.}
 
-\item{type}{(character) Type of QC plot. Options are "bar", "scatter", and
+\item{type}{(character) Type of QC plot. Options are "hist", "scatter", and
 "spots". See details in description.}
 
 \item{x_coord}{(character) Name of column in \code{spatialCoords} containing
@@ -43,20 +43,20 @@ set to NULL to display all spots. Default = "in_tissue".}
 
 \item{metric_x}{(character) Name of column in \code{colData} containing QC
 metric to plot on x-axis (e.g. "cell_count" for number of cells per spot).
-Default = "cell_count". Required for barplots and scatterplots.}
+Default = "cell_count". Required for histogram and scatterplots.}
 
 \item{metric_y}{(character) Name of column in \code{colData} containing QC
 metric to plot on y-axis (e.g. "sum" for number of detected transcripts, or
-"detected" for number of detected genes). Default = "sum". Required for
-scatterplots.}
+"high_mito" for binary ). Default = "sum". Required for
+histogram and scatterplots.}
 
 \item{discard}{(character) Name of column in \code{colData} identifying
 discarded spots that do not meet filtering thresholds, which will be
 highlighted on a spot-based plot. Default = "discard". Optional for
 spot-based plots.}
 
-\item{highlight_zeros}{(logical) Whether to highlight bar for x = 0 (e.g.
-zero cells per spot). Default = TRUE. Optional for barplots.}
+\item{nbins}{(numeric) Adjusting the histogram bin width. Optional for
+spot-based and scatterplots.}
 
 \item{threshold_x}{(numeric) Filtering threshold for QC metric on x-axis,
 which will be highlighted with a vertical bar. Default = NULL. Optional for
@@ -88,9 +88,9 @@ resolved transcriptomics data.
 
 The following types of QC plots are available:
 
-- Barplot (\code{type} = "bar") for a single QC metric, e.g. number of cells
-per spot. For number of cells per spot, the barplot highlights spots with
-zero cells.
+- Histogram (\code{type} = "bar") for a single QC metric, e.g. number of counts
+per spot. For number of counts per spot, the histogram highlights spots with
+derived flags, e.g. low library size.
 - Scatterplot (\code{type} = "scatter") comparing two QC metrics, e.g. number
 of detected features vs. number of cells per spot, with optional vertical and
 horizontal lines highlighting QC filtering thresholds.
@@ -100,7 +100,7 @@ highlighting discarded spots that do not meet filtering thresholds.
 \examples{
 library(STexampleData)
 spe <- Visium_humanDLPFC()
-plotQC(spe, type = "bar", metric_x = "cell_count")
+plotQC(spe, type = "hist", metric_x = "cell_count")
 colData(spe)$sum <- colSums(counts(spe))
 plotQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
 

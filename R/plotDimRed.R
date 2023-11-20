@@ -33,12 +33,23 @@
 #' 
 #' @param size (numeric) Point size for \code{geom_point()}. Default = 0.3.
 #' 
+#' @param text_by (character) Column name of the annotation to apply on top of 
+#' each cluster. Usually should put it the same as `annotate = `. unless you have 
+#' another intended `text_by` column, e.g. with more readable classes or shorter 
+#' strings. Only used for categorical `annotate = `. Default = \code{NULL}.
+#' 
+#' @param text_by_size (numerical) Text size hovering over each cluster. Default =
+#'  \code{5}.
+#' 
+#' @param text_by_color (character) Color string or hex code. Default = \code{"black"}.
+#' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
 #'   ggplot elements (e.g. title, labels, formatting, etc).
 #' 
 #' 
 #' @importFrom SingleCellExperiment colData reducedDim
+#' @importFrom ggrepel geom_text_repel
 #' @importFrom ggplot2 ggplot aes_string geom_point xlab ylab ggtitle theme_bw
 #'   theme element_blank scale_color_manual scale_color_gradient
 #' 
@@ -83,7 +94,8 @@ plotDimRed <- function(spe,
                        type = c("UMAP", "PCA"), 
                        assay = "counts",
                        annotate = NULL, palette = NULL, 
-                       size = 0.3) {
+                       size = 0.3,
+                       text_by = NULL, text_by_size = 5, text_by_color = "black") {
   
   # check validity of input arguments
   if(length(type) != 1){
@@ -148,12 +160,41 @@ plotDimRed <- function(spe,
     }
   }
   
+  
   if(is.numeric(plt_df[[annotate]])){ # continuous display plot title but no legend title
     p <- p + scale + ggtitle(annotate) + labs(color = NULL) 
   }else if(is.factor(plt_df[[annotate]])){ # categorical disply legend title but no plot title
     p <- p + scale + 
       guides(colour = guide_legend(override.aes = list(size = 3)))
   }
+  
+  
+  if(is.factor(plt_df[[annotate]])){
+    # Adding text with the median locations of the 'text_by' vector.
+    if(!is.null(text_by)){
+      by_text_x <- vapply(
+        split(plt_df[[paste0(type, "_1")]], plt_df[[text_by]]),
+        median,
+        FUN.VALUE = 0
+      )
+      
+      by_text_y <- vapply(
+        split(plt_df[[paste0(type, "_2")]], plt_df[[text_by]]),
+        median,
+        FUN.VALUE = 0
+      )
+      
+      p <- p +
+        ggrepel::geom_text_repel(
+          data = data.frame(
+            x = by_text_x, y = by_text_y, label = names(by_text_x)
+          ),
+          mapping = aes(x = .data$x, y = .data$y, label = .data$label),
+          size = text_by_size, colour = text_by_color
+        )
+    }
+  }
+
   
   p
 }
