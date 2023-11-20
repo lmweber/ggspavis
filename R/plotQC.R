@@ -101,12 +101,15 @@ plotQC <- function(spe, type = c("hist", "scatter", "spots"),
   type <- match.arg(type)
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   
-  if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
-  if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
-  
   if(class(spe) == "SingleCellExperiment"){
+    if (is.null(x_coord)) {stop("Please specify x_coord name in the SCE colData")}
+    if (is.null(y_coord)) {stop("Please specify y_coord name in the SCE colData")}
+    
     plt_df <- cbind.data.frame(colData(spe))
   }else if(class(spe) == "SpatialExperiment"){
+    if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
+    if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
+    
     plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
   }
   

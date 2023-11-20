@@ -21,7 +21,7 @@
 #' 
 #' @param sample_id (character) Name of column in \code{colData} containing
 #'   sample IDs. For datasets with multiple samples, this is used to plot
-#'   multiple panels (one per sample) using facetting.
+#'   multiple panels (one per sample) using facetting. Default = \code{NULL}.
 #' 
 #' @param in_tissue (character) Name of column in \code{colData} identifying
 #'   spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
@@ -63,7 +63,7 @@
 #' 
 plotSpots <- function(spe, 
                       x_coord = NULL, y_coord = NULL, 
-                      sample_id = "sample_id", 
+                      sample_id = NULL, 
                       in_tissue = "in_tissue", 
                       trans = "identity",
                       assay = "counts", legend.position = "right", 
@@ -72,15 +72,23 @@ plotSpots <- function(spe,
   
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   stopifnot(legend.position %in% c("left", "right", "top", "bottom"))
-
-  if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
-  if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
   
-  n_samples <- length(table(colData(spe)[, sample_id]))
+  if (!is.null(sample_id)){
+    stopifnot(sample_id %in% colnames(colData(spe)))
+    n_samples <- length(table(colData(spe)[, sample_id]))
+  }else{
+    n_samples <- NULL
+  }
   
   if(class(spe) == "SingleCellExperiment"){
+    if (is.null(x_coord)) {stop("Please specify x_coord name in the SCE colData")}
+    if (is.null(y_coord)) {stop("Please specify y_coord name in the SCE colData")}
+    
     plt_df <- cbind.data.frame(colData(spe))
   }else if(class(spe) == "SpatialExperiment"){
+    if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
+    if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
+    
     plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
   }
   
@@ -123,8 +131,10 @@ plotSpots <- function(spe,
                    legend.position = legend.position) 
   }
   
-  if (n_samples > 1) {
-    p <- p + facet_wrap(~ sample_id)
+  if (!is.null(n_samples)) {
+    if(n_samples > 1){
+      p <- p + facet_wrap(~ sample_id)
+    }
   }
   
   if (y_reverse) {
