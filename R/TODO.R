@@ -3,3 +3,5 @@
 # remove CosMx reader function 
 # add message() to major updates/var rename fill -> annotate
 # Senbai's new functionality of "zoom" for plot Visium
+
+# make them flexible for SCE

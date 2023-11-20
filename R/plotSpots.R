@@ -68,7 +68,7 @@ plotSpots <- function(spe,
                       trans = "identity",
                       assay = "counts", legend.position = "right", 
                       annotate = NULL, palette = NULL, 
-                      y_reverse = TRUE, size = 0.3) {
+                      y_reverse = TRUE, size = 0.3, show_axis = FALSE) {
   
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   stopifnot(legend.position %in% c("left", "right", "top", "bottom"))
@@ -78,7 +78,12 @@ plotSpots <- function(spe,
   
   n_samples <- length(table(colData(spe)[, sample_id]))
   
-  plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  if(class(spe) == "SingleCellExperiment"){
+    plt_df <- cbind.data.frame(colData(spe))
+  }else if(class(spe) == "SpatialExperiment"){
+    plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  }
+  
   if(is.character(plt_df[[annotate]])) plt_df[[annotate]] <- as.factor(plt_df[[annotate]])
   
   if(!annotate %in% c(names(plt_df), rownames(spe))){
@@ -103,15 +108,20 @@ plotSpots <- function(spe,
   p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
     geom_point(size = size) + 
     coord_fixed() + 
-    theme_bw() + 
-    theme(panel.border = element_blank(),
-          panel.grid = element_blank(),
-          axis.title = element_blank(),
-          axis.text = element_blank(),
-          axis.ticks = element_blank(),
-          plot.title = element_text(hjust = 0.5),
-          legend.position = legend.position
-          ) 
+    theme_bw() 
+  
+  if(show_axis == TRUE){
+    p <- p + theme(plot.title = element_text(hjust = 0.5),
+                   legend.position = legend.position)
+  }else{
+    p <- p + theme(panel.border = element_blank(),
+                   panel.grid = element_blank(),
+                   axis.title = element_blank(),
+                   axis.text = element_blank(),
+                   axis.ticks = element_blank(),
+                   plot.title = element_text(hjust = 0.5),
+                   legend.position = legend.position) 
+  }
   
   if (n_samples > 1) {
     p <- p + facet_wrap(~ sample_id)
