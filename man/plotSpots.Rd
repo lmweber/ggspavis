@@ -8,7 +8,7 @@ plotSpots(
   spe,
   x_coord = NULL,
   y_coord = NULL,
-  sample_id = "sample_id",
+  sample_id = NULL,
   in_tissue = "in_tissue",
   trans = "identity",
   assay = "counts",
@@ -32,7 +32,7 @@ y-coordinates. Default = NULL, which selects the second column.}
 
 \item{sample_id}{(character) Name of column in \code{colData} containing
 sample IDs. For datasets with multiple samples, this is used to plot
-multiple panels (one per sample) using facetting.}
+multiple panels (one per sample) using facetting. Default = \code{NULL}.}
 
 \item{in_tissue}{(character) Name of column in \code{colData} identifying
 spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
