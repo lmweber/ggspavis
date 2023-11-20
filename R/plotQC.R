@@ -104,13 +104,17 @@ plotQC <- function(spe, type = c("hist", "scatter", "spots"),
   if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
   if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
   
-  df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  if(class(spe) == "SingleCellExperiment"){
+    plt_df <- cbind.data.frame(colData(spe))
+  }else if(class(spe) == "SpatialExperiment"){
+    plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  }
   
   if (type == "hist") {
-    stopifnot(is.logical(df[, metric_y]))
+    stopifnot(is.logical(plt_df[, metric_y]))
     stopifnot(is.numeric(nbins))
     
-    p <- ggplot(df, aes_string(x = metric_x, fill = metric_y)) +
+    p <- ggplot(plt_df, aes_string(x = metric_x, fill = metric_y)) +
       geom_histogram(color = "#e9ecef", alpha = 0.6, position = 'identity', bins = nbins) +
       scale_fill_manual(values = c("gray70", "firebrick2")) +
       theme_bw() +
@@ -120,7 +124,7 @@ plotQC <- function(spe, type = c("hist", "scatter", "spots"),
   }
   
   if (type == "scatter") {
-    p <- ggplot(df, aes_string(x = metric_x, y = metric_y)) + 
+    p <- ggplot(plt_df, aes_string(x = metric_x, y = metric_y)) + 
       geom_point(size = 0.5) + 
       ggtitle("QC metrics") + 
       theme_bw()
@@ -144,10 +148,10 @@ plotQC <- function(spe, type = c("hist", "scatter", "spots"),
   if (type == "spots") {
     
     if (!is.null(in_tissue)) {
-      df <- df[df[, in_tissue] == 1, ]
+      plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
     }
     
-    p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = discard)) + 
+    p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord, color = discard)) + 
       geom_point(size = 0.3) + 
       coord_fixed() + 
       scale_color_manual(values = c("gray85", "red")) + 

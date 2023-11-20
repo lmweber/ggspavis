@@ -180,7 +180,7 @@ These single-cell spatial technologies usually do not come with an H&E image as 
 Here we check the continuous cell area and gene expression level of KRT20.
 
 ```{r, fig.width=8, fig.height=2.5}
-plotSpots(spe, annotate = "Area", in_tissue = NULL) | 
+plotSpots(spe, annotate = "Area", in_tissue = NULL, show_axis = TRUE) | 
   plotSpots(spe, annotate = "KRT20", in_tissue = NULL, palette = "darkblue")
 ```
 
