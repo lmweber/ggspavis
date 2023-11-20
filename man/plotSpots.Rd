@@ -10,10 +10,14 @@ plotSpots(
   y_coord = NULL,
   sample_id = "sample_id",
   in_tissue = "in_tissue",
+  trans = "identity",
+  assay = "counts",
+  legend.position = "right",
   annotate = NULL,
-  palette = "libd_layer_colors",
+  palette = NULL,
   y_reverse = TRUE,
-  size = 0.3
+  size = 0.3,
+  show_axis = FALSE
 )
 }
 \arguments{

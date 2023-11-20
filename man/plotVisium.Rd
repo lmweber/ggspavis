@@ -7,18 +7,20 @@
 plotVisium(
   spe,
   spots = TRUE,
-  fill = NULL,
+  annotate = NULL,
   highlight = NULL,
   facets = "sample_id",
   image = TRUE,
-  assay = "logcounts",
+  assay = "counts",
   trans = "identity",
+  legend.position = "right",
   x_coord = NULL,
   y_coord = NULL,
   y_reverse = TRUE,
   sample_ids = NULL,
   image_ids = NULL,
-  palette = NULL
+  palette = NULL,
+  size = 1
 )
 }
 \arguments{
@@ -27,9 +29,9 @@ plotVisium(
 \item{spots}{(logical) Whether to display spots (spatial barcodes) as points.
 Default = TRUE.}
 
-\item{fill}{(character) Column in \code{colData} to use to fill points by
-color. If \code{fill} contains a numeric column (e.g. total UMI counts), a
-continuous color scale will be used. If \code{fill} contains a factor (e.g.
+\item{annotate}{(character) Column in \code{colData} to use to fill points by
+color. If \code{annotate} contains a numeric column (e.g. total UMI counts), a
+continuous color scale will be used. If \code{annotate} contains a factor (e.g.
 cluster labels), a discrete color scale will be used. Default = NULL.}
 
 \item{highlight}{(character) Column in \code{colData} to use to highlight
@@ -43,11 +45,11 @@ disable.}
 \item{image}{(logical) Whether to show histology image as background. Default
 = TRUE.}
 
-\item{assay}{(character) Name of assay data to use when \code{fill} is in
+\item{assay}{(character) Name of assay data to use when \code{annotate} is in
 \code{rownames(spe)}. Should be one of \code{assayNames(spe)}.}
 
 \item{trans}{Transformation to apply for continuous scales. Ignored unless
-\code{fill} is numeric, e.g. feature expression. (See
+\code{annotate} is numeric, e.g. feature expression. (See
 \code{\link{ggplot2}{continuous_scale}} for valid options.)}
 
 \item{x_coord}{(character) Column in \code{spatialCoords} containing
@@ -95,14 +97,14 @@ library(STexampleData)
 spe <- Visium_mouseCoronal()
 
 # color by x coordinate, highlight in-tissue spots
-plotVisium(spe, fill = "pxl_col_in_fullres", highlight = "in_tissue")
+plotVisium(spe, annotate = "pxl_col_in_fullres", highlight = "in_tissue")
 
 # subset in-tissue spots
 sub <- spe[, as.logical(colData(spe)$in_tissue)]
 
 # color by feature counts, don't include image
 rownames(sub) <- make.names(rowData(sub)$gene_name)
-plotVisium(sub, fill = "Gad2", assay = "counts")
+plotVisium(sub, annotate = "Gad2", assay = "counts")
 
 }
 \author{

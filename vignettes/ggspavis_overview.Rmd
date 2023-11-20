@@ -158,10 +158,10 @@ plotDimRed(spe, type = "UMAP_neighbors15", annotate = "Cluster") |
   plotDimRed(spe, type = "UMAP_neighbors15", annotate = "MBP")
 ```
 
-Another example with `plotDimRed(type = "PCA")` on ground truth annotation and another highly variable gene.
+Another example with `plotDimRed(type = "PCA")` on ground truth annotation, with text on each cluster, and another highly variable gene.
 
 ```{r, fig.width=8, fig.height=4}
-plotDimRed(spe, type = "PCA", annotate = "layer_guess_reordered") | 
+plotDimRed(spe, type = "PCA", annotate = "layer_guess_reordered", text_by = "layer_guess_reordered_short") | 
   plotDimRed(spe, type = "PCA", annotate = "SCGB2A2")
 ```
 

@@ -7,25 +7,21 @@
 plotDimRed(
   spe,
   type = c("UMAP", "PCA"),
-  x_axis = NULL,
-  y_axis = NULL,
+  assay = "counts",
   annotate = NULL,
-  palette = "libd_layer_colors",
-  size = 0.3
+  palette = NULL,
+  size = 0.3,
+  text_by = NULL,
+  text_by_size = 5,
+  text_by_color = "black"
 )
 }
 \arguments{
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
 \code{SpatialExperiment} object.}
 
-\item{type}{(character) Type of reduced dimension plot. Options are "UMAP" or
-"PCA". Default = "UMAP".}
-
-\item{x_axis}{(character) Name of column in \code{reducedDim} containing
-x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.}
-
-\item{y_axis}{(character) Name of column in \code{reducedDim} containing
-y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.}
+\item{type}{(character) Type of reduced dimension plot. Options can be "UMAP",
+"PCA", or any self-defined reduced dimension names. Default = "UMAP".}
 
 \item{annotate}{(character) Name of column in \code{colData} containing
 values to annotate spots with colors, e.g. cluster labels (discrete values)
@@ -38,6 +34,22 @@ and high range, e.g. \code{c("gray90", "navy")}. Default =
 \code{"libd_layer_colors"}.}
 
 \item{size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
+
+\item{text_by}{(character) Column name of the annotation to apply on top of 
+each cluster. Usually should put it the same as `annotate = `. unless you have 
+another intended `text_by` column, e.g. with more readable classes or shorter 
+strings. Only used for categorical `annotate = `. Default = \code{NULL}.}
+
+\item{text_by_size}{(numerical) Text size hovering over each cluster. Default =
+\code{5}.}
+
+\item{text_by_color}{(character) Color string or hex code. Default = \code{"black"}.}
+
+\item{x_axis}{(character) Name of column in \code{reducedDim} containing
+x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.}
+
+\item{y_axis}{(character) Name of column in \code{reducedDim} containing
+y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
