@@ -14,7 +14,7 @@ Authors@R: c(
         email = "helena.crowell@uzh.ch", 
         role = c("aut"), 
         comment = c(ORCID = "0000-0002-4801-1767")),
-    person("Estella Y.", "Dong", 
+    person("Yixing E.", "Dong", 
         email = "estelladong729@gmail.com", 
         role = c("aut"), 
         comment = c(ORCID = "0000-0003-3839-7958")))
