@@ -37,7 +37,8 @@ library(spatialLIBD)
 # library(ggspavis)
 source(here::here("R/plotSpots.R"))
 source(here::here("R/plotVisium.R"))
-source(here::here("R/plotQC.R"))
+source(here::here("R/plotSpotQC.R"))
+source(here::here("R/plotFeatureQC.R"))
 source(here::here("R/plotDimRed.R"))
 source(here::here("R/utils.R"))
 library(patchwork)
@@ -60,21 +61,21 @@ colData(spe)$sum <- colSums(counts(spe))
 
 With `plotVisium()` annotated by a continuous variable, you can adjust palette, legend.position, scaling of the variable, and whether to highlight spots that are in tissue, etc.
 
-```{r, message=FALSE, warning=FALSE, fig.width=10, fig.height=4.5}
-plotVisium(spe, annotate = "sum", highlight = "in_tissue", legend.position = "left") |
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=3.5}
+plotVisium(spe, annotate = "sum", highlight = "in_tissue", legend.position = "none") |
 plotVisium(spe, annotate = "sum", highlight = "in_tissue", palette = "darkred")+
   guides(fill = guide_colorbar(title = "Libsize"))
 ```
 
 `plotVisium()` can also be used to visualize gene expression.
 
-```{r, fig.width=10, fig.height=4.5}
+```{r, fig.width=8, fig.height=3.5}
 plotVisium(spe, annotate = "Gapdh", highlight = "in_tissue") | plotVisium(spe, annotate = "Mbp", highlight = "in_tissue")
 ```
 
 Same for `plotSpots()`, and here for Visium we by default subset to spots that are in tissue. Palettes in `plotSpots()` can be changed like in `plotVisium()`.
 
-```{r, fig.width=10, fig.height=4.5}
+```{r, fig.width=8, fig.height=3.5}
 plotSpots(spe, annotate = "Gapdh") | plotSpots(spe, annotate = "Mbp", palette = "viridis")
 ```
 
@@ -96,42 +97,59 @@ plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue", palette = "l
 
 For `plotSpots()` on this Visium data, we leave the palette as NULL, and because "ground_truth" is categorical, eight distinct colors are generated. On the other hand, a NULL palette on a continuous variable means taking the default three-color gradient of "blue-beige-red".
 
-```{r, fig.width=10, fig.height=4.5}
+```{r, fig.width=8, fig.height=4}
 plotSpots(spe, annotate = "ground_truth") | plotSpots(spe, annotate = "libsize") + ggtitle("Library size")
 ```
 
-We first derive some QC flags needed for plotting.
+We first derive some per spot QC flags needed for plotting.
 
 ```{r}
 ## QC flags
-spe <- scuttle::addPerCellQC(spe, subsets = list(mito = grepl("(^MT-)|(^mt-)", rowData(spe)$gene_name)))
+spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(mito = grepl("(^MT-)|(^mt-)", rowData(spe)$gene_name)))
 spe$low_libsize <- spe$sum < 400 | spe$detected < 400
 spe$high_mito <- spe$subsets_mito_percent > 30
 ```
 
-In addition to `plotVisium()` and `plotSpots()`, `plotQC(type = "spots)` also reflects the spatial coordinates of the cells/spots, where cells/spots of interests should be labeled by a flag with TRUE or FALSE levels. The TRUE level are highlighted by red color.
+In addition to `plotVisium()` and `plotSpots()`, `plotSpotQC(type = "spots)` also reflects the spatial coordinates of the cells/spots, where cells/spots of interests should be labeled by a flag with TRUE or FALSE levels. The TRUE level are highlighted by red color.
 
-We can check the spot with low library size on histogram and on spot spatially.
 
-```{r, fig.width=10, fig.height=4.5}
-plotQC(spe, metric_x = "sum", metric_y = "low_libsize", type = "hist") | 
-  plotQC(spe, discard = "low_libsize", type = "spots")
+We can have an overview of the spot library size distribution, by leaving \code{annotate = NULL}.
+```{r, fig.width=8, fig.height=4.5}
+plotSpotQC(spe, metric_x = "sum", type = "violin", pt.size = 0.1) | 
+plotSpotQC(spe, metric_x = "sum", type = "hist") | 
+  plotSpotQC(spe, type = "spots", pt.size = 0.2) 
 ```
 
-We can also check the spot with high mitochondria percentage on histogram and on spot spatially.
+We can check the spot with low library size on violin plot, histogram, and on spot spatially.
+```{r, fig.width=10, fig.height=4.5}
+plotSpotQC(spe, metric_x = "sum", annotate = "low_libsize", type = "violin", pt.size = 0.1) | 
+plotSpotQC(spe, metric_x = "sum", annotate = "low_libsize", type = "hist") | 
+  plotSpotQC(spe, annotate = "low_libsize", type = "spots") 
+```
+
+We can also check the spot with high mitochondria percentage on violin plot, histogram, and on spot spatially.
 
 ```{r, fig.width=10, fig.height=4.5}
-plotQC(spe, metric_x = "subsets_mito_percent", metric_y = "high_mito", type = "hist") | 
-  plotQC(spe, discard = "high_mito", type = "spots")
+plotSpotQC(spe, metric_x = "subsets_mito_percent", annotate = "high_mito", type = "violin", pt.size = 0.1) |
+plotSpotQC(spe, metric_x = "subsets_mito_percent", annotate = "high_mito", type = "hist") | 
+  plotSpotQC(spe, annotate = "high_mito", type = "spots")
 ```
 
 We can also use scatterplot to check the trend between two variables. Below is a demonstration of how mitochondria percentage varies with library size. We can also highlight spots by putting some threshold on x and/or y axis. For example, spots with low library size but has high mitochondria percentage are of particular interest.
 
 ```{r, out.width="60%", warning=FALSE, message=FALSE}
-plotQC(spe, type = "scatter", metric_x = "subsets_mito_percent", metric_y = "sum", threshold_x = 30, threshold_y = 400)
+plotSpotQC(spe, type = "scatter", metric_x = "subsets_mito_percent", metric_y = "sum", threshold_x = 30, threshold_y = 400)
 ```
 
-Now we can perform QC, library size log normalization, and simple clustering. The reduced dimension and clustering results are already stored in this `spe` object.
+Perform per gene QC and visualize the result with a histogram. For Visium, we demonstrate a generic threshold that a gene should be detected in at least 20 spots to be considered not lowly abundant. We apply log10 transformation to make it easier for visualization.
+```{r, fig.width=8, fig.height=4}
+rowData(spe)$gene_sum <- rowSums(counts(spe))
+rowData(spe)$low_abun_gene <- rowSums(counts(spe) > 0) < 20
+plotFeatureQC(spe, metric_x = "gene_sum", annotate = "low_abun_gene", type = "hist") + scale_x_log10() |
+  plotFeatureQC(spe, metric_x = "gene_sum", annotate = "low_abun_gene", type = "violin") + scale_y_log10()
+```
+
+Now we can perform QC to exclude low library size spots and low abundance genes, library size log normalization, and simple clustering. The reduced dimension and clustering results are already stored in this `spe` object.
 
 The same data set of `STexampleData::Visium_humanDLPFC()` is also stored in `spatialLIBD::fetch_data()`, but we use the `spatialLIBD` version for the already existing PCA and UMAP reduced dimensions stored in the `spe` object. The first step of `spatialLIBD::fetch_data()` will take some time.
 
@@ -175,7 +193,7 @@ source(here::here("R/.readCosmxSPE.R"))
 spe <- .readCosmxSPE(dirname = dir)
 ```
 
-These single-cell spatial technologies usually do not come with an H&E image as Visium. Therefore, except `plotVisium()` which requires an image stored in the object, all other functions `plotSpots()`, `plotQC()`, `plotDimRed()` can be used as previously. Now the "spots" are the "cells".
+These single-cell spatial technologies usually do not come with an H&E image as Visium. Therefore, except `plotVisium()` which requires an image stored in the object, all other functions `plotSpots()`, `plotSpotQC()`, `plotDimRed()` can be used as previously. Now the "spots" are the "cells".
 
 Here we check the continuous cell area and gene expression level of KRT20.
 
@@ -184,7 +202,33 @@ plotSpots(spe, annotate = "Area", in_tissue = NULL, show_axis = TRUE) |
   plotSpots(spe, annotate = "KRT20", in_tissue = NULL, palette = "darkblue")
 ```
 
+For imaging-based spatial technologies, given the single-cell resolution of the `SPE`, we adopt the same QC methods from [OSCA book](https://bioconductor.org/books/3.17/OSCA.basic/quality-control.html). We first perform per cell QC and visualize the QC flags on imaging-based spatial experiment class. 
+```{r, fig.width=10, fig.height=4.5}
+spe <- addPerCellQCMetrics(x = spe,subsets=list(Mito=grep("MT-",rownames(spe))))
+spe <- addPerFeatureQCMetrics(x = spe)
+
+spe$low_libsize <- isOutlier(metric = spe$sum, type = "lower", log = TRUE)
+spe$high_mito <- isOutlier(metric = spe$subsets_Mito_percent, type = "higher")
+rowData(spe)$low_abun_gene <- log(rowData(spe)) < -5 | log(rowData(spe)) <= 0
+
+
+spe$subsets_Mito_percent <- ifelse(is.na(spe$subsets_Mito_percent), 0, spe$subsets_Mito_percent)
+
+# TODO: may a new package AutoQCFlags
+plotSpotQC(spe, metric_x = "sum", annotate = "low_libsize", type = "violin", pt.size = 0.1) | 
+plotSpotQC(spe, metric_x = "sum", annotate = "low_libsize", type = "hist") | 
+  plotSpotQC(spe, annotate = "low_libsize", type = "spots") 
+```
+
+We then perform per gene QC and visualize the result with a histogram. 
+```{r}
+spe <- scuttle::addPerFeatureQCMetrics(spe)
+head(rowData(spe))
+```
+
 Same analysis on QC and dimension reduction could also be performed for your Xenium or Vizgen data as a `SpatialExperiment` object.
+
+
 
 # Session information
 

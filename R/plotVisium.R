@@ -11,7 +11,7 @@
 #' options available to adjust the plot type and style.
 #' 
 #' 
-#' @param spe (SpatialExperiment) Input data object.
+#' @param spe (SpatialExperiment) or \code{SingleCellExperiment} Input data object.
 #' 
 #' @param spots (logical) Whether to display spots (spatial barcodes) as points.
 #'   Default = TRUE.
@@ -61,6 +61,8 @@
 #' 
 #' @param image_ids (character) Images to show, if multiple images are
 #'   available. Default = NULL (show all images).
+#'   
+#' @param pt.size (numeric) Point size for \code{geom_point()}. Default = 1.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
@@ -102,7 +104,7 @@ plotVisium <- function(spe,
                        facets = "sample_id", image = TRUE, 
                        assay = "counts", trans = "identity", legend.position = "right",
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
-                       sample_ids = NULL, image_ids = NULL, palette = NULL, size = 1) {
+                       sample_ids = NULL, image_ids = NULL, palette = NULL, pt.size = 1) {
   
   # check validity of input arguments
   stopifnot(
@@ -111,7 +113,7 @@ plotVisium <- function(spe,
     is.logical(image), length(image) == 1, 
     is.logical(y_reverse), length(y_reverse) == 1)
   
-  stopifnot(legend.position %in% c("left", "right", "top", "bottom"))
+  stopifnot(legend.position %in% c("left", "right", "top", "bottom", "none"))
   
   if(is.null(x_coord)) x_coord <- spatialCoordsNames(spe)[1]
   if(is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]
@@ -198,7 +200,7 @@ plotVisium <- function(spe,
     points <- list(
       guides(fill = guide(
         title = annotate, order = 1, override.aes = list(col = NA, size = 3))), 
-      geom_point(shape = 21, size = size, stroke = 0.25, alpha = 0.5))
+      geom_point(shape = 21, size = pt.size, stroke = 0.25, alpha = 0.5))
     if(!is.null(highlight)){
       plt_df$highlight <- as.factor(plt_df[[highlight]])
       highlights <- list(
