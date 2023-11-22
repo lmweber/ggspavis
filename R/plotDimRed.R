@@ -10,7 +10,7 @@
 #' 
 #' 
 #' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   \code{SpatialExperiment} object.
+#'   \code{SpatialExperiment} or \code{SingleCellExperiment} object.
 #' 
 #' @param type (character) Type of reduced dimension plot. Options can be "UMAP",
 #' "PCA", or any self-defined reduced dimension names. Default = "UMAP".
@@ -31,7 +31,7 @@
 #'   and high range, e.g. \code{c("gray90", "navy")}. Default =
 #'   \code{"libd_layer_colors"}.
 #' 
-#' @param size (numeric) Point size for \code{geom_point()}. Default = 0.3.
+#' @param pt.size (numeric) Point size for \code{geom_point()}. Default = 0.3.
 #' 
 #' @param text_by (character) Column name of the annotation to apply on top of 
 #' each cluster. Usually should put it the same as `annotate = `. unless you have 
@@ -94,16 +94,16 @@ plotDimRed <- function(spe,
                        type = c("UMAP", "PCA"), 
                        assay = "counts",
                        annotate = NULL, palette = NULL, 
-                       size = 0.3,
+                       pt.size = 0.3,
                        text_by = NULL, text_by_size = 5, text_by_color = "black") {
   
   # check validity of input arguments
   if(length(type) != 1){
-    stop("Please specify reduced dimension type")
+    stop("Please specify reduced dimension type.")
   }
   # check validity of input arguments
   if(!type %in% reducedDimNames(spe)){
-    stop("Reduced dimension 'type' does not exist in reducedDimNames(spe)")
+    stop("Reduced dimension 'type' does not exist in reducedDimNames(spe).")
   }
   # no matter colnames(reducedDim()) null or not, reorganize for plotting
   colnames(reducedDim(spe, type)) <- paste0(type, "_", 1:ncol(reducedDim(spe, type)))
@@ -111,7 +111,7 @@ plotDimRed <- function(spe,
   plt_df <- cbind.data.frame(colData(spe), reducedDim(spe, type))
   
   if(!annotate %in% c(names(plt_df), rownames(spe))){
-    stop("'annotate' should be in rownames(spe) or names(colData(spe))")
+    stop("'annotate' should be in rownames(spe) or names(colData(spe)).")
   }
   # (optionally) add feature assay data to 'plt_df'
   if(annotate %in% rownames(spe)){
@@ -127,7 +127,7 @@ plotDimRed <- function(spe,
   
   p <- ggplot(plt_df, aes_string(x = paste0(type, "_1"), 
                                  y = paste0(type, "_2"), color = annotate)) + 
-    geom_point(size = size) + 
+    geom_point(size = pt.size) + 
     xlab(paste0(type, "_1")) + 
     ylab(paste0(type, "_2")) + 
     # ggtitle("Reduced dimensions") + 

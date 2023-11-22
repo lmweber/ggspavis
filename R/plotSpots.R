@@ -11,7 +11,7 @@
 #' 
 #' 
 #' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   \code{SpatialExperiment} object.
+#'   \code{SpatialExperiment} or \code{SingleCellExperiment} object.
 #' 
 #' @param x_coord (character) Name of column in \code{spatialCoords} containing
 #'   x-coordinates. Default = NULL, which selects the first column.
@@ -41,7 +41,7 @@
 #' @param y_reverse (logical) Whether to reverse y coordinates, which is often
 #'   required for 10x Genomics Visium data. Default = TRUE.
 #' 
-#' @param size (numeric) Point size for \code{geom_point()}. Default = 0.3.
+#' @param pt.size (numeric) Point size for \code{geom_point()}. Default = 0.3.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
@@ -68,10 +68,10 @@ plotSpots <- function(spe,
                       trans = "identity",
                       assay = "counts", legend.position = "right", 
                       annotate = NULL, palette = NULL, 
-                      y_reverse = TRUE, size = 0.3, show_axis = FALSE) {
+                      y_reverse = TRUE, pt.size = 0.3, show_axis = FALSE) {
   
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
-  stopifnot(legend.position %in% c("left", "right", "top", "bottom"))
+  stopifnot(legend.position %in% c("left", "right", "top", "bottom", "none"))
   
   if (!is.null(sample_id)){
     stopifnot(sample_id %in% colnames(colData(spe)))
@@ -114,7 +114,7 @@ plotSpots <- function(spe,
   palette <- .get_pal(palette)
   
   p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
-    geom_point(size = size) + 
+    geom_point(size = pt.size) + 
     coord_fixed() + 
     theme_bw() 
   
