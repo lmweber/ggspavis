@@ -20,11 +20,11 @@ plotVisium(
   sample_ids = NULL,
   image_ids = NULL,
   palette = NULL,
-  size = 1
+  pt.size = 1
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) Input data object.}
+\item{spe}{(SpatialExperiment) or \code{SingleCellExperiment} Input data object.}
 
 \item{spots}{(logical) Whether to display spots (spatial barcodes) as points.
 Default = TRUE.}
@@ -74,6 +74,8 @@ color codes. Options for continuous values are "viridis", a single color
 name (e.g. "red", "navy", etc), or a vector of length two containing color
 names for each end of the scale. Default = "libd_layer_colors" for discrete
 data, and "viridis" for continuous data.}
+
+\item{pt.size}{(numeric) Point size for \code{geom_point()}. Default = 1.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as

@@ -10,7 +10,7 @@ plotDimRed(
   assay = "counts",
   annotate = NULL,
   palette = NULL,
-  size = 0.3,
+  pt.size = 0.3,
   text_by = NULL,
   text_by_size = 5,
   text_by_color = "black"
@@ -18,7 +18,7 @@ plotDimRed(
 }
 \arguments{
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
-\code{SpatialExperiment} object.}
+\code{SpatialExperiment} or \code{SingleCellExperiment} object.}
 
 \item{type}{(character) Type of reduced dimension plot. Options can be "UMAP",
 "PCA", or any self-defined reduced dimension names. Default = "UMAP".}
@@ -33,7 +33,7 @@ hex values. For continuous values, provide a vector of length 2 for the low
 and high range, e.g. \code{c("gray90", "navy")}. Default =
 \code{"libd_layer_colors"}.}
 
-\item{size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
+\item{pt.size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
 
 \item{text_by}{(character) Column name of the annotation to apply on top of 
 each cluster. Usually should put it the same as `annotate = `. unless you have 
