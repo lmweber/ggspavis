@@ -16,13 +16,13 @@ plotSpots(
   annotate = NULL,
   palette = NULL,
   y_reverse = TRUE,
-  size = 0.3,
+  pt.size = 0.3,
   show_axis = FALSE
 )
 }
 \arguments{
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
-\code{SpatialExperiment} object.}
+\code{SpatialExperiment} or \code{SingleCellExperiment} object.}
 
 \item{x_coord}{(character) Name of column in \code{spatialCoords} containing
 x-coordinates. Default = NULL, which selects the first column.}
@@ -52,7 +52,7 @@ counts), provide a vector of length 2 for the low and high range, e.g.
 \item{y_reverse}{(logical) Whether to reverse y coordinates, which is often
 required for 10x Genomics Visium data. Default = TRUE.}
 
-\item{size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
+\item{pt.size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
