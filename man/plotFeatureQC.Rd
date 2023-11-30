@@ -64,3 +64,6 @@ spe <- Visium_humanDLPFC()
 plotFeatureQC(spe, type = "hist", metric_x = "cell_count", annotate = "low_abun_gene")
 plotFeatureQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
 }
+\author{
+Yixing E. Dong
+}

@@ -115,3 +115,6 @@ plotSpotQC(spe, type = "scatter", metric_x = "sum", metric_y = "cell_count")
 plotSpotQC(spe, type = "spots", annotate = "low_libsize")
 plotSpotQC(spe, type = "violin", metric_x = "sum", annotate = "low_libsize")
 }
+\author{
+Lukas M. Weber with modifications by Yixing E. Dong
+}

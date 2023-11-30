@@ -101,3 +101,6 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 plotDimRed(spe, type = "UMAP", annotate = "ground_truth")
 
 }
+\author{
+Lukas M. Weber with modifications by Yixing E. Dong
+}
