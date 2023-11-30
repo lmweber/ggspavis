@@ -1,7 +1,2 @@
-# TODO: add text over clusters
-# rename plotSpots to plotCells for insitu
+# rename plotSpots to plotCells for insitu - Not necessary
 # remove CosMx reader function 
-# add message() to major updates/var rename fill -> annotate
-# Senbai's new functionality of "zoom" for plot Visium
-
-# make them flexible for SCE

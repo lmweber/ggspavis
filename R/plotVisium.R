@@ -31,6 +31,12 @@
 #' 
 #' @param image (logical) Whether to show histology image as background. Default
 #'   = TRUE.
+#'   
+#' @param zoom (logical) Whether to zoom to area of tissue with spots on it. Default
+#'   = FALSE
+#'   
+#' @param show_axis (logical) Whether to show axis and coordiantes for the plot. Default
+#'   = FALSE
 #' 
 #' @param assay (character) Name of assay data to use when \code{annotate} is in
 #'   \code{rownames(spe)}. Should be one of \code{assayNames(spe)}.
@@ -72,6 +78,7 @@
 #' @importFrom SpatialExperiment spatialCoords spatialCoordsNames imgData
 #'   'imgData<-' imgRaster scaleFactors
 #' @importFrom SummarizedExperiment colData assayNames
+#' @importFrom ggrepel geom_text_repel
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
 #'   scale_fill_viridis_c scale_color_identity scale_fill_identity facet_wrap
 #'   guides guide_colorbar guide_legend theme_void element_text margin unit
@@ -82,7 +89,7 @@
 #' 
 #' @export
 #' 
-#' @author Helena L. Crowell with modifications by Lukas M. Weber
+#' @author Helena L. Crowell with modifications by Lukas M. Weber, Yixing E. Dong
 #' 
 #' @examples
 #' library(STexampleData)
@@ -101,7 +108,7 @@
 #' 
 plotVisium <- function(spe, 
                        spots = TRUE, annotate = NULL, highlight = NULL, 
-                       facets = "sample_id", image = TRUE, 
+                       facets = "sample_id", image = TRUE, zoom = FALSE, show_axis = FALSE,
                        assay = "counts", trans = "identity", legend.position = "right",
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
                        sample_ids = NULL, image_ids = NULL, palette = NULL, pt.size = 1) {
@@ -177,6 +184,10 @@ plotVisium <- function(spe,
     img <- img_df$data[[1]]
     xlim <- c(0, ncol(img))
     ylim <- c(0, nrow(img))
+    
+    if(zoom){
+      xlim <- ylim <- NULL
+    }
   }else{
     img <- NULL
     images <- xlim <- ylim <- NULL
@@ -243,14 +254,25 @@ plotVisium <- function(spe,
   
   # display plot
   p <- ggplot(plt_df, 
-         aes_string(x_coord, y_coord, fill = annotate, col = "highlight")) + 
+              aes_string(x_coord, y_coord, fill = annotate, col = "highlight")) + 
     images + points + highlights + scale + 
-    coord_fixed(xlim = xlim, ylim = ylim) + 
-    theme_void() + 
-    theme(legend.key.size = unit(0.5, "lines"), 
-          strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines")),
-          legend.position = legend.position) +
+    coord_fixed(xlim = xlim, ylim = ylim) 
+  
+  if(show_axis){
+    p <- p + 
+      theme_bw() + 
+      theme(plot.title = element_text(hjust = 0.5),
+            legend.position = legend.position)
     if (!is.null(facets)) facet_wrap(facets)
+  }else{
+    p <- p + 
+      theme_void() + 
+      theme(legend.key.size = unit(0.5, "lines"), 
+            strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines")),
+            legend.position = legend.position) +
+      if (!is.null(facets)) facet_wrap(facets)
+  }
+
   
   return(p)
 }

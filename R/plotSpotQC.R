@@ -90,6 +90,8 @@
 #' 
 #' @export
 #' 
+#' @author Lukas M. Weber with modifications by Yixing E. Dong
+#' 
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
@@ -130,6 +132,10 @@ plotSpotQC <- function(spe, type = c("hist", "scatter", "spots", "violin"),
     }
   }
   
+  if (!is.null(in_tissue)) {
+    plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
+  }
+  
   
   if (type == "hist") { # must have metric_x (cont), optional annotate (logical)
     stopifnot(is.numeric(nbins))
@@ -153,6 +159,7 @@ plotSpotQC <- function(spe, type = c("hist", "scatter", "spots", "violin"),
   }
   
   if (type == "scatter") { # must have metric_x (cont), metric_x (cont)
+    
     p <- ggplot(plt_df, aes_string(x = metric_x, y = metric_y)) + 
       geom_point(size = pt.size) + 
       ggtitle("QC metrics") + 
@@ -175,10 +182,6 @@ plotSpotQC <- function(spe, type = c("hist", "scatter", "spots", "violin"),
   }
   
   if (type == "spots") { # must have x_coord (cont), y_coord (cont), optional annotate (logical)
-    
-    if (!is.null(in_tissue)) {
-      plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
-    }
     
     if (!is.null(annotate)){ # At x_coord (cont) & y_coord (cont), colored by annotate (logical)
       p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
@@ -207,10 +210,6 @@ plotSpotQC <- function(spe, type = c("hist", "scatter", "spots", "violin"),
   }
   
   if (type == "violin") { # must have metric_x (cont), optional annotate (logical)
-    
-    if (!is.null(in_tissue)) {
-      plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
-    }
     
     plt_df$dummy <- rep(" ", nrow(plt_df))
   

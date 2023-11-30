@@ -55,6 +55,8 @@
 #' 
 #' @export
 #' 
+#' @author Lukas M. Weber with modifications by Yixing E. Dong
+#' 
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
