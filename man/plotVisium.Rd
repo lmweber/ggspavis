@@ -11,6 +11,8 @@ plotVisium(
   highlight = NULL,
   facets = "sample_id",
   image = TRUE,
+  zoom = FALSE,
+  show_axis = FALSE,
   assay = "counts",
   trans = "identity",
   legend.position = "right",
@@ -44,6 +46,12 @@ disable.}
 
 \item{image}{(logical) Whether to show histology image as background. Default
 = TRUE.}
+
+\item{zoom}{(logical) Whether to zoom to area of tissue with spots on it. Default
+= FALSE}
+
+\item{show_axis}{(logical) Whether to show axis and coordiantes for the plot. Default
+= FALSE}
 
 \item{assay}{(character) Name of assay data to use when \code{annotate} is in
 \code{rownames(spe)}. Should be one of \code{assayNames(spe)}.}
@@ -110,5 +118,5 @@ plotVisium(sub, annotate = "Gad2", assay = "counts")
 
 }
 \author{
-Helena L. Crowell with modifications by Lukas M. Weber
+Helena L. Crowell with modifications by Lukas M. Weber, Yixing E. Dong
 }

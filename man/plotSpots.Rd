@@ -17,7 +17,10 @@ plotSpots(
   palette = NULL,
   y_reverse = TRUE,
   pt.size = 0.3,
-  show_axis = FALSE
+  show_axis = FALSE,
+  text_by = NULL,
+  text_by_size = 5,
+  text_by_color = "black"
 )
 }
 \arguments{
@@ -53,6 +56,16 @@ counts), provide a vector of length 2 for the low and high range, e.g.
 required for 10x Genomics Visium data. Default = TRUE.}
 
 \item{pt.size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
+
+\item{text_by}{(character) Column name of the annotation to apply on top of 
+each cluster. Usually should put it the same as `annotate = `. unless you have 
+another intended `text_by` column, e.g. with more readable classes or shorter 
+strings. Only used for categorical `annotate = `. Default = \code{NULL}.}
+
+\item{text_by_size}{(numerical) Text size hovering over each cluster. Default =
+\code{5}.}
+
+\item{text_by_color}{(character) Color string or hex code. Default = \code{"black"}.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
@@ -74,4 +87,7 @@ library(STexampleData)
 spe <- Visium_humanDLPFC()
 plotSpots(spe, annotate = "ground_truth")
 
+}
+\author{
+Lukas M. Weber with modifications by Yixing E. Dong
 }
