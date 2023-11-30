@@ -43,6 +43,16 @@
 #' 
 #' @param pt.size (numeric) Point size for \code{geom_point()}. Default = 0.3.
 #' 
+#' @param text_by (character) Column name of the annotation to apply on top of 
+#' each cluster. Usually should put it the same as `annotate = `. unless you have 
+#' another intended `text_by` column, e.g. with more readable classes or shorter 
+#' strings. Only used for categorical `annotate = `. Default = \code{NULL}.
+#' 
+#' @param text_by_size (numerical) Text size hovering over each cluster. Default =
+#'  \code{5}.
+#' 
+#' @param text_by_color (character) Color string or hex code. Default = \code{"black"}.
+#' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
 #'   ggplot elements (e.g. title, labels, formatting, etc).
@@ -50,11 +60,14 @@
 #' 
 #' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SummarizedExperiment colData
+#' @importFrom ggrepel geom_text_repel
 #' @importFrom ggplot2 ggplot aes_string facet_wrap geom_point coord_fixed
 #'   ggtitle theme_bw theme element_blank scale_y_reverse scale_color_manual
 #'   scale_color_gradient
 #' 
 #' @export
+#' 
+#' @author Lukas M. Weber with modifications by Yixing E. Dong
 #' 
 #' @examples
 #' library(STexampleData)
@@ -68,7 +81,8 @@ plotSpots <- function(spe,
                       trans = "identity",
                       assay = "counts", legend.position = "right", 
                       annotate = NULL, palette = NULL, 
-                      y_reverse = TRUE, pt.size = 0.3, show_axis = FALSE) {
+                      y_reverse = TRUE, pt.size = 0.3, show_axis = FALSE,
+                      text_by = NULL, text_by_size = 5, text_by_color = "black") {
   
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   stopifnot(legend.position %in% c("left", "right", "top", "bottom", "none"))
@@ -137,10 +151,6 @@ plotSpots <- function(spe,
     }
   }
   
-  if (y_reverse) {
-    p <- p + scale_y_reverse()
-  }
-  
   scale <- if(is.numeric(plt_df[[annotate]])){
     if(length(palette) == 1 && palette == "viridis"){
       scale_color_viridis_c(trans = trans) 
@@ -164,6 +174,37 @@ plotSpots <- function(spe,
   }else if(is.factor(plt_df[[annotate]])){ # categorical disply legend title but no plot title
     p <- p + scale + 
       guides(colour = guide_legend(override.aes = list(size = 3)))
+  }
+  
+  
+  if(is.factor(plt_df[[annotate]])){
+    # Adding text with the median locations of the 'text_by' vector.
+    if(!is.null(text_by)){
+      by_text_x <- vapply(
+        split(plt_df[[x_coord]], plt_df[[text_by]]),
+        median,
+        FUN.VALUE = 0
+      )
+      
+      by_text_y <- vapply(
+        split(plt_df[[y_coord]], plt_df[[text_by]]),
+        median,
+        FUN.VALUE = 0
+      )
+      
+      p <- p +
+        ggrepel::geom_text_repel(
+          data = data.frame(
+            x = by_text_x, y = by_text_y, label = names(by_text_x)
+          ),
+          mapping = aes(x = .data$x, y = .data$y, label = .data$label),
+          size = text_by_size, colour = text_by_color
+        )
+    }
+  }
+  
+  if (y_reverse) {
+    p <- p + scale_y_reverse()
   }
   
   p

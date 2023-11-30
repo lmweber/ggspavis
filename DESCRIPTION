@@ -35,7 +35,8 @@ Imports:
     ggside, 
     grid, 
     methods, 
-    stats
+    stats,
+    ggrepel
 VignetteBuilder: knitr
 Suggests:
     BiocStyle, 

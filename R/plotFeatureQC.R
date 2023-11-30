@@ -50,6 +50,8 @@
 #' 
 #' @export
 #' 
+#' @author Yixing E. Dong
+#' 
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
@@ -96,10 +98,6 @@ plotFeatureQC <- function(spe, type = c("hist", "violin"),
   
   
   if (type == "violin") { # must have metric_x (cont), optional annotate (logical)
-    
-    if (!is.null(in_tissue)) {
-      plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
-    }
     
     plt_df$dummy <- rep(" ", nrow(plt_df))
     

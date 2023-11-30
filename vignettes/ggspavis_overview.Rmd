@@ -50,7 +50,7 @@ library(ggside)
 
 ## 10x Genomics Visium: Mouse coronal brain section
 
-First we start with a quick demo of the Visium mouse brain data. We perform the visualization of library size and gene expression level that can be easily derived. Both `plotVisium()` and `plotSpots()` reflects the spatial coordinates of spots, with the former overlays spots on the H&E image.
+First we start with a quick demo of the Visium mouse brain data. We perform the visualization of library size and gene expression level that can be easily derived. Both `plotVisium()` and `plotSpots()` reflects the spatial coordinates of spots, with the former overlays spots on the H&E image. Note that `plotVisium()` can only take a `SpatialExperiment` class object, while other functions in the package can take both `SpatialExperiment` or `SingleCellExperiment` class object. 
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
@@ -67,13 +67,21 @@ plotVisium(spe, annotate = "sum", highlight = "in_tissue", palette = "darkred")+
   guides(fill = guide_colorbar(title = "Libsize"))
 ```
 
-`plotVisium()` can also be used to visualize gene expression.
+`plotVisium()` can also be used to visualize gene expression. 
 
 ```{r, fig.width=8, fig.height=3.5}
-plotVisium(spe, annotate = "Gapdh", highlight = "in_tissue") | plotVisium(spe, annotate = "Mbp", highlight = "in_tissue")
+plotVisium(spe, annotate = "Gapdh", highlight = "in_tissue") | 
+  plotVisium(spe, annotate = "Mbp", highlight = "in_tissue")
 ```
 
-Same for `plotSpots()`, and here for Visium we by default subset to spots that are in tissue. Palettes in `plotSpots()` can be changed like in `plotVisium()`.
+Two other cases of `plotVisium()` is to show only spots or only the H\&E image. Note that `plotVisium(image = FALSE)` can be used as `plotSpots()`, but it also includes spots that are not in tissue.
+
+```{r, fig.width=8, fig.height=3.5}
+plotVisium(spe, annotate = "Mbp", highlight = "in_tissue", image = FALSE) | 
+  plotVisium(spe, annotate = "Mbp", highlight = "in_tissue", spots = FALSE)
+```
+
+For `plotSpots()` for Visium, we by default subset to spots that are in tissue. Palettes in `plotSpots()` can be changed like in `plotVisium()`. 
 
 ```{r, fig.width=8, fig.height=3.5}
 plotSpots(spe, annotate = "Gapdh") | plotSpots(spe, annotate = "Mbp", palette = "viridis")
@@ -89,7 +97,7 @@ rownames(spe) <- rowData(spe)$gene_name
 colData(spe)$libsize <- colSums(counts(spe))
 ```
 
-First, we check the ground truth annotation with the `spatialLIBD` palette, highlighting the spots that are in tissue.
+First, we check the ground truth annotation with the `spatialLIBD` palette, highlighting the spots that are in tissue. 
 
 ```{r, message=FALSE, out.width="60%"}
 plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue", palette = "libd_layer_colors")
@@ -142,7 +150,7 @@ plotSpotQC(spe, type = "scatter", metric_x = "subsets_mito_percent", metric_y = 
 ```
 
 Perform per gene QC and visualize the result with a histogram. For Visium, we demonstrate a generic threshold that a gene should be detected in at least 20 spots to be considered not lowly abundant. We apply log10 transformation to make it easier for visualization.
-```{r, fig.width=8, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=4}
 rowData(spe)$gene_sum <- rowSums(counts(spe))
 rowData(spe)$low_abun_gene <- rowSums(counts(spe) > 0) < 20
 plotFeatureQC(spe, metric_x = "gene_sum", annotate = "low_abun_gene", type = "hist") + scale_x_log10() |
@@ -161,12 +169,12 @@ rownames(spe) <- rowData(spe)$gene_name
 colData(spe)$libsize <- colSums(counts(spe))
 ```
 
-We can compare the ground truth annotation with clustering result with `plotSpots()` (or `plotVisium()` overlaying H&E).
+We can compare the ground truth annotation with clustering result with `plotSpots()` (or `plotVisium()` overlaying H&E). Here we also demonstrate the on-plot text annotation functionality with `plotSpots(text_by = )`. 
 
-```{r, fig.width=10, fig.height=4.5}
+```{r, fig.width=8, fig.height=4.5}
 spe$Cluster <- factor(spe$Cluster)
 plotSpots(spe, annotate = "layer_guess_reordered") |
-  plotSpots(spe, annotate = "Cluster")
+  plotSpots(spe, annotate = "Cluster", text_by = "Cluster")
 ```
 
 We can now visualize the categorical clustering result or continuous gene expression value on UMAP with `plotDimRed()`
@@ -176,7 +184,7 @@ plotDimRed(spe, type = "UMAP_neighbors15", annotate = "Cluster") |
   plotDimRed(spe, type = "UMAP_neighbors15", annotate = "MBP")
 ```
 
-Another example with `plotDimRed(type = "PCA")` on ground truth annotation, with text on each cluster, and another highly variable gene.
+Another example with `plotDimRed(type = "PCA")` on ground truth annotation, with on-plot text annotation on each cluster, and another highly variable gene.
 
 ```{r, fig.width=8, fig.height=4}
 plotDimRed(spe, type = "PCA", annotate = "layer_guess_reordered", text_by = "layer_guess_reordered_short") | 
@@ -228,7 +236,11 @@ head(rowData(spe))
 
 Same analysis on QC and dimension reduction could also be performed for your Xenium or Vizgen data as a `SpatialExperiment` object.
 
+We also demonstrate the `zoom` to only spots area and `show_axis` on labels and ticks functionality in `plotVisium()`, which are both set to default. # TODO: for Visium in preprint. 
 
+```{r}
+  plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue", palette = "libd_layer_colors", zoom = TRUE, show_axis = TRUE)
+```
 
 # Session information
 
