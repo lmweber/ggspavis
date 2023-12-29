@@ -211,7 +211,7 @@ plotVisium <- function(spe,
     points <- list(
       guides(fill = guide(
         title = annotate, order = 1, override.aes = list(col = NA, size = 3))), 
-      geom_point(shape = 21, size = pt.size, stroke = 0.25, alpha = 0.5))
+      geom_point(shape = 21, size = pt.size, stroke = 0.25, alpha = 0.8))
     if(!is.null(highlight)){
       plt_df$highlight <- as.factor(plt_df[[highlight]])
       highlights <- list(
@@ -261,14 +261,17 @@ plotVisium <- function(spe,
   if(show_axis){
     p <- p + 
       theme_bw() + 
-      theme(plot.title = element_text(hjust = 0.5),
-            legend.position = legend.position)
-    if (!is.null(facets)) facet_wrap(facets)
+      theme(strip.background = element_blank(),
+            legend.position = legend.position) +
+      labs(
+        x = paste0("pxl_col_in_", img_df[s, "image_id"]),
+        y = paste0("pxl_col_in_", img_df[s, "image_id"])
+      ) + 
+      if (!is.null(facets)) facet_wrap(facets)
   }else{
     p <- p + 
       theme_void() + 
-      theme(legend.key.size = unit(0.5, "lines"), 
-            strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines")),
+      theme(strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines")),
             legend.position = legend.position) +
       if (!is.null(facets)) facet_wrap(facets)
   }
