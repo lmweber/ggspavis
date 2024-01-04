@@ -107,6 +107,8 @@ plotDimRed <- function(spe,
   if(!type %in% reducedDimNames(spe)){
     stop("Reduced dimension 'type' does not exist in reducedDimNames(spe).")
   }
+  
+  stopifnot(is.character(annotate))
   # no matter colnames(reducedDim()) null or not, reorganize for plotting
   colnames(reducedDim(spe, type)) <- paste0(type, "_", 1:ncol(reducedDim(spe, type)))
   

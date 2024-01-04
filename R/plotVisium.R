@@ -121,6 +121,7 @@ plotVisium <- function(spe,
     is.logical(y_reverse), length(y_reverse) == 1)
   
   stopifnot(legend.position %in% c("left", "right", "top", "bottom", "none"))
+  stopifnot(is.character(annotate))
   
   if(is.null(x_coord)) x_coord <- spatialCoordsNames(spe)[1]
   if(is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]

@@ -87,6 +87,8 @@ plotSpots <- function(spe,
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   stopifnot(legend.position %in% c("left", "right", "top", "bottom", "none"))
   
+  stopifnot(is.character(annotate))
+  
   if (!is.null(sample_id)){
     stopifnot(sample_id %in% colnames(colData(spe)))
     n_samples <- length(table(colData(spe)[, sample_id]))
