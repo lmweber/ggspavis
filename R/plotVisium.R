@@ -262,7 +262,8 @@ plotVisium <- function(spe,
   if(show_axis){
     p <- p + 
       theme_bw() + 
-      theme(strip.background = element_blank(),
+      theme(strip.text = element_blank(),
+            strip.background = element_blank(),
             legend.position = legend.position) +
       labs(
         x = paste0("pxl_col_in_", img_df[s, "image_id"]),
@@ -272,7 +273,7 @@ plotVisium <- function(spe,
   }else{
     p <- p + 
       theme_void() + 
-      theme(strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines")),
+      theme(strip.text = element_blank(),
             legend.position = legend.position) +
       if (!is.null(facets)) facet_wrap(facets)
   }
