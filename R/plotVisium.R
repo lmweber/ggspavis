@@ -233,8 +233,9 @@ plotVisium <- function(spe,
   # color scale
   scale <- if(annotate != "foo"){
     if(is.numeric(plt_df[[annotate]])){
-      if(length(palette) == 1 && palette == "viridis"){
-        scale_fill_viridis_c(trans = trans)
+      if(length(palette) == 1 && palette %in% c("viridis", "magma", "inferno", "plasma",
+                                                "cividis", "rocket", "mako", "turbo")){
+        scale_fill_viridis_c(trans = trans, option = palette)
       }else if(length(palette) == 1 && palette == "seuratlike"){
         scale_fill_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
                              trans = trans, limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))

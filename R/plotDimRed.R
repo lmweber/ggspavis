@@ -147,8 +147,9 @@ plotDimRed <- function(spe,
 
   
   scale <- if(is.numeric(plt_df[[annotate]])){
-    if(length(palette) == 1 && palette == "viridis"){
-      scale_color_viridis_c()
+    if(length(palette) == 1 && palette %in% c("viridis", "magma", "inferno", "plasma",
+                                              "cividis", "rocket", "mako", "turbo")){
+      scale_color_viridis_c(option = palette)
     }else if(length(palette) == 1 && palette == "seuratlike"){
       scale_color_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
                            limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
