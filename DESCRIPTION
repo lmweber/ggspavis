@@ -47,6 +47,8 @@ Suggests:
     scater, 
     scran, 
     uwot, 
-    testthat (>= 3.0.0)
+    testthat, 
+    spatialLIBD, 
+    patchwork
 RoxygenNote: 7.2.3
 Config/testthat/edition: 3
