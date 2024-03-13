@@ -12,11 +12,11 @@ plotSpots(
   in_tissue = "in_tissue",
   trans = "identity",
   assay = "counts",
-  legend.position = "right",
+  legend_position = "right",
   annotate = NULL,
   palette = NULL,
   y_reverse = TRUE,
-  pt.size = 0.3,
+  point_size = 0.3,
   show_axis = FALSE,
   text_by = NULL,
   text_by_size = 5,
@@ -35,12 +35,12 @@ y-coordinates. Default = NULL, which selects the second column.}
 
 \item{sample_id}{(character) Name of column in \code{colData} containing
 sample IDs. For datasets with multiple samples, this is used to plot
-multiple panels (one per sample) using facetting. Default = \code{NULL}.}
+multiple panels (one per sample) using facetting. Default = NULL.}
 
 \item{in_tissue}{(character) Name of column in \code{colData} identifying
 spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
 argument is provided, only spots over tissue will be shown. Alternatively,
-set to NULL to display all spots. Default = "in_tissue".}
+set to NULL to display all spots. Default = \code{"in_tissue"}.}
 
 \item{annotate}{(character) Name of column in \code{colData} containing
 values to annotate spots with colors, e.g. cluster labels (discrete values)
@@ -55,17 +55,19 @@ counts), provide a vector of length 2 for the low and high range, e.g.
 \item{y_reverse}{(logical) Whether to reverse y coordinates, which is often
 required for 10x Genomics Visium data. Default = TRUE.}
 
-\item{pt.size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
+\item{point_size}{(numeric) Point size for \code{geom_point()}. Default =
+0.3.}
 
-\item{text_by}{(character) Column name of the annotation to apply on top of 
-each cluster. Usually should put it the same as `annotate = `. unless you have 
-another intended `text_by` column, e.g. with more readable classes or shorter 
-strings. Only used for categorical `annotate = `. Default = \code{NULL}.}
+\item{text_by}{(character) Column name of the annotation to apply on top of
+each cluster. Usually should put it the same as `annotate = `. unless you
+have another intended `text_by` column, e.g. with more readable classes or
+shorter strings. Only used for categorical `annotate = `. Default = NULL.}
 
-\item{text_by_size}{(numerical) Text size hovering over each cluster. Default =
-\code{5}.}
+\item{text_by_size}{(numerical) Text size hovering over each cluster. Default
+= 5.}
 
-\item{text_by_color}{(character) Color string or hex code. Default = \code{"black"}.}
+\item{text_by_color}{(character) Color string or hex code. Default =
+\code{"black"}.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
