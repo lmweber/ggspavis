@@ -38,11 +38,16 @@
 #'   counts), provide a vector of length 2 for the low and high range, e.g.
 #'   \code{c("gray90", "navy")}. Default = \code{"libd_layer_colors"}.
 #' 
-#' @param y_reverse (logical) Whether to reverse y coordinates, which is often
-#'   required for 10x Genomics Visium data. Default = TRUE.
+#' @param trans To do. Default = \code{"identity"}.
+#' 
+#' @param assay To do. Default = \code{"counts"}.
+#' 
+#' @param legend_position To do. Default = \code{"right"}.
 #' 
 #' @param point_size (numeric) Point size for \code{geom_point()}. Default =
 #'   0.3.
+#' 
+#' @param show_axis To do. Default = FALSE.
 #' 
 #' @param text_by (character) Column name of the annotation to apply on top of
 #'   each cluster. Usually should put it the same as `annotate = `. unless you
@@ -54,6 +59,9 @@
 #' 
 #' @param text_by_color (character) Color string or hex code. Default =
 #'   \code{"black"}.
+#' 
+#' @param y_reverse (logical) Whether to reverse y coordinates, which is often
+#'   required for 10x Genomics Visium data. Default = TRUE.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
@@ -78,12 +86,13 @@
 #' 
 plotSpots <- function(spe, x_coord = NULL, y_coord = NULL, 
                       sample_id = NULL, in_tissue = "in_tissue", 
+                      annotate = NULL, palette = NULL, 
                       trans = "identity", assay = "counts", 
-                      legend_position = "right", annotate = NULL, 
-                      palette = NULL, y_reverse = TRUE, 
+                      legend_position = "right", 
                       point_size = 0.3, show_axis = FALSE, 
                       text_by = NULL, text_by_size = 5, 
-                      text_by_color = "black") {
+                      text_by_color = "black", 
+                      y_reverse = TRUE) {
   
   if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
   stopifnot(legend_position %in% c("left", "right", "top", "bottom", "none"))

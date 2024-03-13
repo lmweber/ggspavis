@@ -10,17 +10,17 @@ plotSpots(
   y_coord = NULL,
   sample_id = NULL,
   in_tissue = "in_tissue",
+  annotate = NULL,
+  palette = NULL,
   trans = "identity",
   assay = "counts",
   legend_position = "right",
-  annotate = NULL,
-  palette = NULL,
-  y_reverse = TRUE,
   point_size = 0.3,
   show_axis = FALSE,
   text_by = NULL,
   text_by_size = 5,
-  text_by_color = "black"
+  text_by_color = "black",
+  y_reverse = TRUE
 )
 }
 \arguments{
@@ -52,11 +52,16 @@ vector of color names or hex values. For continuous values (e.g. total UMI
 counts), provide a vector of length 2 for the low and high range, e.g.
 \code{c("gray90", "navy")}. Default = \code{"libd_layer_colors"}.}
 
-\item{y_reverse}{(logical) Whether to reverse y coordinates, which is often
-required for 10x Genomics Visium data. Default = TRUE.}
+\item{trans}{To do. Default = \code{"identity"}.}
+
+\item{assay}{To do. Default = \code{"counts"}.}
+
+\item{legend_position}{To do. Default = \code{"right"}.}
 
 \item{point_size}{(numeric) Point size for \code{geom_point()}. Default =
 0.3.}
+
+\item{show_axis}{To do. Default = FALSE.}
 
 \item{text_by}{(character) Column name of the annotation to apply on top of
 each cluster. Usually should put it the same as `annotate = `. unless you
@@ -68,6 +73,9 @@ shorter strings. Only used for categorical `annotate = `. Default = NULL.}
 
 \item{text_by_color}{(character) Color string or hex code. Default =
 \code{"black"}.}
+
+\item{y_reverse}{(logical) Whether to reverse y coordinates, which is often
+required for 10x Genomics Visium data. Default = TRUE.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
