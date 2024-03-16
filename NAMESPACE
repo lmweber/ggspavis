@@ -2,7 +2,6 @@
 
 export(plotDimRed)
 export(plotFeatureQC)
-export(plotReducedDim)
 export(plotSpotQC)
 export(plotSpots)
 export(plotVisium)
