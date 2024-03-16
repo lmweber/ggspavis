@@ -11,86 +11,97 @@ plotSpots(
   sample_id = NULL,
   in_tissue = "in_tissue",
   annotate = NULL,
-  palette = NULL,
-  trans = "identity",
-  assay = "counts",
-  legend_position = "right",
+  feature_col = "gene_name",
+  assay_name = "counts",
+  pal = NULL,
   point_size = 0.3,
+  legend_position = "right",
+  legend_point_size = 3,
   show_axis = FALSE,
+  y_reverse = TRUE,
   text_by = NULL,
   text_by_size = 5,
-  text_by_color = "black",
-  y_reverse = TRUE
+  text_by_color = "black"
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) Input data, assumed to be a
-\code{SpatialExperiment} or \code{SingleCellExperiment} object.}
+\item{spe}{Input data, assumed to be a \code{SpatialExperiment} or
+\code{SingleCellExperiment} object.}
 
-\item{x_coord}{(character) Name of column in \code{spatialCoords} containing
-x-coordinates. Default = NULL, which selects the first column.}
+\item{x_coord}{Name of column in \code{spatialCoords} (for a
+\code{SpatialExperiment} input object) or \code{colData} (for a
+\code{SingleCellExperiment} input object) containing x coordinates. Default
+= NULL (for a \code{SpatialExperiment}, the first column of
+\code{spatialCoords} will be selected in this case).}
 
-\item{y_coord}{(character) Name of column in \code{spatialCoords} containing
-y-coordinates. Default = NULL, which selects the second column.}
+\item{y_coord}{Name of column in \code{spatialCoords} (for a
+\code{SpatialExperiment} input object) or \code{colData} (for a
+\code{SingleCellExperiment} input object) containing y coordinates. Default
+= NULL (for a \code{SpatialExperiment}, the second column of
+\code{spatialCoords} will be selected in this case).}
 
-\item{sample_id}{(character) Name of column in \code{colData} containing
-sample IDs. For datasets with multiple samples, this is used to plot
-multiple panels (one per sample) using facetting. Default = NULL.}
+\item{sample_id}{Name of column in \code{colData} containing sample IDs. This
+argument is only required for datasets containing multiple samples (tissue
+sections). If provided, samples will be shown in multiple panels using
+facetting. Default = NULL.}
 
-\item{in_tissue}{(character) Name of column in \code{colData} identifying
-spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
-argument is provided, only spots over tissue will be shown. Alternatively,
-set to NULL to display all spots. Default = \code{"in_tissue"}.}
+\item{in_tissue}{Name of column in \code{colData} identifying spots over
+tissue (e.g. "in_tissue" for 10x Genomics Visium datasets). If this
+argument is provided, only spots over tissue will be shown. Default =
+"in_tissue". Set to NULL to display all spots.}
 
-\item{annotate}{(character) Name of column in \code{colData} containing
-values to annotate spots with colors, e.g. cluster labels (discrete values)
-or total UMI counts (continuous values).}
+\item{annotate}{Variable to show as annotations. This may be discrete or
+continuous. For a discrete variable (e.g. cluster labels), this should be
+the name of a column in \code{colData} containing a character vector or
+factor. For a continuous variable (e.g. a gene name), this should be an
+entry in the column 'feature_col' in \code{rowData}. Default = NULL.}
 
-\item{palette}{(character) Color palette for annotation. Options for discrete
-labels (e.g. cluster labels) are "libd_layer_colors", "Okabe-Ito", or a
-vector of color names or hex values. For continuous values (e.g. total UMI
-counts), provide a vector of length 2 for the low and high range, e.g.
-\code{c("gray90", "navy")}. Default = \code{"libd_layer_colors"}.}
+\item{feature_col}{Name of column in \code{rowData} containing names of
+continuous features to plot (e.g. gene names). This argument is required if
+\code{annotate} is a continuous variable. Default = "gene_name".}
 
-\item{trans}{To do. Default = \code{"identity"}.}
+\item{assay_name}{Name of \code{assay} in input object containing values to
+plot for a continuous variable. Default = "counts".}
 
-\item{assay}{To do. Default = \code{"counts"}.}
+\item{pal}{Color palette for annotations. Options for discrete values are
+"libd_layer_colors", "Okabe-Ito", or any vector of color names or hex
+values. For continuous values, provide a vector of length 2 for the low and
+high range, e.g. c("gray90", "navy").}
 
-\item{legend_position}{To do. Default = \code{"right"}.}
+\item{point_size}{Point size. Default = 0.3.}
 
-\item{point_size}{(numeric) Point size for \code{geom_point()}. Default =
-0.3.}
+\item{legend_point_size}{Legend point size for discrete annotations. Default
+= 3.}
 
-\item{show_axis}{To do. Default = FALSE.}
+\item{show_axis}{Whether to show axis titles, text, and ticks. Default =
+FALSE.}
 
-\item{text_by}{(character) Column name of the annotation to apply on top of
-each cluster. Usually should put it the same as `annotate = `. unless you
-have another intended `text_by` column, e.g. with more readable classes or
-shorter strings. Only used for categorical `annotate = `. Default = NULL.}
+\item{y_reverse}{Whether to reverse y coordinates. This is usually required
+for 10x Genomics Visium datasets when using the default coordinate values.
+Default = TRUE. Set to FALSE if not needed, e.g. for other platforms.}
 
-\item{text_by_size}{(numerical) Text size hovering over each cluster. Default
-= 5.}
+\item{text_by}{Column name of annotation labels to display over each cluster
+of points. This will usually be the same as \code{annotate}. Alternatively,
+another column may be used (e.g. with more readable classes or shorter
+strings). Only used for discrete \code{annotate}. Default = NULL.}
 
-\item{text_by_color}{(character) Color string or hex code. Default =
-\code{"black"}.}
+\item{text_by_size}{Text size for annotation labels over each cluster.
+Default = 5.}
 
-\item{y_reverse}{(logical) Whether to reverse y coordinates, which is often
-required for 10x Genomics Visium data. Default = TRUE.}
+\item{text_by_color}{Color name or hex code for annotation labels. Default =
+"black".}
 }
 \value{
-Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, labels, formatting, etc).
+Returns a ggplot object, which may be further modified using ggplot
+  functions.
 }
 \description{
-Plotting functions for spatially resolved transcriptomics data.
+Plotting functions for spatial transcriptomics data.
 }
 \details{
-Function to plot spot-based spatially resolved transcriptomics data stored in
-a \code{SpatialExperiment} object.
-
-This function generates a plot in spatial coordinates (e.g. x-y coordinates
-on a tissue slide), along with annotation such as cluster labels or total UMI
-counts.
+Function to create spot plot showing spatial locations in x-y coordinates
+with optional annotations such as cluster labels, expression of a gene, or
+quality control metrics.
 }
 \examples{
 library(STexampleData)
@@ -99,5 +110,5 @@ plotSpots(spe, annotate = "ground_truth")
 
 }
 \author{
-Lukas M. Weber with modifications by Yixing E. Dong
+Lukas M. Weber and Yixing E. Dong
 }

@@ -16,19 +16,19 @@
 #' 
 #' @param annotate Variable to show as annotations. This may be discrete or
 #'   continuous. For a discrete variable (e.g. cluster labels), this should be
-#'   the name of a column in colData containing a character vector or factor.
-#'   For a continuous variable (e.g. a gene name), this should be an entry in
-#'   the column 'feature_col' in rowData. Default = NULL.
+#'   the name of a column in \code{colData} containing a character vector or
+#'   factor. For a continuous variable (e.g. a gene name), this should be an
+#'   entry in the column 'feature_col' in \code{rowData}. Default = NULL.
 #' 
-#' @param feature_col Name of column in rowData containing names of continuous
-#'   features to plot (e.g. gene names). This argument is required if
+#' @param feature_col Name of column in \code{rowData} containing names of
+#'   continuous features to plot (e.g. gene names). This argument is required if
 #'   \code{annotate} is a continuous variable. Default = "gene_name".
 #' 
 #' @param assay_name Name of \code{assay} in input object containing values to
 #'   plot for a continuous variable. Default = "counts".
 #' 
-#' @param update_dimnames Whether to update column names of reducedDims to
-#'   default values for plotting. Default = TRUE.
+#' @param update_dimnames Whether to update column names of \code{reducedDims}
+#'   to default values for plotting. Default = TRUE.
 #' 
 #' @param pal Color palette for annotations. Options for discrete values are
 #'   "libd_layer_colors", "Okabe-Ito", or any vector of color names or hex
@@ -56,8 +56,8 @@
 #'   functions.
 #' 
 #' 
-#' @importFrom SingleCellExperiment reducedDimNames reducedDim colData rowData
-#' @importFrom SummarizedExperiment assay
+#' @importFrom SingleCellExperiment reducedDimNames reducedDim
+#' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom scales hue_pal
@@ -131,12 +131,13 @@ plotReducedDim <- function(spe, plot_type = c("UMAP", "PCA"),
   # data frame for plotting
   df <- cbind.data.frame(colData(spe), reducedDim(spe, plot_type))
   
-  # continuous values
+  # continuous annotation values
   if (annotate %in% rowData(spe)[, feature_col]) {
     stopifnot(is.character(assay_name))
     ix <- which(rowData(spe)[, feature_col] == annotate)
     df[[annotate]] <- assay(spe, assay_name)[ix, ]
   }
+  # discrete annotation values
   if ((annotate %in% colnames(colData(spe))) && 
       (is.character(colData(spe)[, annotate]))) {
     df[[annotate]] <- as.factor(df[[annotate]])
@@ -199,7 +200,8 @@ plotReducedDim <- function(spe, plot_type = c("UMAP", "PCA"),
     p <- p + 
       scaling + 
       ggtitle(annotate) + 
-      labs(color = NULL)
+      labs(color = NULL) + 
+      theme(plot.title = element_text(hjust = 0.5))
   } else if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
     # discrete values: display legend title but no plot title
     p <- p + 

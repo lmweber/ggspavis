@@ -32,19 +32,19 @@ Default = "UMAP".}
 
 \item{annotate}{Variable to show as annotations. This may be discrete or
 continuous. For a discrete variable (e.g. cluster labels), this should be
-the name of a column in colData containing a character vector or factor.
-For a continuous variable (e.g. a gene name), this should be an entry in
-the column 'feature_col' in rowData. Default = NULL.}
+the name of a column in \code{colData} containing a character vector or
+factor. For a continuous variable (e.g. a gene name), this should be an
+entry in the column 'feature_col' in \code{rowData}. Default = NULL.}
 
-\item{feature_col}{Name of column in rowData containing names of continuous
-features to plot (e.g. gene names). This argument is required if
+\item{feature_col}{Name of column in \code{rowData} containing names of
+continuous features to plot (e.g. gene names). This argument is required if
 \code{annotate} is a continuous variable. Default = "gene_name".}
 
 \item{assay_name}{Name of \code{assay} in input object containing values to
 plot for a continuous variable. Default = "counts".}
 
-\item{update_dimnames}{Whether to update column names of reducedDims to
-default values for plotting. Default = TRUE.}
+\item{update_dimnames}{Whether to update column names of \code{reducedDims}
+to default values for plotting. Default = TRUE.}
 
 \item{point_size}{Point size. Default = 0.3.}
 

@@ -1,83 +1,97 @@
 #' plotSpots
 #' 
-#' Plotting functions for spatially resolved transcriptomics data.
+#' Plotting functions for spatial transcriptomics data.
 #' 
-#' Function to plot spot-based spatially resolved transcriptomics data stored in
-#' a \code{SpatialExperiment} object.
-#' 
-#' This function generates a plot in spatial coordinates (e.g. x-y coordinates
-#' on a tissue slide), along with annotation such as cluster labels or total UMI
-#' counts.
+#' Function to create spot plot showing spatial locations in x-y coordinates
+#' with optional annotations such as cluster labels, expression of a gene, or
+#' quality control metrics.
 #' 
 #' 
-#' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   \code{SpatialExperiment} or \code{SingleCellExperiment} object.
+#' @param spe Input data, assumed to be a \code{SpatialExperiment} or
+#'   \code{SingleCellExperiment} object.
 #' 
-#' @param x_coord (character) Name of column in \code{spatialCoords} containing
-#'   x-coordinates. Default = NULL, which selects the first column.
+#' @param x_coord Name of column in \code{spatialCoords} (for a
+#'   \code{SpatialExperiment} input object) or \code{colData} (for a
+#'   \code{SingleCellExperiment} input object) containing x coordinates. Default
+#'   = NULL (for a \code{SpatialExperiment}, the first column of
+#'   \code{spatialCoords} will be selected in this case).
 #' 
-#' @param y_coord (character) Name of column in \code{spatialCoords} containing
-#'   y-coordinates. Default = NULL, which selects the second column.
+#' @param y_coord Name of column in \code{spatialCoords} (for a
+#'   \code{SpatialExperiment} input object) or \code{colData} (for a
+#'   \code{SingleCellExperiment} input object) containing y coordinates. Default
+#'   = NULL (for a \code{SpatialExperiment}, the second column of
+#'   \code{spatialCoords} will be selected in this case).
 #' 
-#' @param sample_id (character) Name of column in \code{colData} containing
-#'   sample IDs. For datasets with multiple samples, this is used to plot
-#'   multiple panels (one per sample) using facetting. Default = NULL.
+#' @param sample_id Name of column in \code{colData} containing sample IDs. This
+#'   argument is only required for datasets containing multiple samples (tissue
+#'   sections). If provided, samples will be shown in multiple panels using
+#'   facetting. Default = NULL.
 #' 
-#' @param in_tissue (character) Name of column in \code{colData} identifying
-#'   spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
-#'   argument is provided, only spots over tissue will be shown. Alternatively,
-#'   set to NULL to display all spots. Default = \code{"in_tissue"}.
+#' @param in_tissue Name of column in \code{colData} identifying spots over
+#'   tissue (e.g. "in_tissue" for 10x Genomics Visium datasets). If this
+#'   argument is provided, only spots over tissue will be shown. Default =
+#'   "in_tissue". Set to NULL to display all spots.
 #' 
-#' @param annotate (character) Name of column in \code{colData} containing
-#'   values to annotate spots with colors, e.g. cluster labels (discrete values)
-#'   or total UMI counts (continuous values).
+#' @param annotate Variable to show as annotations. This may be discrete or
+#'   continuous. For a discrete variable (e.g. cluster labels), this should be
+#'   the name of a column in \code{colData} containing a character vector or
+#'   factor. For a continuous variable (e.g. a gene name), this should be an
+#'   entry in the column 'feature_col' in \code{rowData}. Default = NULL.
 #' 
-#' @param palette (character) Color palette for annotation. Options for discrete
-#'   labels (e.g. cluster labels) are "libd_layer_colors", "Okabe-Ito", or a
-#'   vector of color names or hex values. For continuous values (e.g. total UMI
-#'   counts), provide a vector of length 2 for the low and high range, e.g.
-#'   \code{c("gray90", "navy")}. Default = \code{"libd_layer_colors"}.
+#' @param feature_col Name of column in \code{rowData} containing names of
+#'   continuous features to plot (e.g. gene names). This argument is required if
+#'   \code{annotate} is a continuous variable. Default = "gene_name".
 #' 
-#' @param trans To do. Default = \code{"identity"}.
+#' @param assay_name Name of \code{assay} in input object containing values to
+#'   plot for a continuous variable. Default = "counts".
 #' 
-#' @param assay To do. Default = \code{"counts"}.
+#' @param pal Color palette for annotations. Options for discrete values are
+#'   "libd_layer_colors", "Okabe-Ito", or any vector of color names or hex
+#'   values. For continuous values, provide a vector of length 2 for the low and
+#'   high range, e.g. c("gray90", "navy").
 #' 
-#' @param legend_position To do. Default = \code{"right"}.
+#' @param point_size Point size. Default = 0.3.
 #' 
-#' @param point_size (numeric) Point size for \code{geom_point()}. Default =
-#'   0.3.
+#' @param legend_point_size Legend point size for discrete annotations. Default
+#'   = 3.
 #' 
-#' @param show_axis To do. Default = FALSE.
+#' @param show_axis Whether to show axis titles, text, and ticks. Default =
+#'   FALSE.
 #' 
-#' @param text_by (character) Column name of the annotation to apply on top of
-#'   each cluster. Usually should put it the same as `annotate = `. unless you
-#'   have another intended `text_by` column, e.g. with more readable classes or
-#'   shorter strings. Only used for categorical `annotate = `. Default = NULL.
+#' @param y_reverse Whether to reverse y coordinates. This is usually required
+#'   for 10x Genomics Visium datasets when using the default coordinate values.
+#'   Default = TRUE. Set to FALSE if not needed, e.g. for other platforms.
 #' 
-#' @param text_by_size (numerical) Text size hovering over each cluster. Default
-#'   = 5.
+#' @param text_by Column name of annotation labels to display over each cluster
+#'   of points. This will usually be the same as \code{annotate}. Alternatively,
+#'   another column may be used (e.g. with more readable classes or shorter
+#'   strings). Only used for discrete \code{annotate}. Default = NULL.
 #' 
-#' @param text_by_color (character) Color string or hex code. Default =
-#'   \code{"black"}.
+#' @param text_by_size Text size for annotation labels over each cluster.
+#'   Default = 5.
 #' 
-#' @param y_reverse (logical) Whether to reverse y coordinates, which is often
-#'   required for 10x Genomics Visium data. Default = TRUE.
-#' 
-#' 
-#' @return Returns a ggplot object. Additional plot elements can be added as
-#'   ggplot elements (e.g. title, labels, formatting, etc).
+#' @param text_by_color Color name or hex code for annotation labels. Default =
+#'   "black".
 #' 
 #' 
+#' @return Returns a ggplot object, which may be further modified using ggplot
+#'   functions.
+#' 
+#' 
+#' @importFrom SingleCellExperiment reducedDimNames reducedDim
+#' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom SpatialExperiment spatialCoords
-#' @importFrom SummarizedExperiment colData
+#' @importFrom grDevices colorRampPalette
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom scales hue_pal
 #' @importFrom ggrepel geom_text_repel
-#' @importFrom ggplot2 ggplot aes_string facet_wrap geom_point coord_fixed
-#'   ggtitle theme_bw theme element_blank scale_y_reverse scale_color_manual
-#'   scale_color_gradient
+#' @importFrom ggplot2 ggplot aes_string geom_point facet_wrap coord_fixed
+#'   theme_bw theme element_blank scale_color_viridis_c scale_color_gradientn
+#'   scale_color_gradient scale_color_manual ggtitle labs guides scale_y_reverse
 #' 
 #' @export
 #' 
-#' @author Lukas M. Weber with modifications by Yixing E. Dong
+#' @author Lukas M. Weber and Yixing E. Dong
 #' 
 #' @examples
 #' library(STexampleData)
@@ -86,141 +100,166 @@
 #' 
 plotSpots <- function(spe, x_coord = NULL, y_coord = NULL, 
                       sample_id = NULL, in_tissue = "in_tissue", 
-                      annotate = NULL, palette = NULL, 
-                      trans = "identity", assay = "counts", 
+                      annotate = NULL, feature_col = "gene_name", 
+                      assay_name = "counts", 
+                      pal = NULL, point_size = 0.3, 
                       legend_position = "right", 
-                      point_size = 0.3, show_axis = FALSE, 
+                      legend_point_size = 3, 
+                      show_axis = FALSE, y_reverse = TRUE, 
                       text_by = NULL, text_by_size = 5, 
-                      text_by_color = "black", 
-                      y_reverse = TRUE) {
+                      text_by_color = "black") {
   
-  if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
-  stopifnot(legend_position %in% c("left", "right", "top", "bottom", "none"))
+  # check validity of arguments
+  if (!is.null(in_tissue)) {
+    stopifnot(is.character(in_tissue))
+  }
+  
   stopifnot(is.character(annotate))
+  if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
+    stop("'annotate' should be the name of a column in colData or an entry in ", 
+         "the column 'feature_col' in rowData")
+  }
   
-  if (!is.null(sample_id)){
+  stopifnot(legend_position %in% c("left", "right", "top", "bottom", "none"))
+  
+  if (!is.null(sample_id)) {
     stopifnot(sample_id %in% colnames(colData(spe)))
     n_samples <- length(table(colData(spe)[, sample_id]))
   } else {
     n_samples <- NULL
   }
   
-  if(class(spe) == "SingleCellExperiment") {
-    if (is.null(x_coord)) {
-      stop("Please specify x_coord name in the SCE colData")
-      }
-    if (is.null(y_coord)) {
-      stop("Please specify y_coord name in the SCE colData")
+  # set up data frame for plotting
+  if (class(spe) == "SpatialExperiment") {
+    # select default columns of x and y coordinates
+    if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
+    if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
+    df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  } else if (class(spe) == "SingleCellExperiment") {
+    if (is.null(x_coord) || is.null(y_coord)) {
+      stop("Please provide 'x_coord' and 'y_coord' arguments to specify ", 
+           "columns in colData containing x and y coordinates.")
     }
-    plt_df <- cbind.data.frame(colData(spe))
-  } else if (class(spe) == "SpatialExperiment") {
-    if (is.null(x_coord)) {
-      x_coord <- colnames(spatialCoords(spe))[1]
-    }
-    if (is.null(y_coord)) {
-      y_coord <- colnames(spatialCoords(spe))[2]
-    }
-    plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+    df <- as.data.frame(colData(spe))
   }
   
-  if (is.character(plt_df[[annotate]])) {
-    plt_df[[annotate]] <- as.factor(plt_df[[annotate]])
+  # continuous annotation values
+  if (annotate %in% rowData(spe)[, feature_col]) {
+    stopifnot(is.character(assay_name))
+    ix <- which(rowData(spe)[, feature_col] == annotate)
+    df[[annotate]] <- assay(spe, assay_name)[ix, ]
   }
-  
-  if (!annotate %in% c(names(plt_df), rownames(spe))) {
-    stop("'annotate' should be in rownames(spe) or names(colData(spe))")
-  }
-  # (optionally) add feature assay data to 'plt_df'
-  if (annotate %in% rownames(spe)) {
-    stopifnot(is.character(assay))
-    plt_df[[annotate]] <- assay(spe, assay)[annotate, ]
+  # discrete annotation values
+  if ((annotate %in% colnames(colData(spe))) && 
+      (is.character(colData(spe)[, annotate]))) {
+    df[[annotate]] <- as.factor(df[[annotate]])
   }
   
   if (!is.null(in_tissue)) {
-    plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
+    df <- df[df[, in_tissue] == 1, ]
   }
   
-  if (is.numeric(plt_df[[annotate]]) & is.null(palette)) {
-    palette <- "seuratlike" # for continuous feature, turn length(palette) = 0 to length(palette) = 1
+  # color palettes
+  if (is.numeric(df[[annotate]]) && is.null(palette)) {
+    # for continuous values, change NULL to arbitrary color so length(pal) == 1
+    pal <- "blue"
   }
-  # accepts "libd_layer_colors" and "Okabe-Ito"
-  palette <- .get_pal(palette)
+  # accepts "libd_layer_colors" and "Okabe-Ito", or arbitrary color palette for NULL
+  pal <- .get_pal(pal)
   
-  p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
+  
+  # main plot
+  
+  p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
     geom_point(size = point_size) + 
     coord_fixed() + 
-    theme_bw()
+    theme_bw() + 
+    theme(legend.position = legend_position, 
+          panel.grid = element_blank())
   
-  if (show_axis == TRUE) {
-    p <- p + theme(plot.title = element_text(hjust = 0.5), 
-                   legend.position = legend_position)
-  } else {
-    p <- p + theme(panel.border = element_blank(), 
-                   panel.grid = element_blank(), 
-                   axis.title = element_blank(), 
+  if (!is.null(n_samples) && n_samples > 1) {
+    p <- p + facet_wrap(~ sample_id)
+  }
+  
+  
+  # additional plot formatting
+  
+  if (show_axis == FALSE) {
+    p <- p + theme(axis.title = element_blank(), 
                    axis.text = element_blank(), 
-                   axis.ticks = element_blank(), 
-                   plot.title = element_text(hjust = 0.5), 
-                   legend.position = legend_position)
+                   axis.ticks = element_blank())
   }
   
-  if (!is.null(n_samples)) {
-    if(n_samples > 1) {
-      p <- p + facet_wrap(~ sample_id)
-    }
-  }
-  
-  scale <- if (is.numeric(plt_df[[annotate]])) {
-    if (length(palette) == 1 && 
-        palette %in% c("viridis", "magma", "inferno", "plasma", 
-                       "cividis", "rocket", "mako", "turbo")) {
-      scale_color_viridis_c(trans = trans, option = palette)
-    } else if (length(palette) == 1 && palette == "seuratlike") {
+  # color scale
+  scaling <- if (is.numeric(df[[annotate]])) {
+    # continuous values
+    if (length(pal) == 1 && 
+        palette %in% c("viridis", "magma", "inferno", "plasma", "cividis", 
+                       "rocket", "mako", "turbo")) {
+      scale_color_viridis_c(option = pal)
+    } else if (length(pal) == 1 && palette == "seuratlike") {
+      colors <- colorRampPalette(
+        colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100)
       scale_color_gradientn(
-        colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100), 
-        trans = trans, 
-        limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
+        colors = colorRampPalette(colors = colors), 
+        limits = range(df[[annotate]]))
     } else {
-      scale_color_gradient(low = palette[1], high = palette[2], trans = trans)
+      scale_color_gradient(low = pal[1], high = pal[2])
     }
-  } else if (is.factor(plt_df[[annotate]])) {
-    if(is.null(palette)) { # for categorical feature, automate palette
-      scale_color_manual(
-        name = annotate, 
-        values = scales::hue_pal()(length(unique(plt_df[[annotate]]))))
-    } else if (!is.null(palette)) {
-      scale_color_manual(values = palette)
+  } else if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
+    # discrete values
+    if (is.null(pal)) {
+      scale_color_manual(name = annotate, 
+                         values = hue_pal()(length(unique(df[[annotate]]))))
+    } else if (!is.null(pal)) {
+      scale_color_manual(values = pal)
     }
   }
   
-  if (is.numeric(plt_df[[annotate]])) { # continuous display plot title but no legend title
-    p <- p + scale + ggtitle(annotate) + labs(color = NULL)
-  } else if (is.factor(plt_df[[annotate]])) { # categorical disply legend title but no plot title
-    p <- p + scale + 
-      guides(colour = guide_legend(override.aes = list(size = 3)))
+  # plot title
+  if (is.numeric(df[[annotate]])) {
+    # continuous values: display plot title but no legend title
+    p <- p + 
+      scaling + 
+      ggtitle(annotate) + 
+      labs(color = NULL) + 
+      theme(plot.title = element_text(hjust = 0.5))
+  } else if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
+    # discrete values: display legend title but no plot title
+    p <- p + 
+      scaling + 
+      guides(color = guide_legend(override.aes = list(size = legend_point_size)))
   }
   
-  if (is.factor(plt_df[[annotate]])) {
-    # Adding text with the median locations of the 'text_by' vector.
+  # text annotations
+  if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
+    # add text with the median locations of the 'text_by' vector
     if (!is.null(text_by)) {
       by_text_x <- vapply(
-        split(plt_df[[x_coord]], plt_df[[text_by]]), 
+        split(df[[x_label]], df[[text_by]]), 
         median, 
-        FUN.VALUE = 0)
+        FUN.VALUE = 0
+      )
       by_text_y <- vapply(
-        split(plt_df[[y_coord]], plt_df[[text_by]]), 
+        split(df[[y_label]], df[[text_by]]), 
         median, 
-        FUN.VALUE = 0)
+        FUN.VALUE = 0
+      )
       p <- p + 
-        ggrepel::geom_text_repel(
+        geom_text_repel(
           data = data.frame(
-            x = by_text_x, y = by_text_y, label = names(by_text_x)
+            x = by_text_x, 
+            y = by_text_y, 
+            label = names(by_text_x)
           ), 
           mapping = aes(x = .data$x, y = .data$y, label = .data$label), 
-          size = text_by_size, colour = text_by_color)
+          size = text_by_size, 
+          color = text_by_color
+        )
     }
   }
   
+  # reverse y axis
   if (y_reverse) {
     p <- p + scale_y_reverse()
   }
