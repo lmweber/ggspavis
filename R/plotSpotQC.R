@@ -112,7 +112,7 @@
 #' 
 #' plotSpotQC(spe, plot_type = "histogram", x_metric = "sum", annotate = "low_libsize")
 #' plotSpotQC(spe, plot_type = "scatter", x_metric = "sum", y_metric = "cell_count")
-#' plotSpotQC(spe, plot_type = "spot", annotate = "low_libsize")
+#' plotSpotQC(spe, plot_type = "spot", annotate = "low_libsize", in_tissue = "in_tissue")
 #' plotSpotQC(spe, plot_type = "violin", x_metric = "sum", annotate = "low_libsize")
 #' 
 plotSpotQC <- function(spe, 
