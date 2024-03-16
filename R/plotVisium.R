@@ -11,7 +11,7 @@
 #' options available to adjust the plot type and style.
 #' 
 #' 
-#' @param spe (SpatialExperiment or SingleCellExperiment) Input data object.
+#' @param spe (SpatialExperiment) Input data object.
 #' 
 #' @param spots (logical) Whether to display spots (spatial barcodes) as points.
 #'   Default = TRUE.
@@ -60,7 +60,7 @@
 #'   required for Visium data, depending on the orientation of the raw data.
 #'   Default = TRUE.
 #' 
-#' @param palette (character) Color palette for points. Options for discrete
+#' @param pal (character) Color palette for points. Options for discrete
 #'   labels are "libd_layer_colors", "Okabe-Ito", or a custom vector of hex
 #'   color codes. Options for continuous values are "viridis", a single color
 #'   name (e.g. "red", "navy", etc), or a vector of length two containing color
@@ -118,7 +118,7 @@ plotVisium <- function(spe,
                        facets = "sample_id", image = TRUE, zoom = FALSE, show_axes = FALSE,
                        assay = "counts", trans = "identity", point_size = 1, legend_position = "right",
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
-                       sample_ids = NULL, image_ids = NULL, palette = NULL) {
+                       sample_ids = NULL, image_ids = NULL, pal = NULL) {
   
   # check validity of input arguments
   stopifnot(
@@ -148,12 +148,12 @@ plotVisium <- function(spe,
         length(grep(assay, assayNames(spe))) == 1)
       plt_df[[annotate]] <- assay(spe, assay)[annotate, ]
     }
-    if (is.numeric(plt_df[[annotate]]) & is.null(palette)) {
-      # for continuous feature, ensure length(palette) == 1 (instead of 0 if NULL)
-      palette <- "seuratlike"
+    if (is.numeric(plt_df[[annotate]]) & is.null(pal)) {
+      # for continuous feature, ensure length(pal) == 1 (instead of 0 if NULL)
+      pal <- "seuratlike"
     }
     # get color palette
-    palette <- .get_pal(palette, plt_df[[annotate]])
+    pal <- .get_pal(pal, plt_df[[annotate]])
   } else {
     annotate <- "foo"
     plt_df[[annotate]] <- "black"
@@ -242,27 +242,27 @@ plotVisium <- function(spe,
   # color scale
   scale <- if(annotate != "foo") {
     if (is.numeric(plt_df[[annotate]])) {
-      if (length(palette) == 1 && 
-          palette %in% c("viridis", "magma", "inferno", "plasma", 
-                         "cividis", "rocket", "mako", "turbo")) {
-        scale_fill_viridis_c(trans = trans, option = palette)
-      } else if (length(palette) == 1 && palette == "seuratlike") {
+      if (length(pal) == 1 && 
+          pal %in% c("viridis", "magma", "inferno", "plasma", 
+                     "cividis", "rocket", "mako", "turbo")) {
+        scale_fill_viridis_c(trans = trans, option = pal)
+      } else if (length(pal) == 1 && pal == "seuratlike") {
         scale_fill_gradientn(
           colors = colorRampPalette(
             colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100), 
           trans = trans, 
           limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
       } else {
-        scale_fill_gradient(low = palette[1], high = palette[2], trans = trans)
+        scale_fill_gradient(low = pal[1], high = pal[2], trans = trans)
       }
     } else if (is.factor(plt_df[[annotate]])) {
       # for categorical feature, automate palette
-      if (is.null(palette)) {
+      if (is.null(pal)) {
         scale_fill_manual(
           name = annotate, 
           values = hue_pal()(length(unique(plt_df[[annotate]]))))
-      } else if (!is.null(palette)) {
-        scale_fill_manual(values = palette)
+      } else if (!is.null(pal)) {
+        scale_fill_manual(values = pal)
       }
     }
   } else {

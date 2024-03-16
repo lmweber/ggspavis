@@ -144,7 +144,7 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   }
   
   # color palettes
-  if (is.numeric(df[[annotate]]) && is.null(palette)) {
+  if (is.numeric(df[[annotate]]) && is.null(pal)) {
     # for continuous values, change NULL to arbitrary color so length(pal) == 1
     pal <- "blue"
   }
@@ -172,10 +172,10 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   scaling <- if (is.numeric(df[[annotate]])) {
     # continuous values
     if (length(pal) == 1 && 
-        palette %in% c("viridis", "magma", "inferno", "plasma", "cividis", 
-                       "rocket", "mako", "turbo")) {
+        pal %in% c("viridis", "magma", "inferno", "plasma", "cividis", 
+                   "rocket", "mako", "turbo")) {
       scale_color_viridis_c(option = pal)
-    } else if (length(pal) == 1 && palette == "seuratlike") {
+    } else if (length(pal) == 1 && pal == "seuratlike") {
       colors <- colorRampPalette(
         colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100)
       scale_color_gradientn(

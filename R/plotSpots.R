@@ -58,7 +58,7 @@
 #' @param legend_point_size Legend point size for discrete annotations. Default
 #'   = 3.
 #' 
-#' @param show_axis Whether to show axis titles, text, and ticks. Default =
+#' @param show_axes Whether to show axis titles, text, and ticks. Default =
 #'   FALSE.
 #' 
 #' @param y_reverse Whether to reverse y coordinates. This is usually required
@@ -98,8 +98,14 @@
 #' 
 #' @examples
 #' library(STexampleData)
+#' 
+#' # discrete annotations
 #' spe <- Visium_humanDLPFC()
 #' plotSpots(spe, annotate = "ground_truth")
+#' 
+#' # continuous annotations
+#' spe <- Visium_mouseCoronal()
+#' plotSpots(spe, annotate = "Gapdh")
 #' 
 plotSpots <- function(spe, x_coord = NULL, y_coord = NULL, 
                       sample_id = NULL, in_tissue = "in_tissue", 
@@ -108,7 +114,7 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
                       pal = NULL, point_size = 0.3, 
                       legend_position = "right", 
                       legend_point_size = 3, 
-                      show_axis = FALSE, y_reverse = TRUE, 
+                      show_axes = FALSE, y_reverse = TRUE, 
                       text_by = NULL, text_by_size = 5, 
                       text_by_color = "black") {
   
@@ -163,7 +169,7 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
   }
   
   # color palettes
-  if (is.numeric(df[[annotate]]) && is.null(palette)) {
+  if (is.numeric(df[[annotate]]) && is.null(pal)) {
     # for continuous values, change NULL to arbitrary color so length(pal) == 1
     pal <- "blue"
   }
@@ -187,7 +193,7 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
   
   # additional plot formatting
   
-  if (show_axis == FALSE) {
+  if (show_axes == FALSE) {
     p <- p + theme(axis.title = element_blank(), 
                    axis.text = element_blank(), 
                    axis.ticks = element_blank())
@@ -197,10 +203,10 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
   scaling <- if (is.numeric(df[[annotate]])) {
     # continuous values
     if (length(pal) == 1 && 
-        palette %in% c("viridis", "magma", "inferno", "plasma", "cividis", 
-                       "rocket", "mako", "turbo")) {
+        pal %in% c("viridis", "magma", "inferno", "plasma", "cividis", 
+                   "rocket", "mako", "turbo")) {
       scale_color_viridis_c(option = pal)
-    } else if (length(pal) == 1 && palette == "seuratlike") {
+    } else if (length(pal) == 1 && pal == "seuratlike") {
       colors <- colorRampPalette(
         colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100)
       scale_color_gradientn(
