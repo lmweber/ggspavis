@@ -9,7 +9,7 @@
 #' (see \code{\link{plotFeatureQC}} for feature-level QC):
 #' 
 #' \itemize{
-#' \item Histogram (\code{plot_type "histogram"}) for a single QC metric, e.g.
+#' \item Histogram (\code{plot_type = "histogram"}) for a single QC metric, e.g.
 #' number of UMI counts per spot. For number of counts per spot, the histogram
 #' can optionally highlight selected spots, e.g. spots with low library size.
 #' \item Scatter plot (\code{plot_type = "scatter"}) comparing two QC metrics,
@@ -107,8 +107,8 @@
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
 #' 
-#' spe$sum <- colSums(counts(spe))
-#' spe$low_libsize <- spe$sum < 400
+#' colData(spe)$sum <- colSums(counts(spe))
+#' colData(spe)$low_libsize <- colData(spe)$sum < 400
 #' 
 #' plotSpotQC(spe, plot_type = "histogram", x_metric = "sum", annotate = "low_libsize")
 #' plotSpotQC(spe, plot_type = "scatter", x_metric = "sum", y_metric = "cell_count")
@@ -157,8 +157,8 @@ plotSpotQC <- function(spe,
   # for histogram, spot, or violin plots
   if (!is.null(annotate)) {
     if (!is.logical(df[[annotate]])) {
-      stop("For QC plots, 'annotate' should be a logical vector, and 'x_metric' ", 
-           "and/or 'y_metric' should be vectors of continuous values.")
+      stop("'annotate' should be a logical vector, and 'x_metric' and/or ", 
+           "'y_metric' should be vectors of continuous values.")
     }
   }
   
@@ -262,7 +262,6 @@ plotSpotQC <- function(spe,
     p <- ggplot(df, aes_string(x = "dummy", y = x_metric, fill = "dummy")) + 
       geom_violin(trim = TRUE, alpha = 0.9) + 
       scale_fill_manual(values = c("gray70")) + 
-      xlab("Sample") + 
       ylab(x_metric) + 
       theme_bw() + 
       theme(legend.position="none", 

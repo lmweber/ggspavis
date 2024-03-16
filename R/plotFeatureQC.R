@@ -1,129 +1,150 @@
 #' plotFeatureQC
 #' 
-#' Quality control (QC) plots for spatially resolved transcriptomics data.
+#' Plotting functions for spatial transcriptomics data.
 #' 
-#' Function to generate plots for quality control (QC) purposes for spatially
-#' resolved transcriptomics data.
+#' Function to create quality control (QC) plots for spatial transcriptomics
+#' data.
 #' 
-#' The following types of QC plots are available for per feature QC:
+#' The following types of QC plots are available for feature-level QC (see
+#' \code{\link{plotSpotQC}} for spot-level or cell-level QC):
 #' 
-#' - Histogram (\code{type} = "hist") for a single QC metric, e.g. number of counts
-#' per feature. For number of counts per spot, the histogram highlights spots with
-#' derived flags, e.g. low abundance genes.
-#' - Violin (\code{type} = "violin") for a single QC metric, e.g. number of counts
-#' per feature. For number of counts per spot, the violin plot is able to highlights 
-#' spots with derived flags, e.g. low abundance genes.
-#' 
-#' 
-#' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   \code{SpatialExperiment} or \code{SingleCellExperiment} object.
-#' 
-#' @param type (character) Type of QC plot. Options are "hist", "scatter", and
-#'   "spots". See details in description.
-#' 
-#' @param metric_x (character) Name of column in \code{colData} containing QC
-#'   metric to plot on x-axis (e.g. "sum" for number of cells per spot).
-#'   Default = "sum". Required for histogram, scatter, and violin plots.
-#' 
-#' @param annotate (logical) Name of column in \code{colData} identifying
-#'   flagged spots that do not meet filtering thresholds, which will be
-#'   highlighted on a histogram, spot-based, or violin plot. Default = NULL. 
-#'   Not needed for scatter plot.
-#'   
-#' @param nbins (numeric) Adjusting the histogram bin width. Optional for
-#'   spot-based and scatter and violin plots.
-#'   
-#' @param pt.size (numeric) Adjusting the scatter, spot-based, violin jitter point size. 
-#'   Optional for histogram. Suggested point size for scatter = 0.5, for spot-based
-#'   = 0.3, and for violin jitter = 0.1.
+#' \itemize{
+#' \item Histogram (\code{plot_type = "histogram"}) for a single QC metric, e.g.
+#' total UMI counts across all spots per feature. The histogram can optionally
+#' highlight selected features, e.g. low abundance features.
+#' \item Violin (\code{plot_type = "violin"}) for a single QC metric, e.g. total
+#' UMI counts across all spots per feature. The violin plot can optionally
+#' highlight selected features, e.g. low abundance features.
+#' }
 #' 
 #' 
-#' @return Returns a ggplot object. Additional plot elements can be added as
-#'   ggplot elements (e.g. title, labels, formatting, etc).
+#' @param spe Input data, assumed to be a \code{SpatialExperiment} or
+#'   \code{SingleCellExperiment} object.
+#' 
+#' @param plot_type Type of QC plot. Options are "histogram" and "violin". See
+#'   Details for additional details.
+#' 
+#' @param x_metric Name of column in \code{rowData} containing feature-level QC
+#'   metric to plot on x-axis. Required for histograms and violin plots.
+#' 
+#' @param annotate Name of column in \code{rowData} identifying selected
+#'   features that do not meet QC filtering thresholds, which will be
+#'   highlighted on a histogram or violin plot. Default = NULL. Optional
+#'   argument used for histograms and violin plots.
+#' 
+#' @param n_bins Number of bins for histograms. Default = 100. Optional argument
+#'   used for histograms.
+#' 
+#' @param point_size Point size. Default = 0.1. Optional argument for violin
+#'   plots.
+#' 
+#' @param scale_log1p Whether to log1p-scale axes. Default = TRUE.
 #' 
 #' 
-#' @importFrom SpatialExperiment spatialCoords
-#' @importFrom SummarizedExperiment colData
-#' @importFrom ggplot2 ggplot aes_string geom_histogram geom_point geom_smooth 
-#'   geom_hline geom_vline coord_fixed labs ggtitle theme_bw theme element_blank 
-#'   scale_y_reverse scale_fill_manual scale_color_manual
+#' @return Returns a ggplot object, which may be further modified using ggplot
+#'   functions.
+#' 
+#' 
+#' @importFrom SummarizedExperiment rowData
+#' @importFrom ggplot2 ggplot aes_string geom_histogram geom_violin geom_jitter
+#'   scale_fill_manual scale_color_manual xlab labs theme_bw theme element_blank
+#' 
 #' 
 #' @export
 #' 
-#' @author Yixing E. Dong
+#' @author Yixing E. Dong and Lukas M. Weber
 #' 
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
-#' plotFeatureQC(spe, type = "hist", metric_x = "cell_count", annotate = "low_abun_gene")
-#' plotFeatureQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
-
-plotFeatureQC <- function(spe, type = c("hist", "violin"), 
-                          metric_x = "sum", annotate = NULL, 
-                          nbins = 100, pt.size = 0.1,
-                          marginal = TRUE, y_reverse = TRUE) {
+#' 
+#' rowData(spe)$feature_sum <- rowSums(counts(spe))
+#' rowData(spe)$low_abundance <- rowData(spe)$feature_sum < 100
+#' 
+#' plotFeatureQC(spe, plot_type = "histogram", 
+#'               x_metric = "feature_sum", annotate = "low_abundance")
+#' plotFeatureQC(spe, plot_type = "violin", 
+#'               x_metric = "feature_sum", annotate = "low_abundance")
+#' 
+plotFeatureQC <- function(spe, plot_type = c("histogram", "violin"), 
+                          x_metric = NULL, annotate = NULL, 
+                          n_bins = 100, point_size = 0.1, 
+                          scale_log1p = TRUE) {
   
-  type <- match.arg(type)
+  # check validity of arguments
+  plot_type <- match.arg(plot_type)
   
-  plt_df <- data.frame(rowData(spe))
+  df <- data.frame(rowData(spe))
   
-  ## For hist, spot, violin plot
-  if (!is.null(annotate)){
-    if (!is.logical(plt_df[[annotate]])) {
-      stop("For QC, please make sure `annotate` is a binary flag. `metric_x` should be continuous.")
+  # for histogram or violin plots
+  if (!is.null(annotate)) {
+    stopifnot(is.character(annotate))
+    if (!is.logical(df[[annotate]])) {
+      stop("'annotate' should be a vector of logical values in rowData")
     }
   }
   
   
-  if (type == "hist") { # must have metric_x (cont), optional annotate (logical)
-    stopifnot(is.numeric(nbins))
+  # histogram: requires 'x_metric' (continuous), optionally 'annotate' (logical)
+  
+  if (plot_type == "histogram") {
     
-    if (!is.null(annotate)){ # Histogram of metric_x (cont) , colored by annotate (logical)
-      p <- ggplot(plt_df, aes_string(x = metric_x, fill = annotate)) +
-        geom_histogram(color = "#e9ecef", alpha = 0.6, position = 'identity', bins = nbins) +
-        scale_fill_manual(values = c("gray70", "red")) +
-        labs(fill = annotate) + xlab(metric_x)
-    }else if(is.null(annotate)){ # Just gray histogram of metric_x (cont) 
-      p <- ggplot(plt_df, aes_string(x = metric_x)) +
-        geom_histogram(color = "#e9ecef", alpha = 0.6, position = 'identity', bins = nbins) +
-        scale_fill_manual(values = c("gray70")) +
-        xlab(metric_x)
+    stopifnot(is.numeric(n_bins))
+    
+    # histogram showing 'x_metric', optionally colored by 'annotate'
+    if (!is.null(annotate)) {
+      p <- ggplot(df, aes_string(x = x_metric, fill = annotate)) + 
+        geom_histogram(bins = n_bins, color = "#e9ecef", alpha = 0.6, 
+                       position = "identity") + 
+        scale_fill_manual(values = c("gray70", "red")) + 
+        xlab(x_metric) + 
+        labs(fill = annotate)
+    } else if (is.null(annotate)) {
+      p <- ggplot(df, aes_string(x = x_metric)) + 
+        geom_histogram(bins = n_bins, color = "#e9ecef", alpha = 0.6, 
+                       position = "identity") + 
+        scale_fill_manual(values = c("gray70")) + 
+        xlab(x_metric)
     }
     
-    p <- p +
-      theme_bw() +
-      theme(plot.title = element_text(hjust = 0.5, face = "plain", size = 12)) + 
-      ggtitle("QC metrics")
+    if (scale_log1p) {
+      p <- p + scale_x_continuous(transform = "log1p")
+    }
+    
+    p <- p + theme_bw()
   }
   
   
-  if (type == "violin") { # must have metric_x (cont), optional annotate (logical)
+  # violin: requires 'x_metric' (continuous), optionally 'annotate' (logical)
+  
+  if (plot_type == "violin") {
     
-    plt_df$dummy <- rep(" ", nrow(plt_df))
+    df[["dummy"]] <- rep(" ", nrow(df))
     
-    p <- ggplot(plt_df, aes_string(x="dummy", y=metric_x, fill="dummy")) +
-      geom_violin(trim=TRUE, alpha = 0.9) + 
-      scale_fill_manual(values = c("gray70")) +
+    p <- ggplot(df, aes_string(x = "dummy", y = x_metric, fill = "dummy")) + 
+      geom_violin(trim = TRUE, alpha = 0.9) + 
+      scale_fill_manual(values = c("gray70")) + 
+      ylab(x_metric) + 
       theme_bw() + 
-      xlab("Sample") + ylab("") + ggtitle(metric_x) + 
       theme(legend.position="none", 
-            panel.grid = element_blank(), 
-            panel.border = element_blank(),
-            plot.title = element_text(hjust = 0.5),
-            axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
-            axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black")
-      ) 
+            panel.grid = element_blank())
     
-    if(is.null(annotate)){
-      p <- p + geom_jitter(size = pt.size) # just violin for metric_x (cont)
-    }else if(!is.null(annotate)){
-      p <- p + geom_jitter(aes_string(color = annotate), size = pt.size) + # violin for metric_x (cont), colored by annotate (logical)
-        scale_color_manual(values = c("black", "red")) # Note: in order of FALSE, TRUE
+    if (is.null(annotate)) {
+      # violins for 'x_metric'
+      p <- p + 
+        geom_jitter(size = point_size)
+    } else if (!is.null(annotate)) {
+      # violins for 'x_metric', colored by 'annotate' (colors in order FALSE, TRUE)
+      p <- p + 
+        geom_jitter(aes_string(color = annotate), size = point_size) + 
+        scale_color_manual(values = c("black", "red"))
     }
     
-    
+    if (scale_log1p) {
+      p <- p + scale_y_continuous(transform = "log1p")
+    }
   }
   
+  # return plot
   p
 }
-
