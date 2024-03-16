@@ -73,8 +73,8 @@ plotMolecules <- function(spe,
   df <- cbind.data.frame(spatialCoords(spe), sum = mRNA_counts)
   
   p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = "sum")) + 
-    geom_point(size = size) + 
-    scale_color_gradient(low = palette[1], high = palette[2], trans = "sqrt") + 
+    geom_point(size = point_size) + 
+    scale_color_gradient(low = pal[1], high = pal[2], trans = "sqrt") + 
     coord_fixed() + 
     ggtitle(molecule) + 
     theme_void()
