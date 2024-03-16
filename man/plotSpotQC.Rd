@@ -87,6 +87,8 @@ plots, 0.3 for spot plots, 0.1 for violin plots.}
 for 10x Genomics Visium datasets when using the default coordinate values.
 Default = TRUE. Set to FALSE if not needed, e.g. for other platforms.
 Optional argument used for spot plots.}
+
+\item{...}{Not used.}
 }
 \value{
 Returns a ggplot object, which may be further modified using ggplot

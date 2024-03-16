@@ -141,12 +141,12 @@ plotSpotQC <- function(spe,
   }
   
   # set up data frame for plotting
-  if (class(spe) == "SpatialExperiment") {
+  if (is(spe, "SpatialExperiment")) {
     # select default columns of x and y coordinates
     if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
     if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
     df <- cbind.data.frame(colData(spe), spatialCoords(spe))
-  } else if (class(spe) == "SingleCellExperiment") {
+  } else if (is(spe, "SingleCellExperiment")) {
     if (is.null(x_coord) || is.null(y_coord)) {
       stop("Please provide 'x_coord' and 'y_coord' arguments to specify ", 
            "columns in colData containing x and y coordinates.")
@@ -285,6 +285,7 @@ plotSpotQC <- function(spe,
 
 
 #' @rdname plotSpotQC
+#' @param ... Not used.
 #' @export
 plotQC <- function(...) {
   # message when using deprecated function name
