@@ -65,7 +65,7 @@ library(STexampleData)
 spe <- Visium_humanDLPFC()
 
 rowData(spe)$feature_sum <- rowSums(counts(spe))
-rowData(spe)$low_abundance <- rowData(spe)$feature_sum < 100
+rowData(spe)$low_abundance <- rowSums(counts(spe) > 0) < 20
 
 plotFeatureQC(spe, plot_type = "histogram", 
               x_metric = "feature_sum", annotate = "low_abundance")
