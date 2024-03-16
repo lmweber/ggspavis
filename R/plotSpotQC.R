@@ -107,10 +107,10 @@
 #' spe$sum <- colSums(counts(spe))
 #' spe$low_libsize <- spe$sum < 400
 #' 
-#' plotSpotQC(spe, type = "histogram", x_metric = "sum", annotate = "low_libsize")
-#' plotSpotQC(spe, type = "scatter", x_metric = "sum", y_metric = "cell_count")
-#' plotSpotQC(spe, type = "spot", annotate = "low_libsize")
-#' plotSpotQC(spe, type = "violin", x_metric = "sum", annotate = "low_libsize")
+#' plotSpotQC(spe, plot_type = "histogram", x_metric = "sum", annotate = "low_libsize")
+#' plotSpotQC(spe, plot_type = "scatter", x_metric = "sum", y_metric = "cell_count")
+#' plotSpotQC(spe, plot_type = "spot", annotate = "low_libsize")
+#' plotSpotQC(spe, plot_type = "violin", x_metric = "sum", annotate = "low_libsize")
 #' 
 plotSpotQC <- function(spe, 
                        plot_type = c("histogram", "scatter", "spot", "violin"), 
@@ -129,10 +129,11 @@ plotSpotQC <- function(spe,
     stopifnot(is.character(in_tissue))
   }
   
-  stopifnot(is.character(annotate))
-  if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
-    stop("'annotate' should be the name of a column in colData or an entry in ", 
-         "the column 'feature_col' in rowData")
+  if (!is.null(annotate)) {
+    stopifnot(is.character(annotate))
+    if (!(annotate %in% colnames(colData(spe)))) {
+      stop("'annotate' should be the name of a column in colData")
+    }
   }
   
   # set up data frame for plotting
@@ -164,7 +165,7 @@ plotSpotQC <- function(spe,
   
   # histogram: requires 'x_metric' (continuous), optionally 'annotate' (logical)
   
-  if (type == "histogram") {
+  if (plot_type == "histogram") {
     
     stopifnot(is.numeric(n_bins))
     
@@ -194,7 +195,7 @@ plotSpotQC <- function(spe,
   # scatter: requires 'x_metric' (continuous) and 'y_metric' (continuous),
   # additional optional arguments
   
-  if (type == "scatter") {
+  if (plot_type == "scatter") {
     
     p <- ggplot(df, aes_string(x = x_metric, y = y_metric)) + 
       geom_point(size = point_size) + 
@@ -224,7 +225,7 @@ plotSpotQC <- function(spe,
   # spot: requires 'x_coord' (continuous), 'y_coord' (continuous), optionally
   # 'annotate' (logical)
   
-  if (type == "spots") {
+  if (plot_type == "spot") {
     
     # spots at 'x_coord' and 'y_coord', optionally colored by 'annotate'
     if (!is.null(annotate)) {
@@ -256,9 +257,9 @@ plotSpotQC <- function(spe,
   
   # violin: requires 'x_metric' (continuous), optionally 'annotate' (logical)
   
-  if (type == "violin") {
+  if (plot_type == "violin") {
     
-    df[[dummy]] <- rep(" ", nrow(df))
+    df[["dummy"]] <- rep(" ", nrow(df))
     
     p <- ggplot(df, aes_string(x = "dummy", y = x_metric, fill = "dummy")) + 
       geom_violin(trim = TRUE, alpha = 0.9) + 
