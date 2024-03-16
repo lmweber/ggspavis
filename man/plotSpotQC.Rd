@@ -6,115 +6,123 @@
 \usage{
 plotSpotQC(
   spe,
-  type = c("hist", "scatter", "spots", "violin"),
+  plot_type = c("histogram", "scatter", "spot", "violin"),
   x_coord = NULL,
   y_coord = NULL,
-  in_tissue = "in_tissue",
-  metric_x = "sum",
-  metric_y = "cell_count",
-  annotate = NULL,
-  nbins = 100,
-  pt.size = 0.3,
-  threshold_x = NULL,
-  threshold_y = NULL,
+  x_metric = NULL,
+  y_metric = NULL,
+  x_threshold = NULL,
+  y_threshold = NULL,
   trend = TRUE,
   marginal = TRUE,
+  annotate = NULL,
+  in_tissue = NULL,
+  n_bins = 100,
+  point_size = 0.3,
   y_reverse = TRUE
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) Input data, assumed to be a
-\code{SpatialExperiment} or \code{SingleCellExperiment} object.}
+\item{spe}{Input data, assumed to be a \code{SpatialExperiment} or
+\code{SingleCellExperiment} object.}
 
-\item{type}{(character) Type of QC plot. Options are "hist", "scatter",
-"spots", and "violin". See details in description.}
+\item{plot_type}{Type of QC plot. Options are "histogram", "scatter", "spot",
+and "violin". See Details for additional details.}
 
-\item{x_coord}{(character) Name of column in \code{spatialCoords} containing
-x-coordinates. Default = NULL, which selects the first column. Used for
-spot-based plots.}
+\item{x_coord}{Name of column in \code{spatialCoords} (for a
+\code{SpatialExperiment} input object) or \code{colData} (for a
+\code{SingleCellExperiment} input object) containing x coordinates. Default
+= NULL (for a \code{SpatialExperiment}, the first column of
+\code{spatialCoords} will be selected in this case). Used for spot plots.}
 
-\item{y_coord}{(character) Name of column in \code{spatialCoords} containing
-y-coordinates. Default = NULL, which selects the second column. Used for
-spot-based plots.}
+\item{y_coord}{Name of column in \code{spatialCoords} (for a
+\code{SpatialExperiment} input object) or \code{colData} (for a
+\code{SingleCellExperiment} input object) containing y coordinates. Default
+= NULL (for a \code{SpatialExperiment}, the second column of
+\code{spatialCoords} will be selected in this case). Used for spot plots.}
 
-\item{in_tissue}{(character) Name of column in \code{colData} identifying
-spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
-argument is provided, only spots over tissue will be shown. Alternatively,
-set to NULL to display all spots for Xenium, CosMx, etc. Default = "in_tissue".}
+\item{x_metric}{Name of column in \code{colData} containing QC metric to plot
+on x-axis. Required for histograms, scatter plots, and violin plots.}
 
-\item{metric_x}{(character) Name of column in \code{colData} containing QC
-metric to plot on x-axis (e.g. "sum" for number of cells per spot).
-Default = "sum". Required for histogram, scatter, and violin plots.}
+\item{y_metric}{Name of column in \code{colData} containing QC metric to plot
+on y-axis. Required for histograms, scatter plots, and violin plots.}
 
-\item{metric_y}{(character) Name of column in \code{colData} containing QC
-metric to plot on y-axis (e.g. "cell_count" for number of detected transcripts, or
-"high_mito" for binary ). Default = "cell_count". Only required for scatter plots.}
+\item{x_threshold}{QC filtering threshold on x-axis metric to highlight with
+vertical line. Default = NULL. Optional argument used for scatter plots.}
 
-\item{annotate}{(logical) Name of column in \code{colData} identifying
-flagged spots that do not meet filtering thresholds, which will be
-highlighted on a histogram, spot-based, or violin plot. Default = NULL. 
-Not needed for scatter plot.}
+\item{y_threshold}{QC filtering threshold on y-axis metric to highlight with
+horizontal line. Default = NULL. Optional argument used for scatter plots.}
 
-\item{nbins}{(numeric) Adjusting the histogram bin width. Optional for
-spot-based and scatter and violin plots.}
+\item{trend}{Whether to show smoothed trend line (loess). Default = TRUE.
+Optional argument used for scatter plots.}
 
-\item{pt.size}{(numeric) Adjusting the scatter, spot-based, violin jitter point size. 
-Optional for histogram. Suggested point size for scatter = 0.5, for spot-based
-= 0.3, and for violin jitter = 0.1.}
+\item{marginal}{Whether to show marginal histograms. Default = TRUE. Optional
+argument used for scatter plots.}
 
-\item{threshold_x}{(numeric) Filtering threshold for QC metric on x-axis,
-which will be highlighted with a vertical bar. Default = NULL. Optional for
-scatterplots.}
+\item{annotate}{Name of column in \code{colData} identifying selected spots
+that do not meet QC filtering thresholds, which will be highlighted on a
+histogram, spot plot, or violin plot. Default = NULL. Optional argument
+used for histograms, spot plots, and violin plots.}
 
-\item{threshold_y}{(numeric) Filtering threshold for QC metric on y-axis,
-which will be highlighted with a horizontal bar. Default = NULL. Optional
-for scatterplots.}
+\item{in_tissue}{Name of column in \code{colData} identifying spots over
+tissue (e.g. "in_tissue" for 10x Genomics Visium datasets). If this
+argument is provided, only spots over tissue will be shown. Default = NULL.
+Optional argument used for spot plots.}
 
-\item{trend}{(logical) Whether to display a smoothed trend (loess) for
-scatterplots. Default = TRUE. Optional for scatterplots.}
+\item{n_bins}{Number of bins for histograms. Default = 100. Optional argument
+used for histograms.}
 
-\item{marginal}{(logical) Whether to display marginal histograms for
-scatterplots. Default = TRUE. Optional for scatterplots.}
+\item{point_size}{Point size. Default = 0.3. Optional argument for scatter
+plots, spot plots, and violin plots. Suggested values: 0.5 for scatter
+plots, 0.3 for spot plots, 0.1 for violin plots.}
 
-\item{y_reverse}{(logical) Whether to reverse y coordinates, which is often
-required for 10x Genomics Visium data. Default = TRUE.}
+\item{y_reverse}{Whether to reverse y coordinates. This is usually required
+for 10x Genomics Visium datasets when using the default coordinate values.
+Default = TRUE. Set to FALSE if not needed, e.g. for other platforms.
+Optional argument used for spot plots.}
 }
 \value{
-Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, labels, formatting, etc).
+Returns a ggplot object, which may be further modified using ggplot
+  functions.
 }
 \description{
-Quality control (QC) plots for spatially resolved transcriptomics data.
+Plotting functions for spatial transcriptomics data.
 }
 \details{
-Function to generate plots for quality control (QC) purposes for spatially
-resolved transcriptomics data.
+Function to create quality control (QC) plots for spatial transcriptomics
+data.
 
-The following types of QC plots are available for per spot/cell QC:
+The following types of QC plots are available for spot-level or cell-level QC
+(see \code{\link{plotFeatureQC}} for feature-level QC):
 
-- Histogram (\code{type} = "hist") for a single QC metric, e.g. number of counts
-per spot. For number of counts per spot, the histogram highlights spots with
-derived flags, e.g. low library size.
-- Scatterplot (\code{type} = "scatter") comparing two QC metrics, e.g. number
-of detected features vs. number of cells per spot, with optional vertical and
-horizontal lines highlighting QC filtering thresholds.
-- Spots (\code{type} = "spots") i.e. spots in spatial (x-y) coordinates,
-highlighting flagged spots that do not meet filtering thresholds.
-- Violin (\code{type} = "violin") for a single QC metric, e.g. number of counts
-per spot. For number of counts per spot, the violin plot is able to highlights 
-spots with derived flags, e.g. low library size.
+\itemize{
+\item Histogram (\code{plot_type "histogram"}) for a single QC metric, e.g.
+number of UMI counts per spot. For number of counts per spot, the histogram
+can optionally highlight selected spots, e.g. spots with low library size.
+\item Scatter plot (\code{plot_type = "scatter"}) comparing two QC metrics,
+e.g. number of detected features vs. number of cells per spot, with optional
+horizontal and vertical lines highlighting QC filtering thresholds.
+\item Spot plot (\code{plot_type = "spot"}) showing spots in spatial x-y
+coordinates, e.g. highlighting selected spots that do not meet filtering
+thresholds.
+\item Violin plot (\code{plot_type = "violin"}) for a single QC metric, e.g.
+number of UMI counts per spot. For number of counts per spot, the violin plot
+can optionally highlight selected spots, e.g. spots with low library size.
+}
 }
 \examples{
 library(STexampleData)
 spe <- Visium_humanDLPFC()
+
 spe$sum <- colSums(counts(spe))
 spe$low_libsize <- spe$sum < 400
 
-plotSpotQC(spe, type = "hist", metric_x = "sum", annotate = "low_libsize")
-plotSpotQC(spe, type = "scatter", metric_x = "sum", metric_y = "cell_count")
-plotSpotQC(spe, type = "spots", annotate = "low_libsize")
-plotSpotQC(spe, type = "violin", metric_x = "sum", annotate = "low_libsize")
+plotSpotQC(spe, type = "histogram", x_metric = "sum", annotate = "low_libsize")
+plotSpotQC(spe, type = "scatter", x_metric = "sum", y_metric = "cell_count")
+plotSpotQC(spe, type = "spot", annotate = "low_libsize")
+plotSpotQC(spe, type = "violin", x_metric = "sum", annotate = "low_libsize")
+
 }
 \author{
-Lukas M. Weber with modifications by Yixing E. Dong
+Lukas M. Weber and Yixing E. Dong
 }
