@@ -56,15 +56,16 @@
 #'   functions.
 #' 
 #' 
-#' @importFrom SingleCellExperiment reducedDimNames reducedDim
+#' @importFrom SingleCellExperiment reducedDimNames reducedDim 'reducedDim<-'
 #' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom scales hue_pal
+#' @importFrom stats median
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom ggplot2 ggplot aes_string geom_point xlab ylab theme_bw theme
 #'   element_blank scale_color_viridis_c scale_color_gradientn
-#'   scale_color_gradient scale_color_manual ggtitle labs guides
+#'   scale_color_gradient scale_color_manual ggtitle labs guides aes .data
 #' 
 #' @export
 #' 

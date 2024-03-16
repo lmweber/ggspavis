@@ -94,8 +94,8 @@
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom ggplot2 ggplot aes_string geom_histogram geom_point geom_vline
 #'   geom_hline geom_smooth geom_violin geom_jitter scale_fill_manual
-#'   scale_color_manual xlab ylab labs coord_fixed theme_bw theme
-#'   element_text element_blank guides scale_y_reverse
+#'   scale_color_manual xlab ylab labs coord_fixed theme_bw theme element_text
+#'   element_blank guides scale_y_reverse
 #' @importFrom ggside geom_xsidehistogram geom_ysidehistogram
 #' 
 #' 
