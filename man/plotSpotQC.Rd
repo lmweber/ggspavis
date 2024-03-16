@@ -17,6 +17,7 @@ plotSpotQC(
   marginal = TRUE,
   annotate = NULL,
   in_tissue = NULL,
+  legend_point_size = 3,
   n_bins = 100,
   point_size = 0.3,
   y_reverse = TRUE
@@ -68,6 +69,9 @@ used for histograms, spot plots, and violin plots.}
 tissue (e.g. "in_tissue" for 10x Genomics Visium datasets). If this
 argument is provided, only spots over tissue will be shown. Default = NULL.
 Optional argument used for spot plots.}
+
+\item{legend_point_size}{Legend point size. Default = 3. Optional argument
+used for spot plots.}
 
 \item{n_bins}{Number of bins for histograms. Default = 100. Optional argument
 used for histograms.}
