@@ -94,7 +94,7 @@
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom ggplot2 ggplot aes_string geom_histogram geom_point geom_vline
 #'   geom_hline geom_smooth geom_violin geom_jitter scale_fill_manual
-#'   scale_color_manual xlab ylab labs coord_fixed theme_bw theme ggtitle
+#'   scale_color_manual xlab ylab labs coord_fixed theme_bw theme
 #'   element_text element_blank guides scale_y_reverse
 #' @importFrom ggside geom_xsidehistogram geom_ysidehistogram
 #' 
@@ -188,11 +188,6 @@ plotSpotQC <- function(spe,
         scale_fill_manual(values = c("gray70")) + 
         xlab(x_metric)
     }
-    
-    p <- p + 
-      theme_bw() + 
-      theme(plot.title = element_text(hjust = 0.5, face = "plain", size = 12)) + 
-      ggtitle("QC metrics")
   }
   
   
@@ -203,7 +198,6 @@ plotSpotQC <- function(spe,
     
     p <- ggplot(df, aes_string(x = x_metric, y = y_metric)) + 
       geom_point(size = point_size) + 
-      ggtitle("QC metrics") + 
       theme_bw()
     
     if (!is.null(x_threshold)) {
@@ -245,14 +239,11 @@ plotSpotQC <- function(spe,
     
     p <- p + 
       coord_fixed() + 
-      ggtitle("QC spots") + 
       theme_bw() + 
-      theme(
-        plot.title = element_text(hjust = 0.5), 
-        panel.grid = element_blank(), 
-        axis.title = element_blank(), 
-        axis.text = element_blank(), 
-        axis.ticks = element_blank())
+      theme(panel.grid = element_blank(), 
+            axis.title = element_blank(), 
+            axis.text = element_blank(), 
+            axis.ticks = element_blank())
     
     if (y_reverse) {
       p <- p + scale_y_reverse()
@@ -270,12 +261,10 @@ plotSpotQC <- function(spe,
       geom_violin(trim = TRUE, alpha = 0.9) + 
       scale_fill_manual(values = c("gray70")) + 
       xlab("Sample") + 
-      ylab("") + 
-      ggtitle(x_metric) + 
+      ylab(x_metric) + 
       theme_bw() + 
       theme(legend.position="none", 
-            panel.grid = element_blank(), 
-            plot.title = element_text(hjust = 0.5))
+            panel.grid = element_blank())
     
     if (is.null(annotate)) {
       # violins for 'x_metric'
