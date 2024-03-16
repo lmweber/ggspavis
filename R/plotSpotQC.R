@@ -186,8 +186,10 @@ plotSpotQC <- function(spe,
         geom_histogram(bins = n_bins, color = "#e9ecef", alpha = 0.6, 
                        position = "identity") + 
         scale_fill_manual(values = c("gray70")) + 
-        xlab(x_metric)
+        xlab(x_metric) 
     }
+    
+    p <- p + theme_bw()
   }
   
   
