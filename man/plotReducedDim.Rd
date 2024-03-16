@@ -12,7 +12,7 @@ plotReducedDim(
   feature_col = "gene_name",
   assay_name = "counts",
   update_dimnames = TRUE,
-  palette = NULL,
+  pal = NULL,
   point_size = 0.3,
   legend_point_size = 3,
   text_by = NULL,
@@ -46,6 +46,11 @@ plot for a continuous variable. Default = "counts".}
 \item{update_dimnames}{Whether to update column names of \code{reducedDims}
 to default values for plotting. Default = TRUE.}
 
+\item{pal}{Color palette for annotations. Options for discrete values are
+"libd_layer_colors", "Okabe-Ito", or any vector of color names or hex
+values. For continuous values, provide a vector of length 2 for the low and
+high range, e.g. c("gray90", "navy").}
+
 \item{point_size}{Point size. Default = 0.3.}
 
 \item{legend_point_size}{Legend point size for discrete annotations. Default
@@ -61,11 +66,6 @@ Default = 5.}
 
 \item{text_by_color}{Color name or hex code for annotation labels. Default =
 "black".}
-
-\item{pal}{Color palette for annotations. Options for discrete values are
-"libd_layer_colors", "Okabe-Ito", or any vector of color names or hex
-values. For continuous values, provide a vector of length 2 for the low and
-high range, e.g. c("gray90", "navy").}
 }
 \value{
 Returns a ggplot object, which may be further modified using ggplot
@@ -110,7 +110,7 @@ spe <- runUMAP(spe, dimred = "PCA")
 colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 # generate plot
-plotReducedDim(spe, type = "UMAP", annotate = "ground_truth")
+plotReducedDim(spe, plot_type = "UMAP", annotate = "ground_truth")
 
 }
 \author{

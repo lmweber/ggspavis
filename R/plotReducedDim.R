@@ -101,13 +101,13 @@
 #' colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 #' 
 #' # generate plot
-#' plotReducedDim(spe, type = "UMAP", annotate = "ground_truth")
+#' plotReducedDim(spe, plot_type = "UMAP", annotate = "ground_truth")
 #' 
 plotReducedDim <- function(spe, plot_type = c("UMAP", "PCA"), 
                            annotate = NULL, feature_col = "gene_name", 
                            assay_name = "counts", 
                            update_dimnames = TRUE, 
-                           palette = NULL, point_size = 0.3, 
+                           pal = NULL, point_size = 0.3, 
                            legend_point_size = 3, 
                            text_by = NULL, text_by_size = 5, 
                            text_by_color = "black") {
