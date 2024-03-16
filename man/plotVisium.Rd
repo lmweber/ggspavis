@@ -12,21 +12,21 @@ plotVisium(
   facets = "sample_id",
   image = TRUE,
   zoom = FALSE,
-  show_axis = FALSE,
+  show_axes = FALSE,
   assay = "counts",
   trans = "identity",
-  legend.position = "right",
+  point_size = 1,
+  legend_position = "right",
   x_coord = NULL,
   y_coord = NULL,
   y_reverse = TRUE,
   sample_ids = NULL,
   image_ids = NULL,
-  palette = NULL,
-  pt.size = 1
+  palette = NULL
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) or \code{SingleCellExperiment} Input data object.}
+\item{spe}{(SpatialExperiment or SingleCellExperiment) Input data object.}
 
 \item{spots}{(logical) Whether to display spots (spatial barcodes) as points.
 Default = TRUE.}
@@ -47,11 +47,11 @@ disable.}
 \item{image}{(logical) Whether to show histology image as background. Default
 = TRUE.}
 
-\item{zoom}{(logical) Whether to zoom to area of tissue with spots on it. Default
-= FALSE}
+\item{zoom}{(logical) Whether to zoom to area of tissue containing spots.
+Default = FALSE}
 
-\item{show_axis}{(logical) Whether to show axis and coordiantes for the plot. Default
-= FALSE}
+\item{show_axes}{(logical) Whether to show axes and coordinates. Default =
+FALSE}
 
 \item{assay}{(character) Name of assay data to use when \code{annotate} is in
 \code{rownames(spe)}. Should be one of \code{assayNames(spe)}.}
@@ -59,6 +59,11 @@ disable.}
 \item{trans}{Transformation to apply for continuous scales. Ignored unless
 \code{annotate} is numeric, e.g. feature expression. (See
 \code{\link{ggplot2}{continuous_scale}} for valid options.)}
+
+\item{point_size}{(numeric) Point size. Default = 1.}
+
+\item{legend_position}{Legend position for annotations. Options are "left",
+"right", "top", "bottom", and "none". Default = "right".}
 
 \item{x_coord}{(character) Column in \code{spatialCoords} containing
 x-coordinates. Default = NULL, which selects the first column.}
@@ -82,8 +87,6 @@ color codes. Options for continuous values are "viridis", a single color
 name (e.g. "red", "navy", etc), or a vector of length two containing color
 names for each end of the scale. Default = "libd_layer_colors" for discrete
 data, and "viridis" for continuous data.}
-
-\item{pt.size}{(numeric) Point size for \code{geom_point()}. Default = 1.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
@@ -118,5 +121,6 @@ plotVisium(sub, annotate = "Gad2", assay = "counts")
 
 }
 \author{
-Helena L. Crowell with modifications by Lukas M. Weber, Yixing E. Dong
+Helena L. Crowell, with modifications by Lukas M. Weber and Yixing E.
+  Dong
 }
