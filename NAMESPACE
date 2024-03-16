@@ -2,10 +2,12 @@
 
 export(plotDimRed)
 export(plotFeatureQC)
+export(plotMolecules)
 export(plotSpotQC)
 export(plotSpots)
 export(plotVisium)
 importFrom(RColorBrewer,brewer.pal)
+importFrom(SingleCellExperiment,counts)
 importFrom(SingleCellExperiment,reducedDim)
 importFrom(SingleCellExperiment,reducedDimNames)
 importFrom(SpatialExperiment,'imgData<-')
