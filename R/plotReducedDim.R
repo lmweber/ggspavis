@@ -1,55 +1,59 @@
 #' plotReducedDim
 #' 
-#' Plotting functions for spatially resolved transcriptomics data.
+#' Plotting functions for spatial transcriptomics data.
 #' 
-#' Function to plot spot-based spatially resolved transcriptomics data stored in
-#' a \code{SpatialExperiment} object.
-#' 
-#' This function generates a plot in reduced dimension coordinates (PCA or
-#' UMAP), along with annotation such as cluster labels or total UMI counts.
+#' Function to create reduced dimension plot (e.g. PCA or UMAP) with additional
+#' optional annotations such as cluster labels, expression of a gene, or quality
+#' control metrics.
 #' 
 #' 
-#' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   \code{SpatialExperiment} or \code{SingleCellExperiment} object.
+#' @param spe Input data, assumed to be a \code{SpatialExperiment} or
+#'   \code{SingleCellExperiment} object.
 #' 
-#' @param plot_type (character) Type of reduced dimension plot. Options can be
-#'   "UMAP", "PCA", or any self-defined reduced dimension names. Default =
-#'   "UMAP".
+#' @param plot_type Type of reduced dimension plot. Possible options are "UMAP",
+#'   "PCA", or any other set of reduced dimensions stored in the input object.
+#'   Default = "UMAP".
 #' 
-#' @param annotate (character) Name of column in \code{colData} containing
-#'   values to annotate spots with colors, e.g. cluster labels (discrete values)
-#'   or total UMI counts (continuous values).
+#' @param annotate Variable to show as annotations. This may be discrete or
+#'   continuous. For a discrete variable (e.g. cluster labels), this should be
+#'   the name of a column in colData containing a character vector or factor.
+#'   For a continuous variable (e.g. a gene name), this should be an entry in
+#'   the column 'feature_col' in rowData. Default = NULL.
 #' 
-#' @param features (character) Name of column in \code{rowData} containing
-#'   continuous feature to plot. Default = "gene_name".
+#' @param feature_col Name of column in rowData containing names of continuous
+#'   features to plot (e.g. gene names). This argument is required if
+#'   \code{annotate} is a continuous variable. Default = "gene_name".
 #' 
-#' @param assay_name (character) Name of \code{assay} containing continuous
-#'   feature to plot.
+#' @param assay_name Name of \code{assay} in input object containing values to
+#'   plot for a continuous variable. Default = "counts".
 #' 
-#' @param update_colnames (logical) Whether to update column names of
-#'   \code{reducedDim} to default values. Default = TRUE.
+#' @param update_dimnames Whether to update column names of reducedDims to
+#'   default values for plotting. Default = TRUE.
 #' 
-#' @param pal (character) Color palette for annotation. Options for discrete
-#'   labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
-#'   hex values. For continuous values, provide a vector of length 2 for the low
-#'   and high range, e.g. \code{c("gray90", "navy")}. Default =
-#'   \code{"libd_layer_colors"}.
+#' @param pal Color palette for annotations. Options for discrete values are
+#'   "libd_layer_colors", "Okabe-Ito", or any vector of color names or hex
+#'   values. For continuous values, provide a vector of length 2 for the low and
+#'   high range, e.g. c("gray90", "navy").
 #' 
-#' @param point_size (numeric) Point size for \code{geom_point()}. Default = 0.3.
+#' @param point_size Point size. Default = 0.3.
 #' 
-#' @param text_by (character) Column name of the annotation to apply on top of 
-#' each cluster. Usually should put it the same as `annotate = `. unless you have 
-#' another intended `text_by` column, e.g. with more readable classes or shorter 
-#' strings. Only used for categorical `annotate = `. Default = \code{NULL}.
+#' @param legend_point_size Legend point size for discrete annotations. Default
+#'   = 3.
 #' 
-#' @param text_by_size (numerical) Text size hovering over each cluster. Default =
-#'  \code{5}.
+#' @param text_by Column name of annotation labels to display over each cluster
+#'   of points. This will usually be the same as \code{annotate}. Alternatively,
+#'   another column may be used (e.g. with more readable classes or shorter
+#'   strings). Only used for discrete \code{annotate}. Default = NULL.
 #' 
-#' @param text_by_color (character) Color string or hex code. Default = \code{"black"}.
+#' @param text_by_size Text size for annotation labels over each cluster.
+#'   Default = 5.
+#' 
+#' @param text_by_color Color name or hex code for annotation labels. Default =
+#'   "black".
 #' 
 #' 
-#' @return Returns a ggplot object. Additional plot elements can be added as
-#'   ggplot elements (e.g. title, labels, formatting, etc).
+#' @return Returns a ggplot object, which may be further modified using ggplot
+#'   functions.
 #' 
 #' 
 #' @importFrom SingleCellExperiment reducedDimNames reducedDim colData rowData
@@ -64,24 +68,22 @@
 #' 
 #' @export
 #' 
-#' @author Lukas M. Weber with modifications by Yixing E. Dong
+#' @author Lukas M. Weber and Yixing E. Dong
 #' 
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
 #' 
-#' # use small subset of data for this example
-#' # for longer examples see our online book OSTA
+#' # select spots over tissue
 #' spe <- spe[, colData(spe)$in_tissue == 1]
-#' set.seed(100)
+#' 
+#' # use small subset of data for this example
 #' n <- 200
+#' set.seed(123)
 #' spe <- spe[, sample(seq_len(ncol(spe)), n)]
 #' 
-#' # calculate log-transformed normalized counts
+#' # calculate logcounts
 #' library(scran)
-#' set.seed(100)
-#' qclus <- quickCluster(spe)
-#' spe <- computeSumFactors(spe, cluster = qclus)
 #' spe <- logNormCounts(spe)
 #' 
 #' # identify top highly variable genes (HVGs)
@@ -92,9 +94,9 @@
 #' 
 #' # run dimensionality reduction
 #' library(scater)
-#' set.seed(100)
+#' set.seed(123)
 #' spe <- runPCA(spe, subset_row = top_hvgs)
-#' set.seed(100)
+#' set.seed(123)
 #' spe <- runUMAP(spe, dimred = "PCA")
 #' colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 #' 
@@ -102,36 +104,37 @@
 #' plotReducedDim(spe, type = "UMAP", annotate = "ground_truth")
 #' 
 plotReducedDim <- function(spe, plot_type = c("UMAP", "PCA"), 
-                           annotate = NULL, features = "gene_name", 
+                           annotate = NULL, feature_col = "gene_name", 
                            assay_name = "counts", 
-                           update_colnames = TRUE, 
+                           update_dimnames = TRUE, 
                            palette = NULL, point_size = 0.3, 
+                           legend_point_size = 3, 
                            text_by = NULL, text_by_size = 5, 
                            text_by_color = "black") {
   
   # check validity of arguments
-  plot_type <- match.arg(plot_type)
+  stopifnot(length(plot_type) == 1)
   stopifnot(plot_type %in% reducedDimNames(spe))
   
   stopifnot(is.character(annotate))
-  if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, features]))) {
+  if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
     stop("'annotate' should be the name of a column in colData or an entry in ", 
-         "the column 'features' in rowData")
+         "the column 'feature_col' in rowData")
   }
   
   # update colnames of reducedDims for plotting
-  if (update_colnames) {
+  if (update_dimnames) {
     colnames(reducedDim(spe, plot_type)) <- 
       paste0(plot_type, "_", seq_len(ncol(reducedDim(spe, plot_type))))
   }
   
-  # data for plotting
+  # data frame for plotting
   df <- cbind.data.frame(colData(spe), reducedDim(spe, plot_type))
   
   # continuous values
-  if (annotate %in% rowData(spe)[, features]) {
+  if (annotate %in% rowData(spe)[, feature_col]) {
     stopifnot(is.character(assay_name))
-    ix <- which(rowData(spe)[, features] == annotate)
+    ix <- which(rowData(spe)[, feature_col] == annotate)
     df[[annotate]] <- assay(spe, assay_name)[ix, ]
   }
   if ((annotate %in% colnames(colData(spe))) && 
@@ -141,7 +144,7 @@ plotReducedDim <- function(spe, plot_type = c("UMAP", "PCA"),
   
   # color palettes
   if (is.numeric(df[[annotate]]) && is.null(palette)) {
-    # for continuous feature, change NULL to an arbitrary color so length(pal) == 1
+    # for continuous values, change NULL to arbitrary color so length(pal) == 1
     pal <- "blue"
   }
   # accepts "libd_layer_colors" and "Okabe-Ito", or arbitrary color palette for NULL
@@ -201,7 +204,7 @@ plotReducedDim <- function(spe, plot_type = c("UMAP", "PCA"),
     # discrete values: display legend title but no plot title
     p <- p + 
       scaling + 
-      guides(color = guide_legend(override.aes = list(size = 3)))
+      guides(color = guide_legend(override.aes = list(size = legend_point_size)))
   }
   
   # text annotations
