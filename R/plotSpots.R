@@ -78,9 +78,9 @@
 #'   functions.
 #' 
 #' 
+#' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SingleCellExperiment reducedDimNames reducedDim
 #' @importFrom SummarizedExperiment assay colData rowData
-#' @importFrom SpatialExperiment spatialCoords
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom scales hue_pal
@@ -264,5 +264,6 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
     p <- p + scale_y_reverse()
   }
   
+  # return plot
   p
 }

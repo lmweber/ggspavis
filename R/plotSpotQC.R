@@ -1,180 +1,217 @@
 #' plotSpotQC
 #' 
-#' Quality control (QC) plots for spatially resolved transcriptomics data.
+#' Plotting functions for spatial transcriptomics data.
 #' 
-#' Function to generate plots for quality control (QC) purposes for spatially
-#' resolved transcriptomics data.
+#' Function to create quality control (QC) plots for spatial transcriptomics
+#' data.
 #' 
-#' The following types of QC plots are available for per spot/cell QC:
+#' The following types of QC plots are available for spot-level or cell-level QC
+#' (see \code{\link{plotFeatureQC}} for feature-level QC):
 #' 
-#' - Histogram (\code{type} = "hist") for a single QC metric, e.g. number of counts
-#' per spot. For number of counts per spot, the histogram highlights spots with
-#' derived flags, e.g. low library size.
-#' - Scatterplot (\code{type} = "scatter") comparing two QC metrics, e.g. number
-#' of detected features vs. number of cells per spot, with optional vertical and
-#' horizontal lines highlighting QC filtering thresholds.
-#' - Spots (\code{type} = "spots") i.e. spots in spatial (x-y) coordinates,
-#' highlighting flagged spots that do not meet filtering thresholds.
-#' - Violin (\code{type} = "violin") for a single QC metric, e.g. number of counts
-#' per spot. For number of counts per spot, the violin plot is able to highlights 
-#' spots with derived flags, e.g. low library size.
-#' 
-#' 
-#' @param spe (SpatialExperiment) Input data, assumed to be a
-#'   \code{SpatialExperiment} or \code{SingleCellExperiment} object.
-#' 
-#' @param type (character) Type of QC plot. Options are "hist", "scatter",
-#'   "spots", and "violin". See details in description.
-#' 
-#' @param x_coord (character) Name of column in \code{spatialCoords} containing
-#'   x-coordinates. Default = NULL, which selects the first column. Used for
-#'   spot-based plots.
-#' 
-#' @param y_coord (character) Name of column in \code{spatialCoords} containing
-#'   y-coordinates. Default = NULL, which selects the second column. Used for
-#'   spot-based plots.
-#' 
-#' @param in_tissue (character) Name of column in \code{colData} identifying
-#'   spots over tissue, e.g. "in_tissue" for 10x Genomics Visium data. If this
-#'   argument is provided, only spots over tissue will be shown. Alternatively,
-#'   set to NULL to display all spots for Xenium, CosMx, etc. Default = "in_tissue".
-#' 
-#' @param metric_x (character) Name of column in \code{colData} containing QC
-#'   metric to plot on x-axis (e.g. "sum" for number of cells per spot).
-#'   Default = "sum". Required for histogram, scatter, and violin plots.
-#' 
-#' @param metric_y (character) Name of column in \code{colData} containing QC
-#'   metric to plot on y-axis (e.g. "cell_count" for number of detected transcripts, or
-#'   "high_mito" for binary ). Default = "cell_count". Only required for scatter plots.
-#' 
-#' @param annotate (logical) Name of column in \code{colData} identifying
-#'   flagged spots that do not meet filtering thresholds, which will be
-#'   highlighted on a histogram, spot-based, or violin plot. Default = NULL. 
-#'   Not needed for scatter plot.
-#'   
-#' @param nbins (numeric) Adjusting the histogram bin width. Optional for
-#'   spot-based and scatter and violin plots.
-#'   
-#' @param pt.size (numeric) Adjusting the scatter, spot-based, violin jitter point size. 
-#'   Optional for histogram. Suggested point size for scatter = 0.5, for spot-based
-#'   = 0.3, and for violin jitter = 0.1.
-#' 
-#' @param threshold_x (numeric) Filtering threshold for QC metric on x-axis,
-#'   which will be highlighted with a vertical bar. Default = NULL. Optional for
-#'   scatterplots.
-#' 
-#' @param threshold_y (numeric) Filtering threshold for QC metric on y-axis,
-#'   which will be highlighted with a horizontal bar. Default = NULL. Optional
-#'   for scatterplots.
-#' 
-#' @param trend (logical) Whether to display a smoothed trend (loess) for
-#'   scatterplots. Default = TRUE. Optional for scatterplots.
-#' 
-#' @param marginal (logical) Whether to display marginal histograms for
-#'   scatterplots. Default = TRUE. Optional for scatterplots.
-#' 
-#' @param y_reverse (logical) Whether to reverse y coordinates, which is often
-#'   required for 10x Genomics Visium data. Default = TRUE.
+#' \itemize{
+#' \item Histogram (\code{plot_type "histogram"}) for a single QC metric, e.g.
+#' number of UMI counts per spot. For number of counts per spot, the histogram
+#' can optionally highlight selected spots, e.g. spots with low library size.
+#' \item Scatter plot (\code{plot_type = "scatter"}) comparing two QC metrics,
+#' e.g. number of detected features vs. number of cells per spot, with optional
+#' horizontal and vertical lines highlighting QC filtering thresholds.
+#' \item Spot plot (\code{plot_type = "spot"}) showing spots in spatial x-y
+#' coordinates, e.g. highlighting selected spots that do not meet filtering
+#' thresholds.
+#' \item Violin plot (\code{plot_type = "violin"}) for a single QC metric, e.g.
+#' number of UMI counts per spot. For number of counts per spot, the violin plot
+#' can optionally highlight selected spots, e.g. spots with low library size.
+#' }
 #' 
 #' 
-#' @return Returns a ggplot object. Additional plot elements can be added as
-#'   ggplot elements (e.g. title, labels, formatting, etc).
+#' @param spe Input data, assumed to be a \code{SpatialExperiment} or
+#'   \code{SingleCellExperiment} object.
+#' 
+#' @param plot_type Type of QC plot. Options are "histogram", "scatter", "spot",
+#'   and "violin". See Details for additional details.
+#' 
+#' @param x_coord Name of column in \code{spatialCoords} (for a
+#'   \code{SpatialExperiment} input object) or \code{colData} (for a
+#'   \code{SingleCellExperiment} input object) containing x coordinates. Default
+#'   = NULL (for a \code{SpatialExperiment}, the first column of
+#'   \code{spatialCoords} will be selected in this case). Used for spot plots.
+#' 
+#' @param y_coord Name of column in \code{spatialCoords} (for a
+#'   \code{SpatialExperiment} input object) or \code{colData} (for a
+#'   \code{SingleCellExperiment} input object) containing y coordinates. Default
+#'   = NULL (for a \code{SpatialExperiment}, the second column of
+#'   \code{spatialCoords} will be selected in this case). Used for spot plots.
+#' 
+#' @param x_metric Name of column in \code{colData} containing QC metric to plot
+#'   on x-axis. Required for histograms, scatter plots, and violin plots.
+#' 
+#' @param y_metric Name of column in \code{colData} containing QC metric to plot
+#'   on y-axis. Required for histograms, scatter plots, and violin plots.
+#' 
+#' @param x_threshold QC filtering threshold on x-axis metric to highlight with
+#'   vertical line. Default = NULL. Optional argument used for scatter plots.
+#' 
+#' @param y_threshold QC filtering threshold on y-axis metric to highlight with
+#'   horizontal line. Default = NULL. Optional argument used for scatter plots.
+#' 
+#' @param trend Whether to show smoothed trend line (loess). Default = TRUE.
+#'   Optional argument used for scatter plots.
+#' 
+#' @param marginal Whether to show marginal histograms. Default = TRUE. Optional
+#'   argument used for scatter plots.
+#' 
+#' @param annotate Name of column in \code{colData} identifying selected spots
+#'   that do not meet QC filtering thresholds, which will be highlighted on a
+#'   histogram, spot plot, or violin plot. Default = NULL. Optional argument
+#'   used for histograms, spot plots, and violin plots.
+#' 
+#' @param in_tissue Name of column in \code{colData} identifying spots over
+#'   tissue (e.g. "in_tissue" for 10x Genomics Visium datasets). If this
+#'   argument is provided, only spots over tissue will be shown. Default = NULL.
+#'   Optional argument used for spot plots.
+#' 
+#' @param n_bins Number of bins for histograms. Default = 100. Optional argument
+#'   used for histograms.
+#' 
+#' @param point_size Point size. Default = 0.3. Optional argument for scatter
+#'   plots, spot plots, and violin plots. Suggested values: 0.5 for scatter
+#'   plots, 0.3 for spot plots, 0.1 for violin plots.
+#' 
+#' @param y_reverse Whether to reverse y coordinates. This is usually required
+#'   for 10x Genomics Visium datasets when using the default coordinate values.
+#'   Default = TRUE. Set to FALSE if not needed, e.g. for other platforms.
+#'   Optional argument used for spot plots.
+#' 
+#' 
+#' @return Returns a ggplot object, which may be further modified using ggplot
+#'   functions.
 #' 
 #' 
 #' @importFrom SpatialExperiment spatialCoords
-#' @importFrom SummarizedExperiment colData
-#' @importFrom ggplot2 ggplot aes_string geom_histogram geom_point geom_smooth 
-#'   geom_hline geom_vline coord_fixed labs ggtitle theme_bw theme element_blank 
-#'   scale_y_reverse scale_fill_manual scale_color_manual
+#' @importFrom SummarizedExperiment rowData colData
+#' @importFrom ggplot2 ggplot aes_string geom_histogram geom_point geom_vline
+#'   geom_hline geom_smooth geom_violin geom_jitter scale_fill_manual
+#'   scale_color_manual xlab ylab labs coord_fixed theme_bw theme ggtitle
+#'   element_text element_blank scale_y_reverse
 #' @importFrom ggside geom_xsidehistogram geom_ysidehistogram
+#' 
 #' 
 #' @export
 #' 
-#' @author Lukas M. Weber with modifications by Yixing E. Dong
+#' @author Lukas M. Weber and Yixing E. Dong
 #' 
 #' @examples
 #' library(STexampleData)
 #' spe <- Visium_humanDLPFC()
+#' 
 #' spe$sum <- colSums(counts(spe))
 #' spe$low_libsize <- spe$sum < 400
 #' 
-#' plotSpotQC(spe, type = "hist", metric_x = "sum", annotate = "low_libsize")
-#' plotSpotQC(spe, type = "scatter", metric_x = "sum", metric_y = "cell_count")
-#' plotSpotQC(spe, type = "spots", annotate = "low_libsize")
-#' plotSpotQC(spe, type = "violin", metric_x = "sum", annotate = "low_libsize")
-
-plotSpotQC <- function(spe, type = c("hist", "scatter", "spots", "violin"), 
-                   x_coord = NULL, y_coord = NULL, in_tissue = "in_tissue", 
-                   metric_x = "sum", metric_y = "cell_count", 
-                   annotate = NULL, nbins = 100, pt.size = 0.3,
-                   threshold_x = NULL, threshold_y = NULL, 
-                   trend = TRUE, marginal = TRUE, y_reverse = TRUE) {
+#' plotSpotQC(spe, type = "histogram", x_metric = "sum", annotate = "low_libsize")
+#' plotSpotQC(spe, type = "scatter", x_metric = "sum", y_metric = "cell_count")
+#' plotSpotQC(spe, type = "spot", annotate = "low_libsize")
+#' plotSpotQC(spe, type = "violin", x_metric = "sum", annotate = "low_libsize")
+#' 
+plotSpotQC <- function(spe, 
+                       plot_type = c("histogram", "scatter", "spot", "violin"), 
+                       x_coord = NULL, y_coord = NULL, 
+                       x_metric = NULL, y_metric = NULL, 
+                       x_threshold = NULL, y_threshold = NULL, 
+                       trend = TRUE, marginal = TRUE, 
+                       annotate = NULL, in_tissue = NULL, 
+                       n_bins = 100, point_size = 0.3, 
+                       y_reverse = TRUE) {
   
-  type <- match.arg(type)
-  if (!is.null(in_tissue)) stopifnot(is.character(in_tissue))
+  # check validity of arguments
+  plot_type <- match.arg(plot_type)
   
-  stopifnot(is.character(annotate))
-  
-  if(class(spe) == "SingleCellExperiment"){
-    if (is.null(x_coord)) {stop("Please specify x_coord name in the SCE colData.")}
-    if (is.null(y_coord)) {stop("Please specify y_coord name in the SCE colData.")}
-    
-    plt_df <- cbind.data.frame(colData(spe))
-  }else if(class(spe) == "SpatialExperiment"){
-    if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
-    if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
-    
-    plt_df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  if (!is.null(in_tissue)) {
+    stopifnot(is.character(in_tissue))
   }
   
-  ## For hist, spot, violin plot
-  if (!is.null(annotate)){
-    if (!is.logical(plt_df[[annotate]])) {
-    stop("For QC, please make sure `annotate` is a binary flag. `metric_x` or/and `metric_y` should be continuous.")
+  stopifnot(is.character(annotate))
+  if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
+    stop("'annotate' should be the name of a column in colData or an entry in ", 
+         "the column 'feature_col' in rowData")
+  }
+  
+  # set up data frame for plotting
+  if (class(spe) == "SpatialExperiment") {
+    # select default columns of x and y coordinates
+    if (is.null(x_coord)) x_coord <- colnames(spatialCoords(spe))[1]
+    if (is.null(y_coord)) y_coord <- colnames(spatialCoords(spe))[2]
+    df <- cbind.data.frame(colData(spe), spatialCoords(spe))
+  } else if (class(spe) == "SingleCellExperiment") {
+    if (is.null(x_coord) || is.null(y_coord)) {
+      stop("Please provide 'x_coord' and 'y_coord' arguments to specify ", 
+           "columns in colData containing x and y coordinates.")
+    }
+    df <- as.data.frame(colData(spe))
+  }
+  
+  # for histogram, spot, or violin plots
+  if (!is.null(annotate)) {
+    if (!is.logical(df[[annotate]])) {
+      stop("For QC plots, 'annotate' should be a logical vector, and 'x_metric' ", 
+           "and/or 'y_metric' should be vectors of continuous values.")
     }
   }
   
   if (!is.null(in_tissue)) {
-    plt_df <- plt_df[plt_df[, in_tissue] == 1, ]
+    df <- df[df[, in_tissue] == 1, ]
   }
   
   
-  if (type == "hist") { # must have metric_x (cont), optional annotate (logical)
-    stopifnot(is.numeric(nbins))
+  # histogram: requires 'x_metric' (continuous), optionally 'annotate' (logical)
+  
+  if (type == "histogram") {
     
-    if (!is.null(annotate)){ # Histogram of metric_x (cont) , colored by annotate (logical)
-      p <- ggplot(plt_df, aes_string(x = metric_x, fill = annotate)) +
-        geom_histogram(color = "#e9ecef", alpha = 0.6, position = 'identity', bins = nbins) +
-        scale_fill_manual(values = c("gray70", "red")) +
-        labs(fill = annotate) + xlab(metric_x)
-    }else if(is.null(annotate)){ # Just gray histogram of metric_x (cont) 
-      p <- ggplot(plt_df, aes_string(x = metric_x)) +
-        geom_histogram(color = "#e9ecef", alpha = 0.6, position = 'identity', bins = nbins) +
-        scale_fill_manual(values = c("gray70")) +
-        xlab(metric_x)
+    stopifnot(is.numeric(n_bins))
+    
+    # histogram showing 'x_metric', optionally colored by 'annotate'
+    if (!is.null(annotate)) {
+      p <- ggplot(df, aes_string(x = x_metric, fill = annotate)) + 
+        geom_histogram(bins = n_bins, color = "#e9ecef", alpha = 0.6, 
+                       position = "identity") + 
+        scale_fill_manual(values = c("gray70", "red")) + 
+        xlab(x_metric) + 
+        labs(fill = annotate)
+    } else if (is.null(annotate)) {
+      p <- ggplot(df, aes_string(x = x_metric)) + 
+        geom_histogram(bins = n_bins, color = "#e9ecef", alpha = 0.6, 
+                       position = "identity") + 
+        scale_fill_manual(values = c("gray70")) + 
+        xlab(x_metric)
     }
     
-    p <- p +
-      theme_bw() +
+    p <- p + 
+      theme_bw() + 
       theme(plot.title = element_text(hjust = 0.5, face = "plain", size = 12)) + 
       ggtitle("QC metrics")
   }
   
-  if (type == "scatter") { # must have metric_x (cont), metric_x (cont)
+  
+  # scatter: requires 'x_metric' (continuous) and 'y_metric' (continuous),
+  # additional optional arguments
+  
+  if (type == "scatter") {
     
-    p <- ggplot(plt_df, aes_string(x = metric_x, y = metric_y)) + 
-      geom_point(size = pt.size) + 
+    p <- ggplot(df, aes_string(x = x_metric, y = y_metric)) + 
+      geom_point(size = point_size) + 
       ggtitle("QC metrics") + 
       theme_bw()
     
-    if (!is.null(threshold_x)) {
-      p <- p + geom_vline(xintercept = threshold_x, color = "red")
+    if (!is.null(x_threshold)) {
+      p <- p + 
+        geom_vline(xintercept = x_threshold, color = "red")
     }
-    if (!is.null(threshold_y)) {
-      p <- p + geom_hline(yintercept = threshold_y, color = "red")
+    if (!is.null(y_threshold)) {
+      p <- p + 
+        geom_hline(yintercept = y_threshold, color = "red")
     }
     if (trend) {
-      p <- p + geom_smooth(method = "loess", se = FALSE)
+      p <- p + 
+        geom_smooth(method = "loess", se = FALSE)
     }
     if (marginal) {
       p <- p + 
@@ -183,15 +220,20 @@ plotSpotQC <- function(spe, type = c("hist", "scatter", "spots", "violin"),
     }
   }
   
-  if (type == "spots") { # must have x_coord (cont), y_coord (cont), optional annotate (logical)
+  
+  # spot: requires 'x_coord' (continuous), 'y_coord' (continuous), optionally
+  # 'annotate' (logical)
+  
+  if (type == "spots") {
     
-    if (!is.null(annotate)){ # At x_coord (cont) & y_coord (cont), colored by annotate (logical)
-      p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
-        geom_point(size = pt.size) + 
+    # spots at 'x_coord' and 'y_coord', optionally colored by 'annotate'
+    if (!is.null(annotate)) {
+      p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
+        geom_point(size = point_size) + 
         scale_color_manual(values = c("gray85", "red"))
-    }else if(is.null(annotate)){ # just gray spots at x_coord (cont) & y_coord (cont)
-      p <- ggplot(plt_df, aes_string(x = x_coord, y = y_coord)) + 
-        geom_point(size = pt.size) + 
+    } else if (is.null(annotate)) {
+      p <- ggplot(df, aes_string(x = x_coord, y = y_coord)) + 
+        geom_point(size = point_size) + 
         scale_color_manual(values = "gray85")
     }
     
@@ -200,7 +242,7 @@ plotSpotQC <- function(spe, type = c("hist", "scatter", "spots", "violin"),
       ggtitle("QC spots") + 
       theme_bw() + 
       theme(
-        plot.title = element_text(hjust = 0.5),
+        plot.title = element_text(hjust = 0.5), 
         panel.grid = element_blank(), 
         axis.title = element_blank(), 
         axis.text = element_blank(), 
@@ -211,33 +253,36 @@ plotSpotQC <- function(spe, type = c("hist", "scatter", "spots", "violin"),
     }
   }
   
-  if (type == "violin") { # must have metric_x (cont), optional annotate (logical)
-    
-    plt_df$dummy <- rep(" ", nrow(plt_df))
   
-    p <- ggplot(plt_df, aes_string(x="dummy", y=metric_x, fill="dummy")) +
-      geom_violin(trim=TRUE, alpha = 0.9) + 
-      scale_fill_manual(values = c("gray70")) +
+  # violin: requires 'x_metric' (continuous), optionally 'annotate' (logical)
+  
+  if (type == "violin") {
+    
+    df[[dummy]] <- rep(" ", nrow(df))
+    
+    p <- ggplot(df, aes_string(x = "dummy", y = x_metric, fill = "dummy")) + 
+      geom_violin(trim = TRUE, alpha = 0.9) + 
+      scale_fill_manual(values = c("gray70")) + 
+      xlab("Sample") + 
+      ylab("") + 
+      ggtitle(x_metric) + 
       theme_bw() + 
-      xlab("Sample") + ylab("") + ggtitle(metric_x) + 
       theme(legend.position="none", 
             panel.grid = element_blank(), 
-            panel.border = element_blank(),
-            plot.title = element_text(hjust = 0.5),
-            axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
-            axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black")
-            ) 
+            plot.title = element_text(hjust = 0.5))
     
-    if(is.null(annotate)){
-      p <- p + geom_jitter(size = pt.size) # just violin for metric_x (cont)
-    }else if(!is.null(annotate)){
-      p <- p + geom_jitter(aes_string(color = annotate), size = pt.size) + # violin for metric_x (cont), colored by annotate (logical)
-        scale_color_manual(values = c("black", "red")) # Note: in order of FALSE, TRUE
+    if (is.null(annotate)) {
+      # violins for 'x_metric'
+      p <- p + 
+        geom_jitter(size = point_size)
+    } else if (!is.null(annotate)) {
+      # violins for 'x_metric', colored by 'annotate' (colors in order FALSE, TRUE)
+      p <- p + 
+        geom_jitter(aes_string(color = annotate), size = point_size) + 
+        scale_color_manual(values = c("black", "red"))
     }
-    
-     
   }
   
+  # return plot
   p
 }
-
