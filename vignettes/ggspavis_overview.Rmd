@@ -2,7 +2,7 @@
 title: "ggspavis overview"
 author: 
   - name: Lukas M. Weber
-    affiliation: "Johns Hopkins Bloomberg School of Public Health, Baltimore, USA"
+    affiliation: "Boston University, Boston, MA, USA"
   - name: Helena L. Crowell
     affiliation: "University of Zurich, Zurich, Switzerland"
   - name: Yixing E. Dong
@@ -20,37 +20,27 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 # Introduction
 
-The `ggspavis` package contains a set of visualization functions for spatially resolved transcriptomics data, designed to work with the [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) Bioconductor object class.
+The `ggspavis` package contains a set of visualization functions for spatial transcriptomics data, designed to work with the [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) Bioconductor object class.
 
-These plotting functions are used in our online book [OSTA](https://lmweber.org/OSTA-book/) and other work.
 
 # Examples
 
-Load some example datasets from the [STexampleData](https://bioconductor.org/packages/STexampleData) or [`spatialLIBD`](https://research.libd.org/spatialLIBD/) package, and a toy example data of a single-cell spatial CosMx data set. We create some example plots to demonstrate `ggspavis`.
+Load some example datasets from the [STexampleData](https://bioconductor.org/packages/STexampleData) or [spatialLIBD](https://research.libd.org/spatialLIBD/) package and create some example plots to demonstrate `ggspavis`.
 
 ```{r, message=FALSE, warning=FALSE}
-library(SpatialExperiment)
+library(ggspavis)
 library(STexampleData)
-library(spatialLIBD)
-# library(ggspavis)
-source(here::here("R/plotSpots.R"))
-source(here::here("R/plotVisium.R"))
-source(here::here("R/plotSpotQC.R"))
-source(here::here("R/plotFeatureQC.R"))
-source(here::here("R/plotDimRed.R"))
-source(here::here("R/utils.R"))
 library(patchwork)
-library(grid)
-
-library(ggplot2)
-library(ggside)
+library(scater)
 ```
+
 
 ## 10x Genomics Visium: Mouse coronal brain section
 
-First we start with a quick demo of the Visium mouse brain data. We perform the visualization of library size and gene expression level that can be easily derived. Both `plotVisium()` and `plotSpots()` reflects the spatial coordinates of spots, with the former overlays spots on the H&E image. Note that `plotVisium()` can only take a `SpatialExperiment` class object, while other functions in the package can take both `SpatialExperiment` or `SingleCellExperiment` class object. 
+First we start with a demo for a 10x Genomics Visium mouse brain dataset. We generate visualizations of library size and expression levels of selected genes. Both `plotVisium()` and `plotSpots()` reflect the spatial coordinates of spots, with the former also overlaying spots on the H\&E histology image. Note that `plotVisium()` accepts a `SpatialExperiment` class object, while other functions in the package accept either `SpatialExperiment` or `SingleCellExperiment` class objects.
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
@@ -59,37 +49,66 @@ rownames(spe) <- rowData(spe)$gene_name
 colData(spe)$sum <- colSums(counts(spe))
 ```
 
-With `plotVisium()` annotated by a continuous variable, you can adjust palette, legend.position, scaling of the variable, and whether to highlight spots that are in tissue, etc.
+
+### Continuous annotations
+
+#### plotVisium
+
+With `plotVisium()` annotated by a continuous variable, you can adjust palette, legend position, scaling of the variable, and whether to highlight spots that are in tissue, etc.
+
+Note that we also use the `patchwork` package to display multiple figures in panels here.
 
 ```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=3.5}
-plotVisium(spe, annotate = "sum", highlight = "in_tissue", legend.position = "none") |
-plotVisium(spe, annotate = "sum", highlight = "in_tissue", palette = "darkred")+
+p1 <- plotVisium(spe, annotate = "sum", highlight = "in_tissue", 
+                 legend_position = "none")
+p2 <- plotVisium(spe, annotate = "sum", highlight = "in_tissue", 
+                 pal = "darkred") + 
   guides(fill = guide_colorbar(title = "Libsize"))
+
+# display panels using patchwork
+p1 | p2
 ```
 
-`plotVisium()` can also be used to visualize gene expression. 
+`plotVisium()` can also be used to visualize gene expression.
 
 ```{r, fig.width=8, fig.height=3.5}
-plotVisium(spe, annotate = "Gapdh", highlight = "in_tissue") | 
-  plotVisium(spe, annotate = "Mbp", highlight = "in_tissue")
+p1 <- plotVisium(spe, annotate = "Gapdh", highlight = "in_tissue")
+p2 <- plotVisium(spe, annotate = "Mbp", highlight = "in_tissue")
+
+# display panels using patchwork
+p1 | p2
 ```
 
-Two other cases of `plotVisium()` is to show only spots or only the H\&E image. Note that `plotVisium(image = FALSE)` can be used as `plotSpots()`, but it also includes spots that are not in tissue.
+Two other possibilites with `plotVisium()` are to show only spots or only the H\&E image.
 
 ```{r, fig.width=8, fig.height=3.5}
-plotVisium(spe, annotate = "Mbp", highlight = "in_tissue", image = FALSE) | 
-  plotVisium(spe, annotate = "Mbp", highlight = "in_tissue", spots = FALSE)
+p1 <- plotVisium(spe, annotate = "Mbp", highlight = "in_tissue", image = FALSE)
+p2 <- plotVisium(spe, annotate = "Mbp", highlight = "in_tissue", spots = FALSE)
+
+# display panels using patchwork
+p1 | p2
 ```
 
-For `plotSpots()` for Visium, we by default subset to spots that are in tissue. Palettes in `plotSpots()` can be changed like in `plotVisium()`. 
+
+#### plotSpots
+
+Using `plotSpots()`, for a 10x Genomics Visium dataset, by default we subset to spots that are over tissue. Palettes in `plotSpots()` can be changed in a similar manner to `plotVisium()`.
 
 ```{r, fig.width=8, fig.height=3.5}
-plotSpots(spe, annotate = "Gapdh") | plotSpots(spe, annotate = "Mbp", palette = "viridis")
+p1 <- plotSpots(spe, annotate = "Gapdh")
+p2 <- plotSpots(spe, annotate = "Mbp", pal = "viridis")
+
+# display panels using patchwork
+p1 | p2
 ```
 
-`plotVisium()` and `plotSpots()` can also be used to visualize categorical variables, such as clusters on spatial coordinates with specified eight-level palettes (e.g. `libd_layer_colors` or `Okabe-Ito`) or NULL (for which the palette decision will be automated). We will introduce these functionality using Visium Human DLPFC data.
 
 ## 10x Genomics Visium: Human brain (DLPFC)
+
+### Discrete annotations
+
+`plotSpots()` and `plotVisium()` can also be used to visualize discrete or categorical annotation variables, such as cluster labels as colors on the spatial coordinates. We will introduce this functionality using the Visium human brain dorsolateral prefrontal cortex (DLPFC) dataset.
+
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
 spe <- Visium_humanDLPFC()
@@ -97,150 +116,104 @@ rownames(spe) <- rowData(spe)$gene_name
 colData(spe)$libsize <- colSums(counts(spe))
 ```
 
-First, we check the ground truth annotation with the `spatialLIBD` palette, highlighting the spots that are in tissue. 
+First, we check the manually annotated reference labels, highlighting the spots that are in tissue, using `plotVisium()`.
 
 ```{r, message=FALSE, out.width="60%"}
-plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue", palette = "libd_layer_colors")
+plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue", 
+           pal = "libd_layer_colors")
 ```
 
-For `plotSpots()` on this Visium data, we leave the palette as NULL, and because "ground_truth" is categorical, eight distinct colors are generated. On the other hand, a NULL palette on a continuous variable means taking the default three-color gradient of "blue-beige-red".
+For `plotSpots()`, we leave the palette as NULL, and since the reference annotations are categorical, eight distinct colors are automatically generated. (Similarly, leaving the palette as NULL for a continuous variable will generate a default three-color gradient of "blue-beige-red".)
 
 ```{r, fig.width=8, fig.height=4}
-plotSpots(spe, annotate = "ground_truth") | plotSpots(spe, annotate = "libsize") + ggtitle("Library size")
+p1 <- plotSpots(spe, annotate = "ground_truth") + 
+  ggtitle("Reference")
+p2 <- plotSpots(spe, annotate = "libsize") + 
+  ggtitle("Library size")
+
+# display panels using patchwork
+p1 | p2
 ```
 
-We first derive some per spot QC flags needed for plotting.
+We can also overlay text labels over the clusters using the `text_by` argument.
+
+
+## Quality control (QC) plots
+
+### Spot-level QC
+
+We next derive some spot-level quality control (QC) flags for plotting. We use the `scater` package to add QC metrics to our data object.
 
 ```{r}
-## QC flags
-spe <- scuttle::addPerCellQCMetrics(spe, subsets = list(mito = grepl("(^MT-)|(^mt-)", rowData(spe)$gene_name)))
-spe$low_libsize <- spe$sum < 400 | spe$detected < 400
-spe$high_mito <- spe$subsets_mito_percent > 30
+# calculate QC metrics using scater
+spe <- addPerCellQCMetrics(spe, 
+  subsets = list(mito = grepl("(^MT-)|(^mt-)", rowData(spe)$gene_name)))
+
+# apply QC thresholds
+colData(spe)$low_libsize <- colData(spe)$sum < 400 | colData(spe)$detected < 400
+colData(spe)$high_mito <- colData(spe)$subsets_mito_percent > 30
 ```
 
-In addition to `plotVisium()` and `plotSpots()`, `plotSpotQC(type = "spots)` also reflects the spatial coordinates of the cells/spots, where cells/spots of interests should be labeled by a flag with TRUE or FALSE levels. The TRUE level are highlighted by red color.
+`plotSpotQC(plot_type = "spot")` reflects the spatial coordinates of the spots, where spots of interests can be labeled by a flag with TRUE or FALSE levels. The TRUE level are highlighted by red color.
 
+We can investigate spots with low library size using histograms, violin plots, and spot plots.
 
-We can have an overview of the spot library size distribution, by leaving \code{annotate = NULL}.
 ```{r, fig.width=8, fig.height=4.5}
-plotSpotQC(spe, metric_x = "sum", type = "violin", pt.size = 0.1) | 
-plotSpotQC(spe, metric_x = "sum", type = "hist") | 
-  plotSpotQC(spe, type = "spots", pt.size = 0.2) 
+p1 <- plotSpotQC(spe, plot_type = "histogram", 
+                 x_metric = "sum", annotate = "low_libsize", )
+p2 <- plotSpotQC(spe, plot_type = "violin", 
+                 x_metric = "sum", annotate = "low_libsize", point_size = 0.1)
+p3 <- plotSpotQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
+                 annotate = "low_libsize", point_size = 0.2)
+
+# display panels using patchwork
+p1 | p2 | p3
 ```
 
-We can check the spot with low library size on violin plot, histogram, and on spot spatially.
+Similarly, we can investigate spots with high mitochondrial proportion of reads.
+
 ```{r, fig.width=10, fig.height=4.5}
-plotSpotQC(spe, metric_x = "sum", annotate = "low_libsize", type = "violin", pt.size = 0.1) | 
-plotSpotQC(spe, metric_x = "sum", annotate = "low_libsize", type = "hist") | 
-  plotSpotQC(spe, annotate = "low_libsize", type = "spots") 
+p1 <- plotSpotQC(spe, plot_type = "histogram", 
+                 x_metric = "subsets_mito_percent", annotate = "high_mito", )
+p2 <- plotSpotQC(spe, plot_type = "violin", 
+                 x_metric = "subsets_mito_percent", annotate = "high_mito", point_size = 0.1)
+p3 <- plotSpotQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
+                 annotate = "high_mito", point_size = 0.2)
+
+# display panels using patchwork
+p1 | p2 | p3
 ```
 
-We can also check the spot with high mitochondria percentage on violin plot, histogram, and on spot spatially.
-
-```{r, fig.width=10, fig.height=4.5}
-plotSpotQC(spe, metric_x = "subsets_mito_percent", annotate = "high_mito", type = "violin", pt.size = 0.1) |
-plotSpotQC(spe, metric_x = "subsets_mito_percent", annotate = "high_mito", type = "hist") | 
-  plotSpotQC(spe, annotate = "high_mito", type = "spots")
-```
-
-We can also use scatterplot to check the trend between two variables. Below is a demonstration of how mitochondria percentage varies with library size. We can also highlight spots by putting some threshold on x and/or y axis. For example, spots with low library size but has high mitochondria percentage are of particular interest.
+We can also use a scatter plot to check the trend between two variables, for example mitochondrial proportion vs. library size. We can also highlight spots by putting thresholds on the x and/or y axes.
 
 ```{r, out.width="60%", warning=FALSE, message=FALSE}
-plotSpotQC(spe, type = "scatter", metric_x = "subsets_mito_percent", metric_y = "sum", threshold_x = 30, threshold_y = 400)
+plotSpotQC(spe, plot_type = "scatter", 
+           x_metric = "subsets_mito_percent", y_metric = "sum", 
+           x_threshold = 30, y_threshold = 400)
 ```
 
-Perform per gene QC and visualize the result with a histogram. For Visium, we demonstrate a generic threshold that a gene should be detected in at least 20 spots to be considered not lowly abundant. We apply log10 transformation to make it easier for visualization.
+### Feature-level QC
+
+Perform feature-level (gene-level) QC and visualize the result with a histogram. For example, for Visium, we demonstrate an arbitrary threshold that a gene should be detected in at least 20 spots to be considered not lowly abundant. The plot includes log1p transformation for easier visualization.
+
 ```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=4}
-rowData(spe)$gene_sum <- rowSums(counts(spe))
-rowData(spe)$low_abun_gene <- rowSums(counts(spe) > 0) < 20
-plotFeatureQC(spe, metric_x = "gene_sum", annotate = "low_abun_gene", type = "hist") + scale_x_log10() |
-  plotFeatureQC(spe, metric_x = "gene_sum", annotate = "low_abun_gene", type = "violin") + scale_y_log10()
+rowData(spe)$feature_sum <- rowSums(counts(spe))
+rowData(spe)$low_abundance <- rowSums(counts(spe) > 0) < 20
+
+p1 <- plotFeatureQC(spe, plot_type = "histogram", 
+                    x_metric = "feature_sum", annotate = "low_abundance")
+p2 <- plotFeatureQC(spe, plot_type = "violin", 
+                    x_metric = "feature_sum", annotate = "low_abundance")
+
+# display panels using patchwork
+p1 | p2
 ```
 
-Now we can perform QC to exclude low library size spots and low abundance genes, library size log normalization, and simple clustering. The reduced dimension and clustering results are already stored in this `spe` object.
 
-The same data set of `STexampleData::Visium_humanDLPFC()` is also stored in `spatialLIBD::fetch_data()`, but we use the `spatialLIBD` version for the already existing PCA and UMAP reduced dimensions stored in the `spe` object. The first step of `spatialLIBD::fetch_data()` will take some time.
+## Reduced dimension plots
 
-```{r, message = FALSE, warning=FALSE}
-# load data in SpatialExperiment format
-spe <- spatialLIBD::fetch_data(type = "spe")
-spe <- spe[, spe$sample_id == "151673"]
-rownames(spe) <- rowData(spe)$gene_name
-colData(spe)$libsize <- colSums(counts(spe))
-```
+We can also use the `plotDimRed()` function to generate reduced dimension plots, e.g. PCA or UMAP.
 
-We can compare the ground truth annotation with clustering result with `plotSpots()` (or `plotVisium()` overlaying H&E). Here we also demonstrate the on-plot text annotation functionality with `plotSpots(text_by = )`. 
-
-```{r, fig.width=8, fig.height=4.5}
-spe$Cluster <- factor(spe$Cluster)
-plotSpots(spe, annotate = "layer_guess_reordered") |
-  plotSpots(spe, annotate = "Cluster", text_by = "Cluster")
-```
-
-We can now visualize the categorical clustering result or continuous gene expression value on UMAP with `plotDimRed()`
-
-```{r, fig.width=8, fig.height=4, warning = FALSE}
-plotDimRed(spe, type = "UMAP_neighbors15", annotate = "Cluster") | 
-  plotDimRed(spe, type = "UMAP_neighbors15", annotate = "MBP")
-```
-
-Another example with `plotDimRed(type = "PCA")` on ground truth annotation, with on-plot text annotation on each cluster, and another highly variable gene.
-
-```{r, fig.width=8, fig.height=4}
-plotDimRed(spe, type = "PCA", annotate = "layer_guess_reordered", text_by = "layer_guess_reordered_short") | 
-  plotDimRed(spe, type = "PCA", annotate = "SCGB2A2")
-```
-
-## Nanostring CosMx: Human lung cancer
-
-Now we demonstrate the usage of `ggspavis` on single-cell spatial technologies, such as Xenium, Vizgen, and CosMx. Here we start with reading in a toy example of CosMx data as a `SpatialExperiment` object.
-
-```{r}
-dir <- here::here("inst/extdata/NanostringCosMx/")
-source(here::here("R/.readCosmxSPE.R"))
-spe <- .readCosmxSPE(dirname = dir)
-```
-
-These single-cell spatial technologies usually do not come with an H&E image as Visium. Therefore, except `plotVisium()` which requires an image stored in the object, all other functions `plotSpots()`, `plotSpotQC()`, `plotDimRed()` can be used as previously. Now the "spots" are the "cells".
-
-Here we check the continuous cell area and gene expression level of KRT20.
-
-```{r, fig.width=8, fig.height=2.5}
-plotSpots(spe, annotate = "Area", in_tissue = NULL, show_axis = TRUE) | 
-  plotSpots(spe, annotate = "KRT20", in_tissue = NULL, palette = "darkblue")
-```
-
-For imaging-based spatial technologies, given the single-cell resolution of the `SPE`, we adopt the same QC methods from [OSCA book](https://bioconductor.org/books/3.17/OSCA.basic/quality-control.html). We first perform per cell QC and visualize the QC flags on imaging-based spatial experiment class. 
-```{r, fig.width=10, fig.height=4.5}
-spe <- addPerCellQCMetrics(x = spe,subsets=list(Mito=grep("MT-",rownames(spe))))
-spe <- addPerFeatureQCMetrics(x = spe)
-
-spe$low_libsize <- isOutlier(metric = spe$sum, type = "lower", log = TRUE)
-spe$high_mito <- isOutlier(metric = spe$subsets_Mito_percent, type = "higher")
-rowData(spe)$low_abun_gene <- log(rowData(spe)) < -5 | log(rowData(spe)) <= 0
-
-
-spe$subsets_Mito_percent <- ifelse(is.na(spe$subsets_Mito_percent), 0, spe$subsets_Mito_percent)
-
-# TODO: may a new package AutoQCFlags
-plotSpotQC(spe, metric_x = "sum", annotate = "low_libsize", type = "violin", pt.size = 0.1) | 
-plotSpotQC(spe, metric_x = "sum", annotate = "low_libsize", type = "hist") | 
-  plotSpotQC(spe, annotate = "low_libsize", type = "spots") 
-```
-
-We then perform per gene QC and visualize the result with a histogram. 
-```{r}
-spe <- scuttle::addPerFeatureQCMetrics(spe)
-head(rowData(spe))
-```
-
-Same analysis on QC and dimension reduction could also be performed for your Xenium or Vizgen data as a `SpatialExperiment` object.
-
-We also demonstrate the `zoom` to only spots area and `show_axis` on labels and ticks functionality in `plotVisium()`, which are both set to default. # TODO: for Visium in preprint. 
-
-```{r}
-  plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue", palette = "libd_layer_colors", zoom = TRUE, show_axis = TRUE)
-```
 
 # Session information
 
