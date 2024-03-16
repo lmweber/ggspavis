@@ -2,6 +2,7 @@
 % Please edit documentation in R/plotSpotQC.R
 \name{plotSpotQC}
 \alias{plotSpotQC}
+\alias{plotQC}
 \title{plotSpotQC}
 \usage{
 plotSpotQC(
@@ -22,6 +23,8 @@ plotSpotQC(
   point_size = 0.3,
   y_reverse = TRUE
 )
+
+plotQC(...)
 }
 \arguments{
 \item{spe}{Input data, assumed to be a \code{SpatialExperiment} or
