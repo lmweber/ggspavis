@@ -1,4 +1,4 @@
-#' plotReducedDim
+#' plotDimRed
 #' 
 #' Plotting functions for spatial transcriptomics data.
 #' 
@@ -101,16 +101,16 @@
 #' colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 #' 
 #' # generate plot
-#' plotReducedDim(spe, plot_type = "UMAP", annotate = "ground_truth")
+#' plotDimRed(spe, plot_type = "UMAP", annotate = "ground_truth")
 #' 
-plotReducedDim <- function(spe, plot_type = c("UMAP", "PCA"), 
-                           annotate = NULL, feature_col = "gene_name", 
-                           assay_name = "counts", 
-                           update_dimnames = TRUE, 
-                           pal = NULL, point_size = 0.3, 
-                           legend_point_size = 3, 
-                           text_by = NULL, text_by_size = 5, 
-                           text_by_color = "black") {
+plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"), 
+                       annotate = NULL, feature_col = "gene_name", 
+                       assay_name = "counts", 
+                       update_dimnames = TRUE, 
+                       pal = NULL, point_size = 0.3, 
+                       legend_point_size = 3, 
+                       text_by = NULL, text_by_size = 5, 
+                       text_by_color = "black") {
   
   # check validity of arguments
   stopifnot(length(plot_type) == 1)
@@ -239,13 +239,4 @@ plotReducedDim <- function(spe, plot_type = c("UMAP", "PCA"),
   
   # return plot
   p
-}
-
-
-#' @rdname plotReducedDim
-#' @export
-plotDimRed <- function(...) {
-  # message when using deprecated function name
-  message("The function plotDimRed() has been renamed to plotReducedDim(). ", 
-          "Please use plotReducedDim() instead.")
 }
