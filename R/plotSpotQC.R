@@ -70,6 +70,9 @@
 #'   argument is provided, only spots over tissue will be shown. Default = NULL.
 #'   Optional argument used for spot plots.
 #' 
+#' @param legend_point_size Legend point size. Default = 3. Optional argument
+#'   used for spot plots.
+#' 
 #' @param n_bins Number of bins for histograms. Default = 100. Optional argument
 #'   used for histograms.
 #' 
@@ -92,7 +95,7 @@
 #' @importFrom ggplot2 ggplot aes_string geom_histogram geom_point geom_vline
 #'   geom_hline geom_smooth geom_violin geom_jitter scale_fill_manual
 #'   scale_color_manual xlab ylab labs coord_fixed theme_bw theme ggtitle
-#'   element_text element_blank scale_y_reverse
+#'   element_text element_blank guides scale_y_reverse
 #' @importFrom ggside geom_xsidehistogram geom_ysidehistogram
 #' 
 #' 
@@ -119,6 +122,7 @@ plotSpotQC <- function(spe,
                        x_threshold = NULL, y_threshold = NULL, 
                        trend = TRUE, marginal = TRUE, 
                        annotate = NULL, in_tissue = NULL, 
+                       legend_point_size = 3, 
                        n_bins = 100, point_size = 0.3, 
                        y_reverse = TRUE) {
   
@@ -231,7 +235,8 @@ plotSpotQC <- function(spe,
     if (!is.null(annotate)) {
       p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = annotate)) + 
         geom_point(size = point_size) + 
-        scale_color_manual(values = c("gray85", "red"))
+        scale_color_manual(values = c("gray85", "red")) + 
+        guides(color = guide_legend(override.aes = list(size = legend_point_size)))
     } else if (is.null(annotate)) {
       p <- ggplot(df, aes_string(x = x_coord, y = y_coord)) + 
         geom_point(size = point_size) + 
