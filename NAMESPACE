@@ -3,6 +3,7 @@
 export(plotDimRed)
 export(plotFeatureQC)
 export(plotMolecules)
+export(plotQC)
 export(plotSpotQC)
 export(plotSpots)
 export(plotVisium)

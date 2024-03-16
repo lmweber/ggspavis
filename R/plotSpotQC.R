@@ -282,3 +282,12 @@ plotSpotQC <- function(spe,
   # return plot
   p
 }
+
+
+#' @rdname plotSpotQC
+#' @export
+plotQC <- function(...) {
+  # message when using deprecated function name
+  message("The function plotQC() has been replaced with plotSpotQC() and ", 
+          "plotFeatureQC(). Please use one of these functions instead.")
+}
