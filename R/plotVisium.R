@@ -82,9 +82,9 @@
 #'   'imgData<-' imgRaster scaleFactors
 #' @importFrom SummarizedExperiment colData assayNames
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
-#'   scale_fill_viridis_c scale_color_identity scale_fill_identity facet_wrap
-#'   guides guide_colorbar guide_legend theme_void element_text margin unit
-#'   layer
+#'   scale_fill_gradientn scale_fill_viridis_c scale_color_identity
+#'   scale_fill_identity facet_wrap guides guide_colorbar guide_legend
+#'   theme_void element_text margin unit layer
 #' @importFrom grid rasterGrob
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom grDevices colorRampPalette

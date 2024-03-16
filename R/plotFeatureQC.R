@@ -47,7 +47,8 @@
 #' 
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom ggplot2 ggplot aes_string geom_histogram geom_violin geom_jitter
-#'   scale_fill_manual scale_color_manual xlab labs theme_bw theme element_blank
+#'   scale_fill_manual scale_color_manual scale_x_continuous scale_y_continuous
+#'   xlab labs theme_bw theme element_blank
 #' 
 #' 
 #' @export

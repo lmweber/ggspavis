@@ -87,10 +87,12 @@
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom scales hue_pal
+#' @importFrom stats median
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom ggplot2 ggplot aes_string geom_point facet_wrap coord_fixed
 #'   theme_bw theme element_blank scale_color_viridis_c scale_color_gradientn
 #'   scale_color_gradient scale_color_manual ggtitle labs guides scale_y_reverse
+#'   aes .data
 #' 
 #' @export
 #' 
@@ -245,12 +247,12 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
     # add text with the median locations of the 'text_by' vector
     if (!is.null(text_by)) {
       by_text_x <- vapply(
-        split(df[[x_label]], df[[text_by]]), 
+        split(df[[x_coord]], df[[text_by]]), 
         median, 
         FUN.VALUE = 0
       )
       by_text_y <- vapply(
-        split(df[[y_label]], df[[text_by]]), 
+        split(df[[y_coord]], df[[text_by]]), 
         median, 
         FUN.VALUE = 0
       )
