@@ -6,64 +6,73 @@
 \usage{
 plotFeatureQC(
   spe,
-  type = c("hist", "violin"),
-  metric_x = "sum",
+  plot_type = c("histogram", "violin"),
+  x_metric = NULL,
   annotate = NULL,
-  nbins = 100,
-  pt.size = 0.1,
-  marginal = TRUE,
-  y_reverse = TRUE
+  n_bins = 100,
+  point_size = 0.1,
+  scale_log1p = TRUE
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) Input data, assumed to be a
-\code{SpatialExperiment} or \code{SingleCellExperiment} object.}
+\item{spe}{Input data, assumed to be a \code{SpatialExperiment} or
+\code{SingleCellExperiment} object.}
 
-\item{type}{(character) Type of QC plot. Options are "hist", "scatter", and
-"spots". See details in description.}
+\item{plot_type}{Type of QC plot. Options are "histogram" and "violin". See
+Details for additional details.}
 
-\item{metric_x}{(character) Name of column in \code{colData} containing QC
-metric to plot on x-axis (e.g. "sum" for number of cells per spot).
-Default = "sum". Required for histogram, scatter, and violin plots.}
+\item{x_metric}{Name of column in \code{rowData} containing feature-level QC
+metric to plot on x-axis. Required for histograms and violin plots.}
 
-\item{annotate}{(logical) Name of column in \code{colData} identifying
-flagged spots that do not meet filtering thresholds, which will be
-highlighted on a histogram, spot-based, or violin plot. Default = NULL. 
-Not needed for scatter plot.}
+\item{annotate}{Name of column in \code{rowData} identifying selected
+features that do not meet QC filtering thresholds, which will be
+highlighted on a histogram or violin plot. Default = NULL. Optional
+argument used for histograms and violin plots.}
 
-\item{nbins}{(numeric) Adjusting the histogram bin width. Optional for
-spot-based and scatter and violin plots.}
+\item{n_bins}{Number of bins for histograms. Default = 100. Optional argument
+used for histograms.}
 
-\item{pt.size}{(numeric) Adjusting the scatter, spot-based, violin jitter point size. 
-Optional for histogram. Suggested point size for scatter = 0.5, for spot-based
-= 0.3, and for violin jitter = 0.1.}
+\item{point_size}{Point size. Default = 0.1. Optional argument for violin
+plots.}
+
+\item{scale_log1p}{Whether to log1p-scale axes. Default = TRUE.}
 }
 \value{
-Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, labels, formatting, etc).
+Returns a ggplot object, which may be further modified using ggplot
+  functions.
 }
 \description{
-Quality control (QC) plots for spatially resolved transcriptomics data.
+Plotting functions for spatial transcriptomics data.
 }
 \details{
-Function to generate plots for quality control (QC) purposes for spatially
-resolved transcriptomics data.
+Function to create quality control (QC) plots for spatial transcriptomics
+data.
 
-The following types of QC plots are available for per feature QC:
+The following types of QC plots are available for feature-level QC (see
+\code{\link{plotSpotQC}} for spot-level or cell-level QC):
 
-- Histogram (\code{type} = "hist") for a single QC metric, e.g. number of counts
-per feature. For number of counts per spot, the histogram highlights spots with
-derived flags, e.g. low abundance genes.
-- Violin (\code{type} = "violin") for a single QC metric, e.g. number of counts
-per feature. For number of counts per spot, the violin plot is able to highlights 
-spots with derived flags, e.g. low abundance genes.
+\itemize{
+\item Histogram (\code{plot_type = "histogram"}) for a single QC metric, e.g.
+total UMI counts across all spots per feature. The histogram can optionally
+highlight selected features, e.g. low abundance features.
+\item Violin (\code{plot_type = "violin"}) for a single QC metric, e.g. total
+UMI counts across all spots per feature. The violin plot can optionally
+highlight selected features, e.g. low abundance features.
+}
 }
 \examples{
 library(STexampleData)
 spe <- Visium_humanDLPFC()
-plotFeatureQC(spe, type = "hist", metric_x = "cell_count", annotate = "low_abun_gene")
-plotFeatureQC(spe, type = "scatter", metric_x = "cell_count", metric_y = "sum")
+
+rowData(spe)$feature_sum <- rowSums(counts(spe))
+rowData(spe)$low_abundance <- rowData(spe)$feature_sum < 100
+
+plotFeatureQC(spe, plot_type = "histogram", 
+              x_metric = "feature_sum", annotate = "low_abundance")
+plotFeatureQC(spe, plot_type = "violin", 
+              x_metric = "feature_sum", annotate = "low_abundance")
+
 }
 \author{
-Yixing E. Dong
+Yixing E. Dong and Lukas M. Weber
 }

@@ -100,7 +100,7 @@ The following types of QC plots are available for spot-level or cell-level QC
 (see \code{\link{plotFeatureQC}} for feature-level QC):
 
 \itemize{
-\item Histogram (\code{plot_type "histogram"}) for a single QC metric, e.g.
+\item Histogram (\code{plot_type = "histogram"}) for a single QC metric, e.g.
 number of UMI counts per spot. For number of counts per spot, the histogram
 can optionally highlight selected spots, e.g. spots with low library size.
 \item Scatter plot (\code{plot_type = "scatter"}) comparing two QC metrics,
@@ -118,8 +118,8 @@ can optionally highlight selected spots, e.g. spots with low library size.
 library(STexampleData)
 spe <- Visium_humanDLPFC()
 
-spe$sum <- colSums(counts(spe))
-spe$low_libsize <- spe$sum < 400
+colData(spe)$sum <- colSums(counts(spe))
+colData(spe)$low_libsize <- colData(spe)$sum < 400
 
 plotSpotQC(spe, plot_type = "histogram", x_metric = "sum", annotate = "low_libsize")
 plotSpotQC(spe, plot_type = "scatter", x_metric = "sum", y_metric = "cell_count")
