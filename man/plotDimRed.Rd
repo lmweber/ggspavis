@@ -6,11 +6,13 @@
 \usage{
 plotDimRed(
   spe,
-  type = c("UMAP", "PCA"),
-  assay = "counts",
+  plot_type = c("UMAP", "PCA"),
   annotate = NULL,
+  features = "gene_name",
+  assay_name = "counts",
+  update_colnames = TRUE,
   palette = NULL,
-  pt.size = 0.3,
+  point_size = 0.3,
   text_by = NULL,
   text_by_size = 5,
   text_by_color = "black"
@@ -20,20 +22,24 @@ plotDimRed(
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
 \code{SpatialExperiment} or \code{SingleCellExperiment} object.}
 
-\item{type}{(character) Type of reduced dimension plot. Options can be "UMAP",
-"PCA", or any self-defined reduced dimension names. Default = "UMAP".}
+\item{plot_type}{(character) Type of reduced dimension plot. Options can be
+"UMAP", "PCA", or any self-defined reduced dimension names. Default =
+"UMAP".}
 
 \item{annotate}{(character) Name of column in \code{colData} containing
 values to annotate spots with colors, e.g. cluster labels (discrete values)
 or total UMI counts (continuous values).}
 
-\item{palette}{(character) Color palette for annotation. Options for discrete
-labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
-hex values. For continuous values, provide a vector of length 2 for the low
-and high range, e.g. \code{c("gray90", "navy")}. Default =
-\code{"libd_layer_colors"}.}
+\item{features}{(character) Name of column in \code{rowData} containing
+continuous feature to plot. Default = "gene_name".}
 
-\item{pt.size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
+\item{assay_name}{(character) Name of \code{assay} containing continuous
+feature to plot.}
+
+\item{update_colnames}{(logical) Whether to update column names of
+\code{reducedDim} to default values. Default = TRUE.}
+
+\item{point_size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
 
 \item{text_by}{(character) Column name of the annotation to apply on top of 
 each cluster. Usually should put it the same as `annotate = `. unless you have 
@@ -45,11 +51,11 @@ strings. Only used for categorical `annotate = `. Default = \code{NULL}.}
 
 \item{text_by_color}{(character) Color string or hex code. Default = \code{"black"}.}
 
-\item{x_axis}{(character) Name of column in \code{reducedDim} containing
-x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.}
-
-\item{y_axis}{(character) Name of column in \code{reducedDim} containing
-y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.}
+\item{pal}{(character) Color palette for annotation. Options for discrete
+labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
+hex values. For continuous values, provide a vector of length 2 for the low
+and high range, e.g. \code{c("gray90", "navy")}. Default =
+\code{"libd_layer_colors"}.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
