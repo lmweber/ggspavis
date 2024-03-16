@@ -17,7 +17,7 @@ plotSpots(
   point_size = 0.3,
   legend_position = "right",
   legend_point_size = 3,
-  show_axis = FALSE,
+  show_axes = FALSE,
   y_reverse = TRUE,
   text_by = NULL,
   text_by_size = 5,
@@ -76,7 +76,7 @@ high range, e.g. c("gray90", "navy").}
 \item{legend_point_size}{Legend point size for discrete annotations. Default
 = 3.}
 
-\item{show_axis}{Whether to show axis titles, text, and ticks. Default =
+\item{show_axes}{Whether to show axis titles, text, and ticks. Default =
 FALSE.}
 
 \item{y_reverse}{Whether to reverse y coordinates. This is usually required
@@ -108,8 +108,14 @@ quality control metrics.
 }
 \examples{
 library(STexampleData)
+
+# discrete annotations
 spe <- Visium_humanDLPFC()
 plotSpots(spe, annotate = "ground_truth")
+
+# continuous annotations
+spe <- Visium_mouseCoronal()
+plotSpots(spe, annotate = "Gapdh")
 
 }
 \author{

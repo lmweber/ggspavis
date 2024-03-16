@@ -22,11 +22,11 @@ plotVisium(
   y_reverse = TRUE,
   sample_ids = NULL,
   image_ids = NULL,
-  palette = NULL
+  pal = NULL
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment or SingleCellExperiment) Input data object.}
+\item{spe}{(SpatialExperiment) Input data object.}
 
 \item{spots}{(logical) Whether to display spots (spatial barcodes) as points.
 Default = TRUE.}
@@ -81,7 +81,7 @@ available. Default = NULL (show all samples).}
 \item{image_ids}{(character) Images to show, if multiple images are
 available. Default = NULL (show all images).}
 
-\item{palette}{(character) Color palette for points. Options for discrete
+\item{pal}{(character) Color palette for points. Options for discrete
 labels are "libd_layer_colors", "Okabe-Ito", or a custom vector of hex
 color codes. Options for continuous values are "viridis", a single color
 name (e.g. "red", "navy", etc), or a vector of length two containing color
