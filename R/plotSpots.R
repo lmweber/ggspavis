@@ -52,6 +52,9 @@
 #' 
 #' @param point_size Point size. Default = 0.3.
 #' 
+#' @param legend_position Legend position for discrete annotations. Options are
+#'   "left", "right", "top", "bottom", and "none". Default = "right".
+#' 
 #' @param legend_point_size Legend point size for discrete annotations. Default
 #'   = 3.
 #' 

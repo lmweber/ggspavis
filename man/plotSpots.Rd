@@ -70,6 +70,9 @@ high range, e.g. c("gray90", "navy").}
 
 \item{point_size}{Point size. Default = 0.3.}
 
+\item{legend_position}{Legend position for discrete annotations. Options are
+"left", "right", "top", "bottom", and "none". Default = "right".}
+
 \item{legend_point_size}{Legend point size for discrete annotations. Default
 = 3.}
 

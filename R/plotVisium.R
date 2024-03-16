@@ -11,7 +11,7 @@
 #' options available to adjust the plot type and style.
 #' 
 #' 
-#' @param spe (SpatialExperiment) or \code{SingleCellExperiment} Input data object.
+#' @param spe (SpatialExperiment or SingleCellExperiment) Input data object.
 #' 
 #' @param spots (logical) Whether to display spots (spatial barcodes) as points.
 #'   Default = TRUE.
@@ -32,11 +32,11 @@
 #' @param image (logical) Whether to show histology image as background. Default
 #'   = TRUE.
 #'   
-#' @param zoom (logical) Whether to zoom to area of tissue with spots on it. Default
-#'   = FALSE
+#' @param zoom (logical) Whether to zoom to area of tissue containing spots.
+#'   Default = FALSE
 #'   
-#' @param show_axis (logical) Whether to show axis and coordiantes for the plot. Default
-#'   = FALSE
+#' @param show_axes (logical) Whether to show axes and coordinates. Default =
+#'   FALSE
 #' 
 #' @param assay (character) Name of assay data to use when \code{annotate} is in
 #'   \code{rownames(spe)}. Should be one of \code{assayNames(spe)}.
@@ -44,6 +44,11 @@
 #' @param trans Transformation to apply for continuous scales. Ignored unless
 #'   \code{annotate} is numeric, e.g. feature expression. (See
 #'   \code{\link{ggplot2}{continuous_scale}} for valid options.)
+#' 
+#' @param point_size (numeric) Point size. Default = 1.
+#' 
+#' @param legend_position Legend position for annotations. Options are "left",
+#'   "right", "top", "bottom", and "none". Default = "right".
 #' 
 #' @param x_coord (character) Column in \code{spatialCoords} containing
 #'   x-coordinates. Default = NULL, which selects the first column.
@@ -67,8 +72,6 @@
 #' 
 #' @param image_ids (character) Images to show, if multiple images are
 #'   available. Default = NULL (show all images).
-#'   
-#' @param pt.size (numeric) Point size for \code{geom_point()}. Default = 1.
 #' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
@@ -78,18 +81,22 @@
 #' @importFrom SpatialExperiment spatialCoords spatialCoordsNames imgData
 #'   'imgData<-' imgRaster scaleFactors
 #' @importFrom SummarizedExperiment colData assayNames
-#' @importFrom ggrepel geom_text_repel
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
 #'   scale_fill_viridis_c scale_color_identity scale_fill_identity facet_wrap
 #'   guides guide_colorbar guide_legend theme_void element_text margin unit
 #'   layer
 #' @importFrom grid rasterGrob
+#' @importFrom ggrepel geom_text_repel
+#' @importFrom grDevices colorRampPalette
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom scales hue_pal
 #' @importFrom methods is as
 #' @importFrom stats setNames
 #' 
 #' @export
 #' 
-#' @author Helena L. Crowell with modifications by Lukas M. Weber, Yixing E. Dong
+#' @author Helena L. Crowell, with modifications by Lukas M. Weber and Yixing E.
+#'   Dong
 #' 
 #' @examples
 #' library(STexampleData)
@@ -108,10 +115,10 @@
 #' 
 plotVisium <- function(spe, 
                        spots = TRUE, annotate = NULL, highlight = NULL, 
-                       facets = "sample_id", image = TRUE, zoom = FALSE, show_axis = FALSE,
-                       assay = "counts", trans = "identity", legend.position = "right",
+                       facets = "sample_id", image = TRUE, zoom = FALSE, show_axes = FALSE,
+                       assay = "counts", trans = "identity", point_size = 1, legend_position = "right",
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
-                       sample_ids = NULL, image_ids = NULL, palette = NULL, pt.size = 1) {
+                       sample_ids = NULL, image_ids = NULL, palette = NULL) {
   
   # check validity of input arguments
   stopifnot(
@@ -120,7 +127,7 @@ plotVisium <- function(spe,
     is.logical(image), length(image) == 1, 
     is.logical(y_reverse), length(y_reverse) == 1)
   
-  stopifnot(legend.position %in% c("left", "right", "top", "bottom", "none"))
+  stopifnot(legend_position %in% c("left", "right", "top", "bottom", "none"))
   stopifnot(is.character(annotate))
   
   if(is.null(x_coord)) x_coord <- spatialCoordsNames(spe)[1]
@@ -128,32 +135,34 @@ plotVisium <- function(spe,
   
   # set up data for plotting
   plt_df <- data.frame(colData(spe), spatialCoords(spe))
-  if(!is.null(annotate)){
+  if (!is.null(annotate)) {
     # check validity of 'annotate' argument
     stopifnot(is.character(annotate), length(annotate) == 1)
-    if(!annotate %in% c(names(plt_df), rownames(spe))){
+    if (!annotate %in% c(names(plt_df), rownames(spe))) {
       stop("'annotate' should be in rownames(spe) or names(colData(spe))")
     }
     # (optionally) add feature assay data to 'plt_df'
-    if(annotate %in% rownames(spe)){
+    if (annotate %in% rownames(spe)) {
       stopifnot(
-        is.character(assay))
+        is.character(assay), 
+        length(grep(assay, assayNames(spe))) == 1)
       plt_df[[annotate]] <- assay(spe, assay)[annotate, ]
     }
-    if(is.numeric(plt_df[[annotate]]) & is.null(palette)){
-      palette <- "seuratlike" # for continuous feature, turn length(palette) = 0 to length(palette) = 1
+    if (is.numeric(plt_df[[annotate]]) & is.null(palette)) {
+      # for continuous feature, ensure length(palette) == 1 (instead of 0 if NULL)
+      palette <- "seuratlike"
     }
     # get color palette
     palette <- .get_pal(palette, plt_df[[annotate]])
-  }else{
+  } else {
     annotate <- "foo"
     plt_df[[annotate]] <- "black"
   }
   
-  if(is.null(sample_ids)){
+  if (is.null(sample_ids)) {
     # default to using all samples
     sample_ids <- unique(spe$sample_id)
-  }else{
+  } else {
     # subset specified samples
     spe <- spe[, spe$sample_id %in% sample_ids]
   }
@@ -166,7 +175,7 @@ plotVisium <- function(spe,
   # note: images could also be plotted using 'annotation_custom()', 
   # however, this does not allow for faceting, so we instead 
   # construct a separate image layer for each sample
-  if(image){
+  if (image) {
     images <- lapply(sample_ids, function(s) {
       spi <- img_df[s, "data"]
       img <- imgRaster(spi[[1]])
@@ -186,71 +195,77 @@ plotVisium <- function(spe,
     xlim <- c(0, ncol(img))
     ylim <- c(0, nrow(img))
     
-    if(zoom){
+    if (zoom) {
       xlim <- ylim <- NULL
     }
-  }else{
+  } else {
     img <- NULL
     images <- xlim <- ylim <- NULL
   }
   
   # scale spatial coordinates
-  for(s in sample_ids){
+  for (s in sample_ids) {
     ix <- plt_df$sample_id == s
     xy <- c(x_coord, y_coord)
     sf <- img_df[s, "scaleFactor"]
     plt_df[ix, xy] <- sf * plt_df[ix, xy]
     # reverse y coordinates to match orientation of images 
     # (sometimes required for Visium data)
-    if(y_reverse) plt_df <- .y_reverse(plt_df, ix, y_coord, img)
+    if (y_reverse) plt_df <- .y_reverse(plt_df, ix, y_coord, img)
   }
   
   # construct points and highlights
-  if(spots){
+  if (spots) {
     # check whether 'annotate' is continuous (numeric) or discrete (factor)
     guide <- ifelse(is.numeric(plt_df[[annotate]]), guide_colorbar, guide_legend)
     points <- list(
       guides(fill = guide(
         title = annotate, order = 1, override.aes = list(col = NA, size = 3))), 
-      geom_point(shape = 21, size = pt.size, stroke = 0.25, alpha = 0.8))
-    if(!is.null(highlight)){
+      geom_point(shape = 21, size = point_size, stroke = 0.25, alpha = 0.8))
+    if (!is.null(highlight)) {
       plt_df$highlight <- as.factor(plt_df[[highlight]])
       highlights <- list(
         scale_color_manual(highlight, values = c("#e0e0e0", "black")), 
         guides(col = guide_legend(override.aes = list(
           size = 2, stroke = 1, 
           col = c("#e0e0e0", "black")[seq_along(unique(plt_df$highlight))]))))
-    }else{
+    } else {
       plt_df$highlight <- "transparent"
       highlights <- scale_color_identity()
     }
-  }else{
+  } else {
     # this is required, else the image layer doesn't show
     points <- geom_point(col = "transparent")
     highlights <- NULL
   }
   
   # color scale
-  scale <- if(annotate != "foo"){
-    if(is.numeric(plt_df[[annotate]])){
-      if(length(palette) == 1 && palette %in% c("viridis", "magma", "inferno", "plasma",
-                                                "cividis", "rocket", "mako", "turbo")){
+  scale <- if(annotate != "foo") {
+    if (is.numeric(plt_df[[annotate]])) {
+      if (length(palette) == 1 && 
+          palette %in% c("viridis", "magma", "inferno", "plasma", 
+                         "cividis", "rocket", "mako", "turbo")) {
         scale_fill_viridis_c(trans = trans, option = palette)
-      }else if(length(palette) == 1 && palette == "seuratlike"){
-        scale_fill_gradientn(colors = colorRampPalette(colors = rev(x = RColorBrewer::brewer.pal(n = 11, name = "Spectral")))(100),
-                             trans = trans, limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
-      }else{
+      } else if (length(palette) == 1 && palette == "seuratlike") {
+        scale_fill_gradientn(
+          colors = colorRampPalette(
+            colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100), 
+          trans = trans, 
+          limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
+      } else {
         scale_fill_gradient(low = palette[1], high = palette[2], trans = trans)
       }
-    }else if(is.factor(plt_df[[annotate]])){
-      if(is.null(palette)){ # for categorical feature, automate palette
-        scale_fill_manual(name = annotate,
-                          values = scales::hue_pal()(length(unique(plt_df[[annotate]])))) 
-      }else if(!is.null(palette)){
+    } else if (is.factor(plt_df[[annotate]])) {
+      # for categorical feature, automate palette
+      if (is.null(palette)) {
+        scale_fill_manual(
+          name = annotate, 
+          values = hue_pal()(length(unique(plt_df[[annotate]]))))
+      } else if (!is.null(palette)) {
         scale_fill_manual(values = palette)
       }
     }
-  }else{
+  } else {
     scale_fill_identity()
   }
   
@@ -260,27 +275,23 @@ plotVisium <- function(spe,
     images + points + highlights + scale + 
     coord_fixed(xlim = xlim, ylim = ylim) 
   
-  if(show_axis){
+  if (show_axes) {
     p <- p + 
       theme_bw() + 
-      theme(strip.text = element_blank(),
-            strip.background = element_blank(),
-            legend.position = legend.position) +
-      labs(
-        x = paste0("pxl_col_in_", img_df[s, "image_id"]),
-        y = paste0("pxl_col_in_", img_df[s, "image_id"])
-      ) + 
+      theme(strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"), 
+                                      size = 12), 
+            legend.position = legend_position) +
+      labs(x = paste0("pxl_col_in_", img_df[s, "image_id"]),
+           y = paste0("pxl_col_in_", img_df[s, "image_id"])) + 
       if (!is.null(facets)) facet_wrap(facets)
-  }else{
+  } else {
     p <- p + 
       theme_void() + 
-      theme(strip.text = element_blank(),
-            legend.position = legend.position) +
+      theme(strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"), 
+                                      size = 12), 
+            legend.position = legend_position) + 
       if (!is.null(facets)) facet_wrap(facets)
   }
 
-  
   return(p)
 }
-
-
