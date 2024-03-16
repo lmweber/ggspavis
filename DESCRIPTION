@@ -27,7 +27,10 @@ Encoding: UTF-8
 biocViews:
     Spatial, 
     SingleCell, 
-    Transcriptomics
+    Transcriptomics, 
+    GeneExpression, 
+    QualityControl, 
+    DimensionReduction
 Depends:
     ggplot2
 Imports:
