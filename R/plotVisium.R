@@ -296,5 +296,5 @@ plotVisium <- function(spe,
       if (!is.null(facets)) facet_wrap(facets)
   }
 
-  return(p)
+  p
 }

@@ -149,7 +149,7 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   }
   
   # color palettes
-  if (is.numeric(df[[annotate]]) && is.null(pal)) {
+  if ((is.null(annotate) || is.numeric(df[[annotate]])) && is.null(pal)) {
     # for continuous values, change NULL to arbitrary color so length(pal) == 1
     pal <- "blue"
   }
@@ -174,71 +174,77 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   # additional plot formatting
   
   # color scale
-  scaling <- if (is.numeric(df[[annotate]])) {
-    # continuous values
-    if (length(pal) == 1 && 
-        pal %in% c("viridis", "magma", "inferno", "plasma", "cividis", 
-                   "rocket", "mako", "turbo")) {
-      scale_color_viridis_c(option = pal)
-    } else if (length(pal) == 1 && pal == "seuratlike") {
-      colors <- colorRampPalette(
-        colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100)
-      scale_color_gradientn(
-        colors = colorRampPalette(colors = colors), 
-        limits = range(df[[annotate]]))
-    } else {
-      scale_color_gradient(low = pal[1], high = pal[2])
-    }
-  } else if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
-    # discrete values
-    if (is.null(pal)) {
-      scale_color_manual(name = annotate, 
-                         values = hue_pal()(length(unique(df[[annotate]]))))
-    } else if (!is.null(pal)) {
-      scale_color_manual(values = pal)
+  if (!is.null(annotate)) {
+    scaling <- if (is.numeric(df[[annotate]])) {
+      # continuous values
+      if (length(pal) == 1 && 
+          pal %in% c("viridis", "magma", "inferno", "plasma", "cividis", 
+                     "rocket", "mako", "turbo")) {
+        scale_color_viridis_c(option = pal)
+      } else if (length(pal) == 1 && pal == "seuratlike") {
+        colors <- colorRampPalette(
+          colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100)
+        scale_color_gradientn(
+          colors = colorRampPalette(colors = colors), 
+          limits = range(df[[annotate]]))
+      } else {
+        scale_color_gradient(low = pal[1], high = pal[2])
+      }
+    } else if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
+      # discrete values
+      if (is.null(pal)) {
+        scale_color_manual(name = annotate, 
+                           values = hue_pal()(length(unique(df[[annotate]]))))
+      } else if (!is.null(pal)) {
+        scale_color_manual(values = pal)
+      }
     }
   }
   
   # plot title
-  if (is.numeric(df[[annotate]])) {
-    # continuous values: display plot title but no legend title
-    p <- p + 
-      scaling + 
-      ggtitle(annotate) + 
-      labs(color = NULL) + 
-      theme(plot.title = element_text(hjust = 0.5))
-  } else if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
-    # discrete values: display legend title but no plot title
-    p <- p + 
-      scaling + 
-      guides(color = guide_legend(override.aes = list(size = legend_point_size)))
+  if (!is.null(annotate)) {
+    if (is.numeric(df[[annotate]])) {
+      # continuous values: display plot title but no legend title
+      p <- p + 
+        scaling + 
+        ggtitle(annotate) + 
+        labs(color = NULL) + 
+        theme(plot.title = element_text(hjust = 0.5))
+    } else if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
+      # discrete values: display legend title but no plot title
+      p <- p + 
+        scaling + 
+        guides(color = guide_legend(override.aes = list(size = legend_point_size)))
+    }
   }
   
   # text annotations
-  if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
-    # add text with the median locations of the 'text_by' vector
-    if (!is.null(text_by)) {
-      by_text_x <- vapply(
-        split(df[[x_label]], df[[text_by]]), 
-        median, 
-        FUN.VALUE = 0
-      )
-      by_text_y <- vapply(
-        split(df[[y_label]], df[[text_by]]), 
-        median, 
-        FUN.VALUE = 0
-      )
-      p <- p + 
-        geom_text_repel(
-          data = data.frame(
-            x = by_text_x, 
-            y = by_text_y, 
-            label = names(by_text_x)
-          ), 
-          mapping = aes(x = .data$x, y = .data$y, label = .data$label), 
-          size = text_by_size, 
-          color = text_by_color
+  if (!is.null(annotate)) {
+    if (is.factor(df[[annotate]]) | is.character(df[[annotate]])) {
+      # add text with the median locations of the 'text_by' vector
+      if (!is.null(text_by)) {
+        by_text_x <- vapply(
+          split(df[[x_label]], df[[text_by]]), 
+          median, 
+          FUN.VALUE = 0
         )
+        by_text_y <- vapply(
+          split(df[[y_label]], df[[text_by]]), 
+          median, 
+          FUN.VALUE = 0
+        )
+        p <- p + 
+          geom_text_repel(
+            data = data.frame(
+              x = by_text_x, 
+              y = by_text_y, 
+              label = names(by_text_x)
+            ), 
+            mapping = aes(x = .data$x, y = .data$y, label = .data$label), 
+            size = text_by_size, 
+            color = text_by_color
+          )
+      }
     }
   }
   
