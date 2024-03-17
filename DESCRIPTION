@@ -1,5 +1,5 @@
 Package: ggspavis
-Version: 1.9.3
+Version: 1.9.4
 Title: Visualization functions for spatial transcriptomics data
 Description: Visualization functions for spatial transcriptomics data. Includes 
     functions to generate several types of plots, including spot plots, feature 
