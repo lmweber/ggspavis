@@ -125,10 +125,12 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
     stopifnot(is.character(in_tissue))
   }
   
-  stopifnot(is.character(annotate))
-  if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
-    stop("'annotate' should be the name of a column in colData or an entry in ", 
-         "the column 'feature_col' in rowData")
+  if (!is.null(annotate)) {
+    stopifnot(is.character(annotate))
+    if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
+      stop("'annotate' should be the name of a column in colData or an entry ", 
+           "in the column 'feature_col' in rowData")
+    }
   }
   
   stopifnot(legend_position %in% c("left", "right", "top", "bottom", "none"))

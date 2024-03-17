@@ -117,10 +117,12 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   stopifnot(length(plot_type) == 1)
   stopifnot(plot_type %in% reducedDimNames(spe))
   
-  stopifnot(is.character(annotate))
-  if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
-    stop("'annotate' should be the name of a column in colData or an entry in ", 
-         "the column 'feature_col' in rowData")
+  if (!is.null(annotate)) {
+    stopifnot(is.character(annotate))
+    if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
+      stop("'annotate' should be the name of a column in colData or an entry ", 
+           "in the column 'feature_col' in rowData")
+    }
   }
   
   # update colnames of reducedDims for plotting
