@@ -1,10 +1,12 @@
 Package: ggspavis
 Version: 1.9.0
-Title: Visualization functions for spatially resolved transcriptomics data
-Description: Visualization functions for spatially resolved transcriptomics 
-    datasets stored in SpatialExperiment format. Includes functions to create 
-    several types of plots for data from from spot-based (e.g. 10x Genomics 
-    Visium) and molecule-based (e.g. seqFISH) technological platforms.
+Title: Visualization functions for spatial transcriptomics data
+Description: Visualization functions for spatial transcriptomics data. Includes 
+    functions to generate several types of plots, including spot plots, feature 
+    (molecule) plots, reduced dimension plots, spot-level quality control (QC) 
+    plots, and feature-level QC plots, for datasets from the 10x Genomics 
+    Visium and other technological platforms. Datasets are assumed to be in 
+    either SpatialExperiment or SingleCellExperiment format.
 Authors@R: c(
     person("Lukas M.", "Weber", 
         email = "lukas.weber.edu@gmail.com", 
@@ -13,15 +15,22 @@ Authors@R: c(
     person("Helena L.", "Crowell", 
         email = "helena.crowell@uzh.ch", 
         role = c("aut"), 
-        comment = c(ORCID = "0000-0002-4801-1767")))
+        comment = c(ORCID = "0000-0002-4801-1767")), 
+    person("Yixing E.", "Dong", 
+        email = "estelladong729@gmail.com", 
+        role = c("aut"), 
+        comment = c(ORCID = "0009-0003-5115-5686")))
 URL: https://github.com/lmweber/ggspavis
 BugReports: https://github.com/lmweber/ggspavis/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 biocViews:
+    Spatial, 
     SingleCell, 
     Transcriptomics, 
-    Spatial
+    GeneExpression, 
+    QualityControl, 
+    DimensionReduction
 Depends:
     ggplot2
 Imports:
@@ -30,6 +39,10 @@ Imports:
     SummarizedExperiment, 
     ggside, 
     grid, 
+    ggrepel, 
+    RColorBrewer, 
+    scales, 
+    grDevices, 
     methods, 
     stats
 VignetteBuilder: knitr
@@ -42,6 +55,6 @@ Suggests:
     scater, 
     scran, 
     uwot, 
-    testthat (>= 3.0.0)
-RoxygenNote: 7.2.1
-Config/testthat/edition: 3
+    testthat, 
+    patchwork
+RoxygenNote: 7.3.1

@@ -16,9 +16,9 @@
 #' @param spots (logical) Whether to display spots (spatial barcodes) as points.
 #'   Default = TRUE.
 #' 
-#' @param fill (character) Column in \code{colData} to use to fill points by
-#'   color. If \code{fill} contains a numeric column (e.g. total UMI counts), a
-#'   continuous color scale will be used. If \code{fill} contains a factor (e.g.
+#' @param annotate (character) Column in \code{colData} to use to fill points by
+#'   color. If \code{annotate} contains a numeric column (e.g. total UMI counts), a
+#'   continuous color scale will be used. If \code{annotate} contains a factor (e.g.
 #'   cluster labels), a discrete color scale will be used. Default = NULL.
 #' 
 #' @param highlight (character) Column in \code{colData} to use to highlight
@@ -31,13 +31,24 @@
 #' 
 #' @param image (logical) Whether to show histology image as background. Default
 #'   = TRUE.
+#'   
+#' @param zoom (logical) Whether to zoom to area of tissue containing spots.
+#'   Default = FALSE
+#'   
+#' @param show_axes (logical) Whether to show axes and coordinates. Default =
+#'   FALSE
 #' 
-#' @param assay (character) Name of assay data to use when \code{fill} is in
+#' @param assay (character) Name of assay data to use when \code{annotate} is in
 #'   \code{rownames(spe)}. Should be one of \code{assayNames(spe)}.
 #'   
 #' @param trans Transformation to apply for continuous scales. Ignored unless
-#'   \code{fill} is numeric, e.g. feature expression. (See
+#'   \code{annotate} is numeric, e.g. feature expression. (See
 #'   \code{\link{ggplot2}{continuous_scale}} for valid options.)
+#' 
+#' @param point_size (numeric) Point size. Default = 1.
+#' 
+#' @param legend_position Legend position for annotations. Options are "left",
+#'   "right", "top", "bottom", and "none". Default = "right".
 #' 
 #' @param x_coord (character) Column in \code{spatialCoords} containing
 #'   x-coordinates. Default = NULL, which selects the first column.
@@ -49,7 +60,7 @@
 #'   required for Visium data, depending on the orientation of the raw data.
 #'   Default = TRUE.
 #' 
-#' @param palette (character) Color palette for points. Options for discrete
+#' @param pal (character) Color palette for points. Options for discrete
 #'   labels are "libd_layer_colors", "Okabe-Ito", or a custom vector of hex
 #'   color codes. Options for continuous values are "viridis", a single color
 #'   name (e.g. "red", "navy", etc), or a vector of length two containing color
@@ -71,16 +82,21 @@
 #'   'imgData<-' imgRaster scaleFactors
 #' @importFrom SummarizedExperiment colData assayNames
 #' @importFrom ggplot2 ggplot aes_string scale_fill_manual scale_fill_gradient
-#'   scale_fill_viridis_c scale_color_identity scale_fill_identity facet_wrap
-#'   guides guide_colorbar guide_legend theme_void element_text margin unit
-#'   layer
+#'   scale_fill_gradientn scale_fill_viridis_c scale_color_identity
+#'   scale_fill_identity facet_wrap guides guide_colorbar guide_legend
+#'   theme_void element_text margin unit layer
 #' @importFrom grid rasterGrob
+#' @importFrom ggrepel geom_text_repel
+#' @importFrom grDevices colorRampPalette
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom scales hue_pal
 #' @importFrom methods is as
 #' @importFrom stats setNames
 #' 
 #' @export
 #' 
-#' @author Helena L. Crowell with modifications by Lukas M. Weber
+#' @author Helena L. Crowell, with modifications by Lukas M. Weber and Yixing E.
+#'   Dong
 #' 
 #' @examples
 #' library(STexampleData)
@@ -88,21 +104,21 @@
 #' spe <- Visium_mouseCoronal()
 #' 
 #' # color by x coordinate, highlight in-tissue spots
-#' plotVisium(spe, fill = "pxl_col_in_fullres", highlight = "in_tissue")
+#' plotVisium(spe, annotate = "pxl_col_in_fullres", highlight = "in_tissue")
 #' 
 #' # subset in-tissue spots
 #' sub <- spe[, as.logical(colData(spe)$in_tissue)]
 #' 
 #' # color by feature counts, don't include image
 #' rownames(sub) <- make.names(rowData(sub)$gene_name)
-#' plotVisium(sub, fill = "Gad2", assay = "counts")
+#' plotVisium(sub, annotate = "Gad2", assay = "counts")
 #' 
 plotVisium <- function(spe, 
-                       spots = TRUE, fill = NULL, highlight = NULL, 
-                       facets = "sample_id", image = TRUE, 
-                       assay = "logcounts", trans = "identity", 
+                       spots = TRUE, annotate = NULL, highlight = NULL, 
+                       facets = "sample_id", image = TRUE, zoom = FALSE, show_axes = FALSE,
+                       assay = "counts", trans = "identity", point_size = 1, legend_position = "right",
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
-                       sample_ids = NULL, image_ids = NULL, palette = NULL) {
+                       sample_ids = NULL, image_ids = NULL, pal = NULL) {
   
   # check validity of input arguments
   stopifnot(
@@ -111,29 +127,36 @@ plotVisium <- function(spe,
     is.logical(image), length(image) == 1, 
     is.logical(y_reverse), length(y_reverse) == 1)
   
-  if (is.null(x_coord)) x_coord <- spatialCoordsNames(spe)[1]
-  if (is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]
+  stopifnot(legend_position %in% c("left", "right", "top", "bottom", "none"))
+  stopifnot(is.character(annotate))
+  
+  if(is.null(x_coord)) x_coord <- spatialCoordsNames(spe)[1]
+  if(is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]
   
   # set up data for plotting
   plt_df <- data.frame(colData(spe), spatialCoords(spe))
-  if (!is.null(fill)) {
-    # check validity of 'fill' argument
-    stopifnot(is.character(fill), length(fill) == 1)
-    if (!fill %in% c(names(plt_df), rownames(spe))) {
-      stop("'fill' should be in rownames(spe) or names(colData(spe))")
+  if (!is.null(annotate)) {
+    # check validity of 'annotate' argument
+    stopifnot(is.character(annotate), length(annotate) == 1)
+    if (!annotate %in% c(names(plt_df), rownames(spe))) {
+      stop("'annotate' should be in rownames(spe) or names(colData(spe))")
     }
     # (optionally) add feature assay data to 'plt_df'
-    if (fill %in% rownames(spe)) {
+    if (annotate %in% rownames(spe)) {
       stopifnot(
         is.character(assay), 
         length(grep(assay, assayNames(spe))) == 1)
-      plt_df[[fill]] <- assay(spe, assay)[fill, ]
+      plt_df[[annotate]] <- assay(spe, assay)[annotate, ]
+    }
+    if (is.numeric(plt_df[[annotate]]) & is.null(pal)) {
+      # for continuous feature, ensure length(pal) == 1 (instead of 0 if NULL)
+      pal <- "seuratlike"
     }
     # get color palette
-    palette <- .get_pal(palette, plt_df[[fill]])
+    pal <- .get_pal(pal, plt_df[[annotate]])
   } else {
-    fill <- "foo"
-    plt_df[[fill]] <- "black"
+    annotate <- "foo"
+    plt_df[[annotate]] <- "black"
   }
   
   if (is.null(sample_ids)) {
@@ -171,6 +194,10 @@ plotVisium <- function(spe,
     img <- img_df$data[[1]]
     xlim <- c(0, ncol(img))
     ylim <- c(0, nrow(img))
+    
+    if (zoom) {
+      xlim <- ylim <- NULL
+    }
   } else {
     img <- NULL
     images <- xlim <- ylim <- NULL
@@ -189,19 +216,19 @@ plotVisium <- function(spe,
   
   # construct points and highlights
   if (spots) {
-    # check whether 'fill' is continuous (numeric) or discrete (factor)
-    guide <- ifelse(is.numeric(plt_df[[fill]]), guide_colorbar, guide_legend)
+    # check whether 'annotate' is continuous (numeric) or discrete (factor)
+    guide <- ifelse(is.numeric(plt_df[[annotate]]), guide_colorbar, guide_legend)
     points <- list(
       guides(fill = guide(
-        title = fill, order = 1, override.aes = list(col = NA, size = 3))), 
-      geom_point(shape = 21, size = 1, stroke = 0.25, alpha = 0.5))
+        title = annotate, order = 1, override.aes = list(col = NA, size = 3))), 
+      geom_point(shape = 21, size = point_size, stroke = 0.25, alpha = 0.8))
     if (!is.null(highlight)) {
       plt_df$highlight <- as.factor(plt_df[[highlight]])
       highlights <- list(
-        scale_color_manual(highlight, values = c("gray50", "black")), 
+        scale_color_manual(highlight, values = c("#e0e0e0", "black")), 
         guides(col = guide_legend(override.aes = list(
           size = 2, stroke = 1, 
-          col = c("gray", "black")[seq_along(unique(plt_df$highlight))]))))
+          col = c("#e0e0e0", "black")[seq_along(unique(plt_df$highlight))]))))
     } else {
       plt_df$highlight <- "transparent"
       highlights <- scale_color_identity()
@@ -213,26 +240,58 @@ plotVisium <- function(spe,
   }
   
   # color scale
-  scale <- if (fill != "foo") {
-    if (is.numeric(plt_df[[fill]])) {
-      if (length(palette) == 1 && palette == "viridis") {
-        scale_fill_viridis_c(trans = trans)
+  scale <- if(annotate != "foo") {
+    if (is.numeric(plt_df[[annotate]])) {
+      if (length(pal) == 1 && 
+          pal %in% c("viridis", "magma", "inferno", "plasma", 
+                     "cividis", "rocket", "mako", "turbo")) {
+        scale_fill_viridis_c(trans = trans, option = pal)
+      } else if (length(pal) == 1 && pal == "seuratlike") {
+        scale_fill_gradientn(
+          colors = colorRampPalette(
+            colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100), 
+          trans = trans, 
+          limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
       } else {
-        scale_fill_gradient(low = palette[1], high = palette[2], trans = trans)
+        scale_fill_gradient(low = pal[1], high = pal[2], trans = trans)
       }
-    } else {
-      scale_fill_manual(values = palette)
+    } else if (is.factor(plt_df[[annotate]])) {
+      # for categorical feature, automate palette
+      if (is.null(pal)) {
+        scale_fill_manual(
+          name = annotate, 
+          values = hue_pal()(length(unique(plt_df[[annotate]]))))
+      } else if (!is.null(pal)) {
+        scale_fill_manual(values = pal)
+      }
     }
-  } else scale_fill_identity()
+  } else {
+    scale_fill_identity()
+  }
   
   # display plot
-  ggplot(plt_df, 
-         aes_string(x_coord, y_coord, fill = fill, col = "highlight")) + 
+  p <- ggplot(plt_df, 
+              aes_string(x_coord, y_coord, fill = annotate, col = "highlight")) + 
     images + points + highlights + scale + 
-    coord_fixed(xlim = xlim, ylim = ylim) + 
-    theme_void() + 
-    theme(legend.key.size = unit(0.5, "lines"), 
-          strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"))) +
-    if (!is.null(facets)) facet_wrap(facets)
-}
+    coord_fixed(xlim = xlim, ylim = ylim) 
+  
+  if (show_axes) {
+    p <- p + 
+      theme_bw() + 
+      theme(strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"), 
+                                      size = 12), 
+            legend.position = legend_position) +
+      labs(x = paste0("pxl_col_in_", img_df[s, "image_id"]),
+           y = paste0("pxl_col_in_", img_df[s, "image_id"])) + 
+      if (!is.null(facets)) facet_wrap(facets)
+  } else {
+    p <- p + 
+      theme_void() + 
+      theme(strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"), 
+                                      size = 12), 
+            legend.position = legend_position) + 
+      if (!is.null(facets)) facet_wrap(facets)
+  }
 
+  return(p)
+}

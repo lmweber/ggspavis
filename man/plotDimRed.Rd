@@ -6,69 +6,90 @@
 \usage{
 plotDimRed(
   spe,
-  type = c("UMAP", "PCA"),
-  x_axis = NULL,
-  y_axis = NULL,
+  plot_type = c("UMAP", "PCA"),
   annotate = NULL,
-  palette = "libd_layer_colors",
-  size = 0.3
+  feature_col = "gene_name",
+  assay_name = "counts",
+  update_dimnames = TRUE,
+  pal = NULL,
+  point_size = 0.3,
+  legend_point_size = 3,
+  text_by = NULL,
+  text_by_size = 5,
+  text_by_color = "black"
 )
 }
 \arguments{
-\item{spe}{(SpatialExperiment) Input data, assumed to be a
-\code{SpatialExperiment} object.}
+\item{spe}{Input data, assumed to be a \code{SpatialExperiment} or
+\code{SingleCellExperiment} object.}
 
-\item{type}{(character) Type of reduced dimension plot. Options are "UMAP" or
-"PCA". Default = "UMAP".}
+\item{plot_type}{Type of reduced dimension plot. Possible options are "UMAP",
+"PCA", or any other set of reduced dimensions stored in the input object.
+Default = "UMAP".}
 
-\item{x_axis}{(character) Name of column in \code{reducedDim} containing
-x-coordinates. Default = "UMAP1" or "PC1", depending on plot type.}
+\item{annotate}{Variable to show as annotations. This may be discrete or
+continuous. For a discrete variable (e.g. cluster labels), this should be
+the name of a column in \code{colData} containing a character vector or
+factor. For a continuous variable (e.g. a gene name), this should be an
+entry in the column 'feature_col' in \code{rowData}. Default = NULL.}
 
-\item{y_axis}{(character) Name of column in \code{reducedDim} containing
-y-coordinates. Default = "UMAP2" or "PC2", depending on plot type.}
+\item{feature_col}{Name of column in \code{rowData} containing names of
+continuous features to plot (e.g. gene names). This argument is required if
+\code{annotate} is a continuous variable. Default = "gene_name".}
 
-\item{annotate}{(character) Name of column in \code{colData} containing
-values to annotate spots with colors, e.g. cluster labels (discrete values)
-or total UMI counts (continuous values).}
+\item{assay_name}{Name of \code{assay} in input object containing values to
+plot for a continuous variable. Default = "counts".}
 
-\item{palette}{(character) Color palette for annotation. Options for discrete
-labels are "libd_layer_colors", "Okabe-Ito", or a vector of color names or
-hex values. For continuous values, provide a vector of length 2 for the low
-and high range, e.g. \code{c("gray90", "navy")}. Default =
-\code{"libd_layer_colors"}.}
+\item{update_dimnames}{Whether to update column names of \code{reducedDims}
+to default values for plotting. Default = TRUE.}
 
-\item{size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
+\item{pal}{Color palette for annotations. Options for discrete values are
+"libd_layer_colors", "Okabe-Ito", or any vector of color names or hex
+values. For continuous values, provide a vector of length 2 for the low and
+high range, e.g. c("gray90", "navy").}
+
+\item{point_size}{Point size. Default = 0.3.}
+
+\item{legend_point_size}{Legend point size for discrete annotations. Default
+= 3.}
+
+\item{text_by}{Column name of annotation labels to display over each cluster
+of points. This will usually be the same as \code{annotate}. Alternatively,
+another column may be used (e.g. with more readable classes or shorter
+strings). Only used for discrete \code{annotate}. Default = NULL.}
+
+\item{text_by_size}{Text size for annotation labels over each cluster.
+Default = 5.}
+
+\item{text_by_color}{Color name or hex code for annotation labels. Default =
+"black".}
 }
 \value{
-Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, labels, formatting, etc).
+Returns a ggplot object, which may be further modified using ggplot
+  functions.
 }
 \description{
-Plotting functions for spatially resolved transcriptomics data.
+Plotting functions for spatial transcriptomics data.
 }
 \details{
-Function to plot spot-based spatially resolved transcriptomics data stored in
-a \code{SpatialExperiment} object.
-
-This function generates a plot in reduced dimension coordinates (PCA or
-UMAP), along with annotation such as cluster labels or total UMI counts.
+Function to create reduced dimension plot (e.g. PCA or UMAP) with additional
+optional annotations such as cluster labels, expression of a gene, or quality
+control metrics.
 }
 \examples{
 library(STexampleData)
 spe <- Visium_humanDLPFC()
 
-# use small subset of data for this example
-# for longer examples see our online book OSTA
+# select spots over tissue
 spe <- spe[, colData(spe)$in_tissue == 1]
-set.seed(100)
+
+# use small subset of data for this example
 n <- 200
+set.seed(123)
 spe <- spe[, sample(seq_len(ncol(spe)), n)]
 
-# calculate log-transformed normalized counts
+# calculate logcounts
 library(scran)
-set.seed(100)
-qclus <- quickCluster(spe)
-spe <- computeSumFactors(spe, cluster = qclus)
 spe <- logNormCounts(spe)
 
 # identify top highly variable genes (HVGs)
@@ -79,13 +100,16 @@ top_hvgs <- getTopHVGs(dec, prop = 0.1)
 
 # run dimensionality reduction
 library(scater)
-set.seed(100)
+set.seed(123)
 spe <- runPCA(spe, subset_row = top_hvgs)
-set.seed(100)
+set.seed(123)
 spe <- runUMAP(spe, dimred = "PCA")
 colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 # generate plot
-plotDimRed(spe, type = "UMAP", annotate = "ground_truth")
+plotDimRed(spe, plot_type = "UMAP", annotate = "ground_truth")
 
+}
+\author{
+Lukas M. Weber and Yixing E. Dong
 }

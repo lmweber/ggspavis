@@ -10,51 +10,53 @@ plotMolecules(
   x_coord = NULL,
   y_coord = NULL,
   sample_id = "sample_id",
-  palette = c("gray90", "navy"),
-  size = 0.3
+  pal = c("gray90", "navy"),
+  point_size = 0.3
 )
 }
 \arguments{
 \item{spe}{(SpatialExperiment) Input data, assumed to be a
 \code{SpatialExperiment} object.}
 
-\item{molecule}{(character) Name of mRNA molecule to plot (assumed to match
-one of the row names of \code{rowData}).}
+\item{molecule}{Name of mRNA molecule to plot (assumed to match one of the
+row names of \code{rowData}).}
 
-\item{x_coord}{(character) Name of column in \code{spatialCoords} containing
-x-coordinates of the cell centroids. Default = NULL, which selects the
-first column.}
+\item{x_coord}{Name of column in \code{spatialCoords} containing x
+coordinates. Default = NULL, which selects the first column of
+\code{spatialCoords}.}
 
-\item{y_coord}{(character) Name of column in \code{spatialCoords} containing
-y-coordinates of the cell centroids. Default = NULL, which selects the
-second column.}
+\item{y_coord}{Name of column in \code{spatialCoords} containing y
+coordinates. Default = NULL, which selects the second column of
+\code{spatialCoords}.}
 
-\item{sample_id}{(character) Name of column in \code{colData} containing
-sample IDs. For datasets with multiple samples, this is used to plot
-multiple panels (one per sample) using facetting.}
+\item{sample_id}{Name of column in \code{colData} containing sample IDs. This
+argument is only required for datasets containing multiple samples (tissue
+sections). If provided, samples will be shown in multiple panels using
+facetting. Default = NULL.}
 
-\item{palette}{(character) Color palette, provided as a vector of length 2
-for the low and high range. Default = \code{c("gray90", "navy")}.}
+\item{pal}{Color palette, provided as a vector of length 2 for the low and
+high range. Default = c("gray90", "navy").}
 
-\item{size}{(numeric) Point size for \code{geom_point()}. Default = 0.3.}
+\item{point_size}{Point size. Default = 0.3.}
 }
 \value{
-Returns a ggplot object. Additional plot elements can be added as
-  ggplot elements (e.g. title, labels, formatting, etc).
+Returns a ggplot object, which may be further modified using ggplot
+  functions.
 }
 \description{
-Plotting functions for spatially resolved transcriptomics data.
+Plotting functions for spatial transcriptomics data.
 }
 \details{
-Function to plot molecule-based spatially resolved transcriptomics data
-stored in a \code{SpatialExperiment} object.
-
-This function generates a plot in spatial coordinates (e.g. x-y coordinates
-on a tissue slide), for a selected molecule.
+Function to create spot plot for molecule-based datasets, showing spatial
+locations in x-y coordinates with optional annotations such as expression of
+a gene.
 }
 \examples{
 library(STexampleData)
 spe <- seqFISH_mouseEmbryo()
 plotMolecules(spe, molecule = "Sox2")
 
+}
+\author{
+Lukas M. Weber
 }
