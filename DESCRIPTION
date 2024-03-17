@@ -7,7 +7,7 @@ Description: Visualization functions for spatially resolved transcriptomics
     Visium) and molecule-based (e.g. seqFISH) technological platforms.
 Authors@R: c(
     person("Lukas M.", "Weber", 
-        email = "lukas.weber.edu@gmail.com", 
+        email = "lmweberedu@gmail.com", 
         role = c("aut", "cre"), 
         comment = c(ORCID = "0000-0002-3282-1730")), 
     person("Helena L.", "Crowell", 
