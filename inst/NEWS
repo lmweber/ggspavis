@@ -1,3 +1,7 @@
+changes in version 1.9.1 (2024-03-16)
++ major updates to several plotting functions providing improved flexibility 
+  and new features (contributions by Estella Dong)
+
 changes in version 1.3.1 (2022-10-11)
 + support for multiple-sample datasets
 
