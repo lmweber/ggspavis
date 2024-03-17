@@ -156,16 +156,18 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
     df <- as.data.frame(colData(spe))
   }
   
-  # continuous annotation values
-  if (annotate %in% rowData(spe)[, feature_col]) {
-    stopifnot(is.character(assay_name))
-    ix <- which(rowData(spe)[, feature_col] == annotate)
-    df[[annotate]] <- assay(spe, assay_name)[ix, ]
-  }
-  # discrete annotation values
-  if ((annotate %in% colnames(colData(spe))) && 
-      (is.character(colData(spe)[, annotate]))) {
-    df[[annotate]] <- as.factor(df[[annotate]])
+  if (!is.null(annotate)) {
+    # continuous annotation values
+    if (annotate %in% rowData(spe)[, feature_col]) {
+      stopifnot(is.character(assay_name))
+      ix <- which(rowData(spe)[, feature_col] == annotate)
+      df[[annotate]] <- assay(spe, assay_name)[ix, ]
+    }
+    # discrete annotation values
+    if ((annotate %in% colnames(colData(spe))) && 
+        (is.character(colData(spe)[, annotate]))) {
+      df[[annotate]] <- as.factor(df[[annotate]])
+    }
   }
   
   if (!is.null(in_tissue)) {

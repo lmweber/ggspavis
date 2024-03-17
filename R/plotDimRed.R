@@ -134,16 +134,18 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   # data frame for plotting
   df <- cbind.data.frame(colData(spe), reducedDim(spe, plot_type))
   
-  # continuous annotation values
-  if (annotate %in% rowData(spe)[, feature_col]) {
-    stopifnot(is.character(assay_name))
-    ix <- which(rowData(spe)[, feature_col] == annotate)
-    df[[annotate]] <- assay(spe, assay_name)[ix, ]
-  }
-  # discrete annotation values
-  if ((annotate %in% colnames(colData(spe))) && 
-      (is.character(colData(spe)[, annotate]))) {
-    df[[annotate]] <- as.factor(df[[annotate]])
+  if (!is.null(annotate)) {
+    # continuous annotation values
+    if (annotate %in% rowData(spe)[, feature_col]) {
+      stopifnot(is.character(assay_name))
+      ix <- which(rowData(spe)[, feature_col] == annotate)
+      df[[annotate]] <- assay(spe, assay_name)[ix, ]
+    }
+    # discrete annotation values
+    if ((annotate %in% colnames(colData(spe))) && 
+        (is.character(colData(spe)[, annotate]))) {
+      df[[annotate]] <- as.factor(df[[annotate]])
+    }
   }
   
   # color palettes
