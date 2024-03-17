@@ -2,38 +2,32 @@
 
 [![R build status](https://github.com/lmweber/ggspavis/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/lmweber/ggspavis/actions)
 
-The `ggspavis` package contains visualization functions for spatially resolved transcriptomics data stored in [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) R/Bioconductor format.
+The `ggspavis` package contains visualization functions for spatial transcriptomics data, including functions to generate several types of plots, including spot plots, feature (molecule) plots, reduced dimension plots, spot-level quality control (QC) plots, and feature-level QC plots, for datasets from the 10x Genomics Visium and other technological platforms. Datasets are assumed to be in either [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) or [SingleCellExperiment](https://bioconductor.org/packages/SingleCellExperiment) Bioconductor format.
 
-The `ggspavis` package is available from [Bioconductor](https://bioconductor.org/packages/ggspavis).
-
-A vignette containing examples and documentation is available from [Bioconductor](https://bioconductor.org/packages/ggspavis).
+The package is available from [Bioconductor](https://bioconductor.org/packages/ggspavis).
 
 
 ## Installation
 
-The `ggspavis` package can be installed from Bioconductor. Note that Bioconductor follows a "release" and "development" schedule, where the release version is considered to be stable and updated every 6 months, and the development version contains latest updates (and then becomes the next release version every 6 months).
-
-
-### Release version
-
-To install the stable release version, install the latest release version of R from [CRAN](https://cran.r-project.org/), then install the Bioconductor package installer and the `ggspavis` package:
+The release version of the package can be installed from Bioconductor:
 
 ```
 install.packages("BiocManager")
 BiocManager::install("ggspavis")
 ```
 
-### Development version
-
-The development version can be installed from GitHub:
+The development version can be installed from the development version of Bioconductor or from GitHub:
 
 ```
-install.packages("remotes")
 remotes::install_github("lmweber/ggspavis", build_vignettes = TRUE)
 ```
 
 
+## Tutorial
+
+A vignette containing a tutorial and examples is available from the [Bioconductor](https://bioconductor.org/packages/ggspavis) package page.
+
+
 ## Citation
 
-Righell D.\*, Weber L.M.\*, Crowell H.L.\*, Pardo B., Collado-Torres L., Ghazanfar S., Lun A.T.L., Hicks S.C.<sup>+</sup>, and Risso D.<sup>+</sup> (2021), *SpatialExperiment: infrastructure for spatially resolved transcriptomics data in R using Bioconductor*, [bioRxiv](https://www.biorxiv.org/content/10.1101/2021.01.27.428431v3).
-
+- Righell D.\*, Weber L.M.\*, Crowell H.L.\*, Pardo B., Collado-Torres L., Ghazanfar S., Lun A.T.L., Hicks S.C.\*, and Risso D.\* (2022). *SpatialExperiment: infrastructure for spatially resolved transcriptomics data in R using Bioconductor.* [Bioinformatics](https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btac299/6575443), btac299.
