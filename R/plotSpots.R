@@ -39,8 +39,11 @@
 #'   entry in the column 'feature_col' in \code{rowData}. Default = NULL.
 #' 
 #' @param feature_col Name of column in \code{rowData} containing names of
-#'   continuous features to plot (e.g. gene names). This argument is required if
-#'   \code{annotate} is a continuous variable. Default = "gene_name".
+#'   continuous features to plot (e.g. gene names). This argument is used if
+#'   \code{annotate} is a continuous variable. (Alternatively, if \code{rowData}
+#'   is empty, the names of the continuous features will be obtained from the
+#'   \code{rownames} of \code{assay} \code{assay_name} instead.) Default =
+#'   "gene_name".
 #' 
 #' @param assay_name Name of \code{assay} in input object containing values to
 #'   plot for a continuous variable. Default = "counts".
@@ -125,11 +128,20 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
     stopifnot(is.character(in_tissue))
   }
   
+  # names of continuous features
+  if (ncol(rowData(spe)) == 0) {
+    stopifnot(is.character(assay_name))
+    feature_names <- rownames(assay(spe, assay_name))
+  } else if (ncol(rowData(spe)) > 1) {
+    feature_names <- rowData(spe)[, feature_col]
+  }
+  
   if (!is.null(annotate)) {
     stopifnot(is.character(annotate))
-    if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
-      stop("'annotate' should be the name of a column in colData or an entry ", 
-           "in the column 'feature_col' in rowData")
+    if (!(annotate %in% c(colnames(colData(spe)), feature_names))) {
+      stop("'annotate' should be either (i) the name of a column in colData ", 
+           "or (ii) an entry in either a column named 'feature_col' in ", 
+           "rowData or the rownames of the assay named 'assay_name'")
     }
   }
   
@@ -158,9 +170,9 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
   
   if (!is.null(annotate)) {
     # continuous annotation values
-    if (annotate %in% rowData(spe)[, feature_col]) {
+    if (annotate %in% feature_names) {
       stopifnot(is.character(assay_name))
-      ix <- which(rowData(spe)[, feature_col] == annotate)
+      ix <- which(feature_names == annotate)
       df[[annotate]] <- assay(spe, assay_name)[ix, ]
     }
     # discrete annotation values

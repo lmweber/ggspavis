@@ -34,8 +34,11 @@ factor. For a continuous variable (e.g. a gene name), this should be an
 entry in the column 'feature_col' in \code{rowData}. Default = NULL.}
 
 \item{feature_col}{Name of column in \code{rowData} containing names of
-continuous features to plot (e.g. gene names). This argument is required if
-\code{annotate} is a continuous variable. Default = "gene_name".}
+continuous features to plot (e.g. gene names). This argument is used if
+\code{annotate} is a continuous variable. (Alternatively, if \code{rowData}
+is empty, the names of the continuous features will be obtained from the
+\code{rownames} of \code{assay} \code{assay_name} instead.) Default =
+"gene_name".}
 
 \item{assay_name}{Name of \code{assay} in input object containing values to
 plot for a continuous variable. Default = "counts".}
