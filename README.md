@@ -16,10 +16,10 @@ install.packages("BiocManager")
 BiocManager::install("ggspavis")
 ```
 
-The development version can be installed from the development version of Bioconductor or from GitHub:
+The latest development version can be installed either from the development version of Bioconductor or from GitHub:
 
 ```
-remotes::install_github("lmweber/ggspavis", build_vignettes = TRUE)
+remotes::install_github("lmweber/ggspavis")
 ```
 
 

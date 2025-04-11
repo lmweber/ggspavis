@@ -137,29 +137,29 @@ plotVisium <- function(spe,
   if(is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]
   
   # set up data for plotting
-  plt_df <- data.frame(colData(spe), spatialCoords(spe))
+  df <- data.frame(colData(spe), spatialCoords(spe))
   if (!is.null(annotate)) {
     # check validity of 'annotate' argument
     stopifnot(is.character(annotate), length(annotate) == 1)
-    if (!annotate %in% c(names(plt_df), rownames(spe))) {
+    if (!annotate %in% c(names(df), rownames(spe))) {
       stop("'annotate' should be in rownames(spe) or names(colData(spe))")
     }
-    # (optionally) add feature assay data to 'plt_df'
+    # (optionally) add feature assay data to 'df'
     if (annotate %in% rownames(spe)) {
       stopifnot(
         is.character(assay), 
         length(grep(assay, assayNames(spe))) == 1)
-      plt_df[[annotate]] <- assay(spe, assay)[annotate, ]
+      df[[annotate]] <- assay(spe, assay)[annotate, ]
     }
-    if (is.numeric(plt_df[[annotate]]) & is.null(pal)) {
+    if (is.numeric(df[[annotate]]) & is.null(pal)) {
       # for continuous feature, ensure length(pal) == 1 (instead of 0 if NULL)
       pal <- "seuratlike"
     }
     # get color palette
-    pal <- .get_pal(pal, plt_df[[annotate]])
+    pal <- .get_pal(pal, df[[annotate]])
   } else {
     annotate <- "foo"
-    plt_df[[annotate]] <- "black"
+    df[[annotate]] <- "black"
   }
   
   if (is.null(sample_ids)) {
@@ -208,32 +208,32 @@ plotVisium <- function(spe,
   
   # scale spatial coordinates
   for (s in sample_ids) {
-    ix <- plt_df$sample_id == s
+    ix <- df$sample_id == s
     xy <- c(x_coord, y_coord)
     sf <- img_df[s, "scaleFactor"]
-    plt_df[ix, xy] <- sf * plt_df[ix, xy]
+    df[ix, xy] <- sf * df[ix, xy]
     # reverse y coordinates to match orientation of images 
     # (sometimes required for Visium data)
-    if (y_reverse) plt_df <- .y_reverse(plt_df, ix, y_coord, img)
+    if (y_reverse) df <- .y_reverse(df, ix, y_coord, img)
   }
   
   # construct points and highlights
   if (spots) {
     # check whether 'annotate' is continuous (numeric) or discrete (factor)
-    guide <- ifelse(is.numeric(plt_df[[annotate]]), guide_colorbar, guide_legend)
+    guide <- ifelse(is.numeric(df[[annotate]]), guide_colorbar, guide_legend)
     points <- list(
       guides(fill = guide(
         title = annotate, order = 1, override.aes = list(col = NA, size = 3))), 
       geom_point(shape = 21, size = point_size, stroke = 0.25, alpha = 0.8))
     if (!is.null(highlight)) {
-      plt_df$highlight <- as.factor(plt_df[[highlight]])
+      df$highlight <- as.factor(df[[highlight]])
       highlights <- list(
         scale_color_manual(highlight, values = c("#e0e0e0", "black")), 
         guides(col = guide_legend(override.aes = list(
           size = 2, stroke = 1, 
-          col = c("#e0e0e0", "black")[seq_along(unique(plt_df$highlight))]))))
+          col = c("#e0e0e0", "black")[seq_along(unique(df$highlight))]))))
     } else {
-      plt_df$highlight <- "transparent"
+      df$highlight <- "transparent"
       highlights <- scale_color_identity()
     }
   } else {
@@ -244,7 +244,7 @@ plotVisium <- function(spe,
   
   # color scale
   scale <- if(annotate != "foo") {
-    if (is.numeric(plt_df[[annotate]])) {
+    if (is.numeric(df[[annotate]])) {
       if (length(pal) == 1 && 
           pal %in% c("viridis", "magma", "inferno", "plasma", 
                      "cividis", "rocket", "mako", "turbo")) {
@@ -254,16 +254,16 @@ plotVisium <- function(spe,
           colors = colorRampPalette(
             colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100), 
           trans = trans, 
-          limits = c(min(plt_df[[annotate]]), max(plt_df[[annotate]])))
+          limits = c(min(df[[annotate]]), max(df[[annotate]])))
       } else {
         scale_fill_gradient(low = pal[1], high = pal[2], trans = trans)
       }
-    } else if (is.factor(plt_df[[annotate]])) {
+    } else if (is.factor(df[[annotate]])) {
       # for categorical feature, automate palette
       if (is.null(pal)) {
         scale_fill_manual(
           name = annotate, 
-          values = hue_pal()(length(unique(plt_df[[annotate]]))))
+          values = hue_pal()(length(unique(df[[annotate]]))))
       } else if (!is.null(pal)) {
         scale_fill_manual(values = pal)
       }
@@ -273,7 +273,7 @@ plotVisium <- function(spe,
   }
   
   # display plot
-  p <- ggplot(plt_df, 
+  p <- ggplot(df, 
               aes_string(x_coord, y_coord, fill = annotate, col = "highlight")) + 
     images + points + highlights + scale + 
     coord_fixed(xlim = xlim, ylim = ylim) 

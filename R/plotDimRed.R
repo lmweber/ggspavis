@@ -18,11 +18,14 @@
 #'   continuous. For a discrete variable (e.g. cluster labels), this should be
 #'   the name of a column in \code{colData} containing a character vector or
 #'   factor. For a continuous variable (e.g. a gene name), this should be an
-#'   entry in the column 'feature_col' in \code{rowData}. Default = NULL.
+#'   entry in \code{feature_names}. Default = NULL.
 #' 
-#' @param feature_col Name of column in \code{rowData} containing names of
-#'   continuous features to plot (e.g. gene names). This argument is required if
-#'   \code{annotate} is a continuous variable. Default = "gene_name".
+#' @param feature_names Name of column in \code{rowData} containing names of
+#'   continuous features to plot (e.g. gene names). For example, set to
+#'   \code{feature_names = "gene_name"} if gene names are stored in a column
+#'   named \code{"gene_name"}. This argument is used if \code{annotate} is a
+#'   continuous variable. Default = NULL, in which case the row names of the
+#'   input object will be used.
 #' 
 #' @param assay_name Name of \code{assay} in input object containing values to
 #'   plot for a continuous variable. Default = "counts".
@@ -105,7 +108,7 @@
 #' plotDimRed(spe, plot_type = "UMAP", annotate = "ground_truth")
 #' 
 plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"), 
-                       annotate = NULL, feature_col = "gene_name", 
+                       annotate = NULL, feature_names = NULL, 
                        assay_name = "counts", 
                        update_dimnames = TRUE, 
                        pal = NULL, point_size = 0.3, 
@@ -117,11 +120,21 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   stopifnot(length(plot_type) == 1)
   stopifnot(plot_type %in% reducedDimNames(spe))
   
+  # get names of continuous features
+  if (is.null(feature_names)) {
+    feature_nms <- rownames(spe)
+  } else {
+    stopifnot(ncol(rowData(spe)) > 0)
+    stopifnot(feature_names %in% colnames(rowData(spe)))
+    feature_nms <- rowData(spe)[, feature_names]
+  }
+  
   if (!is.null(annotate)) {
     stopifnot(is.character(annotate))
-    if (!(annotate %in% c(colnames(colData(spe)), rowData(spe)[, feature_col]))) {
-      stop("'annotate' should be the name of a column in colData or an entry ", 
-           "in the column 'feature_col' in rowData")
+    if (!(annotate %in% c(colnames(colData(spe)), feature_nms))) {
+      stop("'annotate' should be either (i) the name of a column in colData ", 
+           "or (ii) an entry in either a column named 'feature_names' in ", 
+           "rowData or the rownames of the input object")
     }
   }
   
@@ -136,9 +149,9 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   
   if (!is.null(annotate)) {
     # continuous annotation values
-    if (annotate %in% rowData(spe)[, feature_col]) {
+    if (annotate %in% feature_nms) {
       stopifnot(is.character(assay_name))
-      ix <- which(rowData(spe)[, feature_col] == annotate)
+      ix <- which(feature_nms == annotate)
       df[[annotate]] <- assay(spe, assay_name)[ix, ]
     }
     # discrete annotation values
@@ -184,9 +197,7 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
       } else if (length(pal) == 1 && pal == "seuratlike") {
         colors <- colorRampPalette(
           colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100)
-        scale_color_gradientn(
-          colors = colorRampPalette(colors = colors), 
-          limits = range(df[[annotate]]))
+        scale_color_gradientn(colors = colors, limits = range(df[[annotate]]))
       } else {
         scale_color_gradient(low = pal[1], high = pal[2])
       }
