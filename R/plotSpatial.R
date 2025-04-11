@@ -78,6 +78,11 @@
 #' 
 #' @param text_by_color Color name or hex code for annotation labels. Default =
 #'   "black".
+#'   
+#' @param shape Numerical value for `geom_point(aes(shape = shape))`. 
+#'   Default number 21 gives circular shape that represents a Visium spot or 
+#'   a Xenium cell, for instance. A value of 22 returns square shape that is 
+#'   suitable for VisiumHD. 
 #' 
 #' 
 #' @return Returns a ggplot object, which may be further modified using ggplot
@@ -113,15 +118,15 @@
 #' plotSpatial(spe, annotate = "Gapdh", feature_names = "gene_name")
 #' 
 plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL, 
-                      sample_id = NULL, in_tissue = "in_tissue", 
-                      annotate = NULL, feature_names = NULL, 
-                      assay_name = "counts", 
-                      pal = NULL, point_size = 0.3, 
-                      legend_position = "right", 
-                      legend_point_size = 3, 
-                      show_axes = FALSE, y_reverse = TRUE, 
-                      text_by = NULL, text_by_size = 5, 
-                      text_by_color = "black") {
+                        sample_id = NULL, in_tissue = "in_tissue", 
+                        annotate = NULL, feature_names = NULL, 
+                        assay_name = "counts", 
+                        pal = NULL, point_size = 0.3, 
+                        legend_position = "right", 
+                        legend_point_size = 3, 
+                        show_axes = FALSE, y_reverse = TRUE, 
+                        text_by = NULL, text_by_size = 5, 
+                        text_by_color = "black", shape = 21) {
   
   # check validity of arguments
   if (!is.null(in_tissue)) {
@@ -200,7 +205,7 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
   # main plot
   
   p <- ggplot(df, aes(x = get(x_coord), y = get(y_coord), color = get(annotate))) + 
-    geom_point(size = point_size) + 
+    geom_point(size = point_size, shape = shape) + 
     coord_fixed() + 
     theme_bw() + 
     theme(legend.position = legend_position, 
@@ -302,12 +307,15 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
   p
 }
 
-#' @rdname plotSpots
+
+#' @rdname plotSpatial
 #' @param ... Not used.
 #' @export
 plotSpots <- function(...) {
   # message when using deprecated function name
-  message("The function plotSpots() has been replaced with plotSpatial() that", 
+  message("The function plotSpots() has been replaced with plotSpatial() that",
           "is suitable for both imaging and sequencing based technologies. ",
           "Please use this functions instead.")
 }
+
+

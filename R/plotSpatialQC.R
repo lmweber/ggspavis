@@ -116,15 +116,15 @@
 #' plotSpatialQC(spe, plot_type = "violin", x_metric = "sum", annotate = "low_libsize")
 #' 
 plotSpatialQC <- function(spe, 
-                       plot_type = c("histogram", "scatter", "spot", "violin"), 
-                       x_coord = NULL, y_coord = NULL, 
-                       x_metric = NULL, y_metric = NULL, 
-                       x_threshold = NULL, y_threshold = NULL, 
-                       trend = TRUE, marginal = TRUE, 
-                       annotate = NULL, in_tissue = NULL, 
-                       legend_point_size = 3, 
-                       n_bins = 100, point_size = 0.3, 
-                       y_reverse = TRUE) {
+                          plot_type = c("histogram", "scatter", "spot", "violin"), 
+                          x_coord = NULL, y_coord = NULL, 
+                          x_metric = NULL, y_metric = NULL, 
+                          x_threshold = NULL, y_threshold = NULL, 
+                          trend = TRUE, marginal = TRUE, 
+                          annotate = NULL, in_tissue = NULL, 
+                          legend_point_size = 3, 
+                          n_bins = 100, point_size = 0.3, 
+                          y_reverse = TRUE) {
   
   # check validity of arguments
   plot_type <- match.arg(plot_type)
@@ -264,7 +264,7 @@ plotSpatialQC <- function(spe,
     p <- ggplot(df, aes(x = get("dummy"), y = get(x_metric), fill = get("dummy"))) + 
       geom_violin(trim = TRUE, alpha = 0.9) + 
       scale_fill_manual(values = c("gray70")) + 
-      xlab(fill="dummy") + labs(fill="dummy") + 
+      xlab("dummy") + labs(fill="dummy") + 
       ylab(x_metric) + 
       theme_bw() + 
       theme(legend.position="none", 

@@ -22,7 +22,8 @@ plotVisium(
   y_reverse = TRUE,
   sample_ids = NULL,
   image_ids = NULL,
-  pal = NULL
+  pal = NULL,
+  shape = 21
 )
 }
 \arguments{
@@ -87,6 +88,11 @@ color codes. Options for continuous values are "viridis", a single color
 name (e.g. "red", "navy", etc), or a vector of length two containing color
 names for each end of the scale. Default = "libd_layer_colors" for discrete
 data, and "viridis" for continuous data.}
+
+\item{shape}{(numeric) Numerical value for `geom_point(aes(shape = shape))`. 
+Default number 21 gives circular shape that represents a Visium spot or 
+a Xenium cell, for instance. A value of 22 returns square shape that is 
+suitable for VisiumHD.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as
@@ -108,9 +114,10 @@ options available to adjust the plot type and style.
 library(STexampleData)
 
 spe <- Visium_mouseCoronal()
+colData(spe)$sum <- colSums(counts(spe))
 
-# color by x coordinate, highlight in-tissue spots
-plotVisium(spe, annotate = "pxl_col_in_fullres", highlight = "in_tissue")
+# color by colData, highlight in-tissue spots
+plotVisium(spe, annotate = "sum", highlight = "in_tissue")
 
 # subset in-tissue spots
 sub <- spe[, as.logical(colData(spe)$in_tissue)]
