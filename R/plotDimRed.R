@@ -66,7 +66,7 @@
 #' @importFrom scales hue_pal
 #' @importFrom stats median
 #' @importFrom ggrepel geom_text_repel
-#' @importFrom ggplot2 ggplot aes_string geom_point xlab ylab theme_bw theme
+#' @importFrom ggplot2 ggplot geom_point xlab ylab theme_bw theme
 #'   element_blank scale_color_viridis_c scale_color_gradientn
 #'   scale_color_gradient scale_color_manual ggtitle labs guides aes .data
 #' 
@@ -145,7 +145,8 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   }
   
   # data frame for plotting
-  df <- cbind.data.frame(colData(spe), reducedDim(spe, plot_type))
+  df <- cbind(data.frame(colData(spe), check.names = FALSE),
+              data.frame(reducedDim(spe, plot_type), check.names = FALSE))
   
   if (!is.null(annotate)) {
     # continuous annotation values
@@ -176,10 +177,9 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   
   # main plot
   
-  p <- ggplot(df, aes_string(x = x_label, y = y_label, color = annotate)) + 
+  p <- ggplot(df, aes(x = get(x_label), y = get(y_label), color = get(annotate))) + 
     geom_point(size = point_size) + 
-    xlab(x_label) + 
-    ylab(y_label) + 
+    xlab(x_label) + ylab(y_label) + labs(color = annotate) + 
     theme_bw() + 
     theme(panel.grid = element_blank())
   
@@ -194,7 +194,7 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
           pal %in% c("viridis", "magma", "inferno", "plasma", "cividis", 
                      "rocket", "mako", "turbo")) {
         scale_color_viridis_c(option = pal)
-      } else if (length(pal) == 1 && pal == "seuratlike") {
+      } else if (length(pal) == 1 && pal == "rainbow") {
         colors <- colorRampPalette(
           colors = rev(x = brewer.pal(n = 11, name = "Spectral")))(100)
         scale_color_gradientn(colors = colors, limits = range(df[[annotate]]))
@@ -249,7 +249,8 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
             data = data.frame(
               x = by_text_x, 
               y = by_text_y, 
-              label = names(by_text_x)
+              label = names(by_text_x),
+              check.names = FALSE
             ), 
             mapping = aes(x = .data$x, y = .data$y, label = .data$label), 
             size = text_by_size, 

@@ -38,7 +38,7 @@
 #' 
 #' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SingleCellExperiment counts
-#' @importFrom ggplot2 ggplot aes_string facet_wrap geom_point
+#' @importFrom ggplot2 ggplot facet_wrap geom_point
 #'   scale_color_gradient coord_fixed ggtitle theme_void
 #' 
 #' @export
@@ -70,14 +70,16 @@ plotMolecules <- function(spe,
   # providing a single value e.g. "navy" will create a vector c("gray95", "navy")
   pal <- .get_pal(pal)
   
-  df <- cbind.data.frame(spatialCoords(spe), sum = mRNA_counts)
+  df <- cbind(data.frame(spatialCoords(spe), check.names = FALSE), 
+              sum = mRNA_counts)
   
-  p <- ggplot(df, aes_string(x = x_coord, y = y_coord, color = "sum")) + 
+  p <- ggplot(df, aes(x = get(x_coord), y = get(y_coord), color = get("sum"))) + 
     geom_point(size = point_size) + 
     scale_color_gradient(low = pal[1], high = pal[2], trans = "sqrt") + 
     coord_fixed() + 
     ggtitle(molecule) + 
-    theme_void()
+    theme_void() + 
+    labs(color = "sum")
   
   if (n_samples > 1) {
     p <- p + facet_wrap(~ sample_id)
