@@ -23,7 +23,7 @@ plotSpatial(
   text_by = NULL,
   text_by_size = 5,
   text_by_color = "black",
-  shape = 21
+  shape = 16
 )
 
 plotSpots(...)
@@ -102,8 +102,8 @@ Default = 5.}
 "black".}
 
 \item{shape}{Numerical value for `geom_point(aes(shape = shape))`. 
-Default number 21 gives circular shape that represents a Visium spot or 
-a Xenium cell, for instance. A value of 22 returns square shape that is 
+Default number 16 gives circular shape that represents a Visium spot or 
+a Xenium cell, for instance. A value of 15 returns square shape that is 
 suitable for VisiumHD.}
 
 \item{...}{Not used.}

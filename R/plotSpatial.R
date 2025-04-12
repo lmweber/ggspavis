@@ -80,8 +80,8 @@
 #'   "black".
 #'   
 #' @param shape Numerical value for `geom_point(aes(shape = shape))`. 
-#'   Default number 21 gives circular shape that represents a Visium spot or 
-#'   a Xenium cell, for instance. A value of 22 returns square shape that is 
+#'   Default number 16 gives circular shape that represents a Visium spot or 
+#'   a Xenium cell, for instance. A value of 15 returns square shape that is 
 #'   suitable for VisiumHD. 
 #' 
 #' 
@@ -126,7 +126,7 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
                         legend_point_size = 3, 
                         show_axes = FALSE, y_reverse = TRUE, 
                         text_by = NULL, text_by_size = 5, 
-                        text_by_color = "black", shape = 21) {
+                        text_by_color = "black", shape = 16) {
   
   # check validity of arguments
   if (!is.null(in_tissue)) {
@@ -206,6 +206,7 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
   
   p <- ggplot(df, aes(x = get(x_coord), y = get(y_coord), color = get(annotate))) + 
     geom_point(size = point_size, shape = shape) + 
+    xlab(x_coord) + ylab(y_coord) + labs(color=annotate) + 
     coord_fixed() + 
     theme_bw() + 
     theme(legend.position = legend_position, 
