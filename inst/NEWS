@@ -1,3 +1,7 @@
+changes in version 1.15.1 (2025-05-07)
++ support for Visium HD data; rename plotSpots() / plotSpotQC() to 
+  plotSpatial() / plotSpatialQC() (contributions by Estella Dong)
+
 changes in version 1.9.1 (2024-03-16)
 + major updates to several plotting functions providing improved flexibility 
   and new features (contributions by Estella Dong)
