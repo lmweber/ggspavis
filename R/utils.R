@@ -18,7 +18,7 @@
       "rocket" = pal, 
       "mako" = pal, 
       "turbo" = pal, 
-      "seuratlike" = pal, 
+      "rainbow" = pal, 
       # for a single color name, combine with "gray95" for continuous color scale
       c("gray95", pal)
     )

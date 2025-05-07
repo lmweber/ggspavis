@@ -40,7 +40,7 @@ library(scater)
 
 ## 10x Genomics Visium: Mouse coronal brain section
 
-First we start with a demo for a 10x Genomics Visium mouse brain dataset. We generate visualizations of library size and expression levels of selected genes. Both `plotVisium()` and `plotSpots()` reflect the spatial coordinates of spots, with the former also overlaying spots on the H\&E histology image. Note that `plotVisium()` accepts a `SpatialExperiment` class object, while other functions in the package accept either `SpatialExperiment` or `SingleCellExperiment` class objects.
+First we start with a demo for a 10x Genomics Visium mouse brain dataset. We generate visualizations of library size and expression levels of selected genes. Both `plotVisium()` and `plotSpatial()` reflect the spatial coordinates of spots, with the former also overlaying spots on the H\&E histology image. Note that `plotVisium()` accepts a `SpatialExperiment` class object, while other functions in the package accept either `SpatialExperiment` or `SingleCellExperiment` class objects.
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
@@ -90,13 +90,13 @@ p1 | p2
 ```
 
 
-#### plotSpots
+#### plotSpatial
 
-Using `plotSpots()`, for a 10x Genomics Visium dataset, by default we subset to spots that are over tissue. Palettes in `plotSpots()` can be changed in a similar manner to `plotVisium()`.
+Using `plotSpatial()`, for a 10x Genomics Visium dataset, by default we subset to spots that are over tissue. Palettes in `plotSpatial()` can be changed in a similar manner to `plotVisium()`.
 
 ```{r, fig.width=8, fig.height=3.5}
-p1 <- plotSpots(spe, annotate = "Gapdh")
-p2 <- plotSpots(spe, annotate = "Mbp", pal = "viridis")
+p1 <- plotSpatial(spe, annotate = "Gapdh")
+p2 <- plotSpatial(spe, annotate = "Mbp", pal = "viridis")
 
 # display panels using patchwork
 p1 | p2
@@ -107,7 +107,7 @@ p1 | p2
 
 ### Discrete annotations
 
-`plotSpots()` and `plotVisium()` can also be used to visualize discrete or categorical annotation variables, such as cluster labels as colors on the spatial coordinates. We will introduce this functionality using the Visium human brain dorsolateral prefrontal cortex (DLPFC) dataset.
+`plotSpatial()` and `plotVisium()` can also be used to visualize discrete or categorical annotation variables, such as cluster labels as colors on the spatial coordinates. We will introduce this functionality using the Visium human brain dorsolateral prefrontal cortex (DLPFC) dataset.
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
@@ -123,12 +123,12 @@ plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue",
            pal = "libd_layer_colors")
 ```
 
-For `plotSpots()`, we leave the palette as NULL, and since the reference annotations are categorical, eight distinct colors are automatically generated. (Similarly, leaving the palette as NULL for a continuous variable will generate a default three-color gradient of "blue-beige-red".)
+For `plotSpatial()`, we leave the palette as NULL, and since the reference annotations are categorical, eight distinct colors are automatically generated. (Similarly, leaving the palette as NULL for a continuous variable will generate a default three-color gradient of "blue-beige-red".)
 
 ```{r, fig.width=8, fig.height=4}
-p1 <- plotSpots(spe, annotate = "ground_truth") + 
+p1 <- plotSpatial(spe, annotate = "ground_truth") + 
   ggtitle("Reference")
-p2 <- plotSpots(spe, annotate = "libsize") + 
+p2 <- plotSpatial(spe, annotate = "libsize") + 
   ggtitle("Library size")
 
 # display panels using patchwork
@@ -154,16 +154,16 @@ colData(spe)$low_libsize <- colData(spe)$sum < 400 | colData(spe)$detected < 400
 colData(spe)$high_mito <- colData(spe)$subsets_mito_percent > 30
 ```
 
-`plotSpotQC(plot_type = "spot")` reflects the spatial coordinates of the spots, where spots of interests can be labeled by a flag with TRUE or FALSE levels. The TRUE level are highlighted by red color.
+`plotSpatialQC(plot_type = "spot")` reflects the spatial coordinates of the spots, where spots of interests can be labeled by a flag with TRUE or FALSE levels. The TRUE level are highlighted by red color.
 
 We can investigate spots with low library size using histograms, violin plots, and spot plots.
 
 ```{r, fig.width=8, fig.height=4.5}
-p1 <- plotSpotQC(spe, plot_type = "histogram", 
+p1 <- plotSpatialQC(spe, plot_type = "histogram", 
                  x_metric = "sum", annotate = "low_libsize", )
-p2 <- plotSpotQC(spe, plot_type = "violin", 
+p2 <- plotSpatialQC(spe, plot_type = "violin", 
                  x_metric = "sum", annotate = "low_libsize", point_size = 0.1)
-p3 <- plotSpotQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
+p3 <- plotSpatialQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
                  annotate = "low_libsize", point_size = 0.2)
 
 # display panels using patchwork
@@ -173,11 +173,11 @@ p1 | p2 | p3
 Similarly, we can investigate spots with high mitochondrial proportion of reads.
 
 ```{r, fig.width=10, fig.height=4.5}
-p1 <- plotSpotQC(spe, plot_type = "histogram", 
+p1 <- plotSpatialQC(spe, plot_type = "histogram", 
                  x_metric = "subsets_mito_percent", annotate = "high_mito", )
-p2 <- plotSpotQC(spe, plot_type = "violin", 
+p2 <- plotSpatialQC(spe, plot_type = "violin", 
                  x_metric = "subsets_mito_percent", annotate = "high_mito", point_size = 0.1)
-p3 <- plotSpotQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
+p3 <- plotSpatialQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
                  annotate = "high_mito", point_size = 0.2)
 
 # display panels using patchwork
@@ -187,7 +187,7 @@ p1 | p2 | p3
 We can also use a scatter plot to check the trend between two variables, for example mitochondrial proportion vs. library size. We can also highlight spots by putting thresholds on the x and/or y axes.
 
 ```{r, out.width="60%", warning=FALSE, message=FALSE}
-plotSpotQC(spe, plot_type = "scatter", 
+plotSpatialQC(spe, plot_type = "scatter", 
            x_metric = "subsets_mito_percent", y_metric = "sum", 
            x_threshold = 30, y_threshold = 400)
 ```

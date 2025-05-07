@@ -15,6 +15,7 @@ plotVisium(
   show_axes = FALSE,
   assay = "counts",
   trans = "identity",
+  point_shape = 21,
   point_size = 1,
   legend_position = "right",
   x_coord = NULL,
@@ -59,6 +60,10 @@ FALSE}
 \item{trans}{Transformation to apply for continuous scales. Ignored unless
 \code{annotate} is numeric, e.g. feature expression. (See
 \code{\link{ggplot2}{continuous_scale}} for valid options.)}
+
+\item{point_shape}{(numeric) Point shape. Default = 21, which gives a
+circular shape suitable for representing for example, a Visium spot or
+Xenium cell. A value of 22 gives a square shape suitable for Visium HD.}
 
 \item{point_size}{(numeric) Point size. Default = 1.}
 
@@ -108,9 +113,10 @@ options available to adjust the plot type and style.
 library(STexampleData)
 
 spe <- Visium_mouseCoronal()
+colData(spe)$sum <- colSums(counts(spe))
 
-# color by x coordinate, highlight in-tissue spots
-plotVisium(spe, annotate = "pxl_col_in_fullres", highlight = "in_tissue")
+# color by colData, highlight in-tissue spots
+plotVisium(spe, annotate = "sum", highlight = "in_tissue")
 
 # subset in-tissue spots
 sub <- spe[, as.logical(colData(spe)$in_tissue)]
