@@ -38,8 +38,8 @@
 #' 
 #' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SingleCellExperiment counts
-#' @importFrom ggplot2 ggplot facet_wrap geom_point
-#'   scale_color_gradient coord_fixed ggtitle theme_void
+#' @importFrom ggplot2 ggplot facet_wrap geom_point scale_color_gradient
+#'   coord_fixed ggtitle theme_void
 #' 
 #' @export
 #' 
@@ -77,9 +77,9 @@ plotMolecules <- function(spe,
     geom_point(size = point_size) + 
     scale_color_gradient(low = pal[1], high = pal[2], trans = "sqrt") + 
     coord_fixed() + 
+    labs(color = "sum") + 
     ggtitle(molecule) + 
-    theme_void() + 
-    labs(color = "sum")
+    theme_void()
   
   if (n_samples > 1) {
     p <- p + facet_wrap(~ sample_id)

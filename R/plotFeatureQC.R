@@ -125,10 +125,11 @@ plotFeatureQC <- function(spe, plot_type = c("histogram", "violin"),
     p <- ggplot(df, aes(x = get("dummy"), y = get(x_metric), fill = get("dummy"))) + 
       geom_violin(trim = TRUE, alpha = 0.9) + 
       scale_fill_manual(values = c("gray70")) + 
-      xlab("dummy") + labs(fill="dummy") + 
-      ylab(x_metric) + 
+      labs(x = "dummy", 
+           y = x_metric, 
+           fill = "dummy") + 
       theme_bw() + 
-      theme(legend.position="none", 
+      theme(legend.position = "none", 
             panel.grid = element_blank())
     
     if (is.null(annotate)) {
@@ -140,7 +141,7 @@ plotFeatureQC <- function(spe, plot_type = c("histogram", "violin"),
       p <- p + 
         geom_jitter(aes(color = get(annotate)), size = point_size) + 
         scale_color_manual(values = c("black", "red")) + 
-        labs(color=annotate)
+        labs(color = annotate)
     }
     
     if (scale_log1p) {

@@ -66,9 +66,9 @@
 #' @importFrom scales hue_pal
 #' @importFrom stats median
 #' @importFrom ggrepel geom_text_repel
-#' @importFrom ggplot2 ggplot geom_point xlab ylab theme_bw theme
-#'   element_blank scale_color_viridis_c scale_color_gradientn
-#'   scale_color_gradient scale_color_manual ggtitle labs guides aes .data
+#' @importFrom ggplot2 ggplot geom_point theme_bw theme element_blank
+#'   scale_color_viridis_c scale_color_gradientn scale_color_gradient
+#'   scale_color_manual ggtitle labs guides aes .data
 #' 
 #' @export
 #' 
@@ -145,7 +145,7 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   }
   
   # data frame for plotting
-  df <- cbind(data.frame(colData(spe), check.names = FALSE),
+  df <- cbind(data.frame(colData(spe), check.names = FALSE), 
               data.frame(reducedDim(spe, plot_type), check.names = FALSE))
   
   if (!is.null(annotate)) {
@@ -179,7 +179,9 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   
   p <- ggplot(df, aes(x = get(x_label), y = get(y_label), color = get(annotate))) + 
     geom_point(size = point_size) + 
-    xlab(x_label) + ylab(y_label) + labs(color = annotate) + 
+    labs(x = x_label, 
+         y = y_label, 
+         color = annotate) + 
     theme_bw() + 
     theme(panel.grid = element_blank())
   
@@ -249,7 +251,7 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
             data = data.frame(
               x = by_text_x, 
               y = by_text_y, 
-              label = names(by_text_x),
+              label = names(by_text_x), 
               check.names = FALSE
             ), 
             mapping = aes(x = .data$x, y = .data$y, label = .data$label), 

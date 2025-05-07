@@ -15,6 +15,7 @@ plotVisium(
   show_axes = FALSE,
   assay = "counts",
   trans = "identity",
+  point_shape = 21,
   point_size = 1,
   legend_position = "right",
   x_coord = NULL,
@@ -22,8 +23,7 @@ plotVisium(
   y_reverse = TRUE,
   sample_ids = NULL,
   image_ids = NULL,
-  pal = NULL,
-  shape = 21
+  pal = NULL
 )
 }
 \arguments{
@@ -61,6 +61,10 @@ FALSE}
 \code{annotate} is numeric, e.g. feature expression. (See
 \code{\link{ggplot2}{continuous_scale}} for valid options.)}
 
+\item{point_shape}{(numeric) Point shape. Default = 21, which gives a
+circular shape suitable for representing for example, a Visium spot or
+Xenium cell. A value of 22 gives a square shape suitable for Visium HD.}
+
 \item{point_size}{(numeric) Point size. Default = 1.}
 
 \item{legend_position}{Legend position for annotations. Options are "left",
@@ -88,11 +92,6 @@ color codes. Options for continuous values are "viridis", a single color
 name (e.g. "red", "navy", etc), or a vector of length two containing color
 names for each end of the scale. Default = "libd_layer_colors" for discrete
 data, and "viridis" for continuous data.}
-
-\item{shape}{(numeric) Numerical value for `geom_point(aes(shape = shape))`. 
-Default number 21 gives circular shape that represents a Visium spot or 
-a Xenium cell, for instance. A value of 22 returns square shape that is 
-suitable for VisiumHD.}
 }
 \value{
 Returns a ggplot object. Additional plot elements can be added as

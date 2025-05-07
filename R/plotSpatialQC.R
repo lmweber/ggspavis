@@ -92,10 +92,10 @@
 #' 
 #' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SummarizedExperiment rowData colData
-#' @importFrom ggplot2 ggplot geom_histogram geom_point geom_vline
-#'   geom_hline geom_smooth geom_violin geom_jitter scale_fill_manual
-#'   scale_color_manual xlab ylab labs coord_fixed theme_bw theme element_text
-#'   element_blank guides scale_y_reverse
+#' @importFrom ggplot2 ggplot geom_histogram geom_point geom_vline geom_hline
+#'   geom_smooth geom_violin geom_jitter scale_fill_manual scale_color_manual
+#'   xlab labs coord_fixed theme_bw theme element_text element_blank guides
+#'   scale_y_reverse
 #' @importFrom ggside geom_xsidehistogram geom_ysidehistogram
 #' 
 #' 
@@ -199,7 +199,8 @@ plotSpatialQC <- function(spe,
     
     p <- ggplot(df, aes(x = get(x_metric), y = get(y_metric))) + 
       geom_point(size = point_size) + 
-      xlab(x_coord) + ylab(y_coord) + 
+      labs(x = x_coord, 
+           y = y_coord) + 
       theme_bw()
     
     if (!is.null(x_threshold)) {
@@ -231,8 +232,8 @@ plotSpatialQC <- function(spe,
     if (!is.null(annotate)) {
       p <- ggplot(df, aes(x = get(x_coord), y = get(y_coord), color = get(annotate))) + 
         geom_point(size = point_size) + 
-        labs(color=annotate) +
         scale_color_manual(values = c("gray85", "red")) + 
+        labs(color = annotate) + 
         guides(color = guide_legend(override.aes = list(size = legend_point_size)))
     } else if (is.null(annotate)) {
       p <- ggplot(df, aes(x = get(x_coord), y = get(y_coord))) + 
@@ -241,8 +242,9 @@ plotSpatialQC <- function(spe,
     }
     
     p <- p + 
-      xlab(x_coord) + ylab(y_coord) + 
       coord_fixed() + 
+      labs(x = x_coord, 
+           y = y_coord) + 
       theme_bw() + 
       theme(panel.grid = element_blank(), 
             axis.title = element_blank(), 
@@ -264,10 +266,11 @@ plotSpatialQC <- function(spe,
     p <- ggplot(df, aes(x = get("dummy"), y = get(x_metric), fill = get("dummy"))) + 
       geom_violin(trim = TRUE, alpha = 0.9) + 
       scale_fill_manual(values = c("gray70")) + 
-      xlab("dummy") + labs(fill="dummy") + 
-      ylab(x_metric) + 
+      labs(x = "dummy", 
+           y = x_metric, 
+           fill = "dummy") + 
       theme_bw() + 
-      theme(legend.position="none", 
+      theme(legend.position = "none", 
             panel.grid = element_blank())
     
     if (is.null(annotate)) {
@@ -279,7 +282,7 @@ plotSpatialQC <- function(spe,
       p <- p + 
         geom_jitter(aes(color = get(annotate)), size = point_size) + 
         scale_color_manual(values = c("black", "red")) + 
-        labs(color=annotate)
+        labs(color = annotate)
     }
   }
   
@@ -297,11 +300,11 @@ plotQC <- function(...) {
           "plotFeatureQC(). Please use one of these functions instead.")
 }
 
+
 #' @rdname plotSpatialQC
 #' @param ... Not used.
 #' @export
 plotSpotQC <- function(...) {
   # message when using deprecated function name
-  message("The function plotSpotQC() has been replaced with plotSpatialQC(). ", 
-          "Please use one of these functions instead.")
+  message("The function plotSpotQC() has been replaced with plotSpatialQC().")
 }

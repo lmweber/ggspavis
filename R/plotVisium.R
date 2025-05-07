@@ -45,6 +45,10 @@
 #'   \code{annotate} is numeric, e.g. feature expression. (See
 #'   \code{\link{ggplot2}{continuous_scale}} for valid options.)
 #' 
+#' @param point_shape (numeric) Point shape. Default = 21, which gives a
+#'   circular shape suitable for representing for example, a Visium spot or
+#'   Xenium cell. A value of 22 gives a square shape suitable for Visium HD.
+#' 
 #' @param point_size (numeric) Point size. Default = 1.
 #' 
 #' @param legend_position Legend position for annotations. Options are "left",
@@ -65,18 +69,14 @@
 #' 
 #' @param image_ids (character) Images to show, if multiple images are
 #'   available. Default = NULL (show all images).
-#'
+#' 
 #' @param pal (character) Color palette for points. Options for discrete
 #'   labels are "libd_layer_colors", "Okabe-Ito", or a custom vector of hex
 #'   color codes. Options for continuous values are "viridis", a single color
 #'   name (e.g. "red", "navy", etc), or a vector of length two containing color
 #'   names for each end of the scale. Default = "libd_layer_colors" for discrete
 #'   data, and "viridis" for continuous data.
-#'   
-#' @param shape (numeric) Numerical value for `geom_point(aes(shape = shape))`. 
-#'   Default number 21 gives circular shape that represents a Visium spot or 
-#'   a Xenium cell, for instance. A value of 22 returns square shape that is 
-#'   suitable for VisiumHD. 
+#' 
 #' 
 #' @return Returns a ggplot object. Additional plot elements can be added as
 #'   ggplot elements (e.g. title, customized formatting, etc).
@@ -87,7 +87,7 @@
 #' @importFrom SummarizedExperiment colData assayNames
 #' @importFrom ggplot2 ggplot scale_fill_manual scale_fill_gradient
 #'   scale_fill_gradientn scale_fill_viridis_c scale_color_identity
-#'   scale_fill_identity facet_wrap guides guide_colorbar guide_legend
+#'   scale_fill_identity facet_wrap labs guides guide_colorbar guide_legend
 #'   theme_void element_text margin unit layer
 #' @importFrom grid rasterGrob
 #' @importFrom ggrepel geom_text_repel
@@ -120,11 +120,12 @@
 #' 
 plotVisium <- function(spe, 
                        spots = TRUE, annotate = NULL, highlight = NULL, 
-                       facets = "sample_id", image = TRUE, zoom = FALSE, show_axes = FALSE,
-                       assay = "counts", trans = "identity", point_size = 1, legend_position = "right",
+                       facets = "sample_id", image = TRUE, zoom = FALSE, 
+                       show_axes = FALSE, assay = "counts", trans = "identity", 
+                       point_shape = 21, point_size = 1, 
+                       legend_position = "right", 
                        x_coord = NULL, y_coord = NULL, y_reverse = TRUE, 
-                       sample_ids = NULL, image_ids = NULL, pal = NULL,
-                       shape = 21) {
+                       sample_ids = NULL, image_ids = NULL, pal = NULL) {
   
   # check validity of input arguments
   stopifnot(
@@ -143,7 +144,7 @@ plotVisium <- function(spe,
   if(is.null(y_coord)) y_coord <- spatialCoordsNames(spe)[2]
   
   # set up data for plotting
-  df <- cbind(data.frame(colData(spe), check.names = FALSE),
+  df <- cbind(data.frame(colData(spe), check.names = FALSE), 
               data.frame(spatialCoords(spe), check.names = FALSE))
   if (!is.null(annotate)) {
     # check validity of 'annotate' argument
@@ -231,7 +232,7 @@ plotVisium <- function(spe,
     points <- list(
       guides(fill = guide(
         title = annotate, order = 1, override.aes = list(col = NA, size = 3))), 
-      geom_point(shape = shape, size = point_size, stroke = 0.25, alpha = 0.8))
+      geom_point(shape = point_shape, size = point_size, stroke = 0.25, alpha = 0.8))
     if (!is.null(highlight)) {
       df$highlight <- as.factor(df[[highlight]])
       highlights <- list(
@@ -282,7 +283,7 @@ plotVisium <- function(spe,
   # display plot
   p <- ggplot(df, aes(get(x_coord), get(y_coord), fill = get(annotate), 
                       col = get("highlight"))) + 
-    labs(fill=annotate) + 
+    labs(fill = annotate) + 
     images + points + highlights + scale + 
     coord_fixed(xlim = xlim, ylim = ylim) 
   
@@ -292,17 +293,17 @@ plotVisium <- function(spe,
       theme(strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"), 
                                       size = 12), 
             legend.position = legend_position) +
-      labs(x = paste0("pxl_col_in_", img_df[s, "image_id"]),
-           y = paste0("pxl_col_in_", img_df[s, "image_id"])) 
+      labs(x = paste0("pxl_col_in_", img_df[s, "image_id"]), 
+           y = paste0("pxl_col_in_", img_df[s, "image_id"]))
   } else {
     p <- p + 
       theme_void() + 
       theme(strip.text = element_text(margin = margin(0, 0, 0.5, 0, "lines"), 
                                       size = 12), 
-            legend.position = legend_position) 
+            legend.position = legend_position)
   }
-  p <- p + if (!is.null(facets) & length(sample_ids) > 1) facet_wrap(facets)
+  
+  p <- p + if (!is.null(facets) && length(sample_ids) > 1) facet_wrap(facets)
   
   p
 }
-

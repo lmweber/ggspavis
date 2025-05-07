@@ -15,6 +15,7 @@ plotSpatial(
   feature_names = NULL,
   assay_name = "counts",
   pal = NULL,
+  point_shape = 16,
   point_size = 0.3,
   legend_position = "right",
   legend_point_size = 3,
@@ -22,8 +23,7 @@ plotSpatial(
   y_reverse = TRUE,
   text_by = NULL,
   text_by_size = 5,
-  text_by_color = "black",
-  shape = 16
+  text_by_color = "black"
 )
 
 plotSpots(...)
@@ -75,6 +75,10 @@ plot for a continuous variable. Default = "counts".}
 values. For continuous values, provide a vector of length 2 for the low and
 high range, e.g. c("gray90", "navy").}
 
+\item{point_shape}{Point shape. Default = 16, which gives a circular shape
+suitable for representing, for example, a Visium spot or Xenium cell. A
+value of 15 gives a square shape suitable for Visium HD.}
+
 \item{point_size}{Point size. Default = 0.3.}
 
 \item{legend_position}{Legend position for discrete annotations. Options are
@@ -100,11 +104,6 @@ Default = 5.}
 
 \item{text_by_color}{Color name or hex code for annotation labels. Default =
 "black".}
-
-\item{shape}{Numerical value for `geom_point(aes(shape = shape))`. 
-Default number 16 gives circular shape that represents a Visium spot or 
-a Xenium cell, for instance. A value of 15 returns square shape that is 
-suitable for VisiumHD.}
 
 \item{...}{Not used.}
 }

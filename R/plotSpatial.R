@@ -53,6 +53,10 @@
 #'   values. For continuous values, provide a vector of length 2 for the low and
 #'   high range, e.g. c("gray90", "navy").
 #' 
+#' @param point_shape Point shape. Default = 16, which gives a circular shape
+#'   suitable for representing, for example, a Visium spot or Xenium cell. A
+#'   value of 15 gives a square shape suitable for Visium HD.
+#' 
 #' @param point_size Point size. Default = 0.3.
 #' 
 #' @param legend_position Legend position for discrete annotations. Options are
@@ -78,11 +82,6 @@
 #' 
 #' @param text_by_color Color name or hex code for annotation labels. Default =
 #'   "black".
-#'   
-#' @param shape Numerical value for `geom_point(aes(shape = shape))`. 
-#'   Default number 16 gives circular shape that represents a Visium spot or 
-#'   a Xenium cell, for instance. A value of 15 returns square shape that is 
-#'   suitable for VisiumHD. 
 #' 
 #' 
 #' @return Returns a ggplot object, which may be further modified using ggplot
@@ -97,8 +96,8 @@
 #' @importFrom scales hue_pal
 #' @importFrom stats median
 #' @importFrom ggrepel geom_text_repel
-#' @importFrom ggplot2 ggplot geom_point facet_wrap coord_fixed
-#'   theme_bw theme element_blank scale_color_viridis_c scale_color_gradientn
+#' @importFrom ggplot2 ggplot geom_point facet_wrap coord_fixed theme_bw theme
+#'   element_blank scale_color_viridis_c scale_color_gradientn
 #'   scale_color_gradient scale_color_manual ggtitle labs guides scale_y_reverse
 #'   aes .data
 #' 
@@ -121,12 +120,13 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
                         sample_id = NULL, in_tissue = "in_tissue", 
                         annotate = NULL, feature_names = NULL, 
                         assay_name = "counts", 
-                        pal = NULL, point_size = 0.3, 
+                        pal = NULL, 
+                        point_shape = 16, point_size = 0.3, 
                         legend_position = "right", 
                         legend_point_size = 3, 
                         show_axes = FALSE, y_reverse = TRUE, 
                         text_by = NULL, text_by_size = 5, 
-                        text_by_color = "black", shape = 16) {
+                        text_by_color = "black") {
   
   # check validity of arguments
   if (!is.null(in_tissue)) {
@@ -205,8 +205,10 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
   # main plot
   
   p <- ggplot(df, aes(x = get(x_coord), y = get(y_coord), color = get(annotate))) + 
-    geom_point(size = point_size, shape = shape) + 
-    xlab(x_coord) + ylab(y_coord) + labs(color=annotate) + 
+    geom_point(size = point_size, shape = point_shape) + 
+    labs(x = x_coord, 
+         y = y_coord, 
+         color = annotate) + 
     coord_fixed() + 
     theme_bw() + 
     theme(legend.position = legend_position, 
@@ -288,7 +290,7 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
             data = data.frame(
               x = by_text_x, 
               y = by_text_y, 
-              label = names(by_text_x),
+              label = names(by_text_x), 
               check.names = FALSE
             ), 
             mapping = aes(x = .data$x, y = .data$y, label = .data$label), 
@@ -314,9 +316,6 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
 #' @export
 plotSpots <- function(...) {
   # message when using deprecated function name
-  message("The function plotSpots() has been replaced with plotSpatial() that",
-          "is suitable for both imaging and sequencing based technologies. ",
-          "Please use this functions instead.")
+  message("The function plotSpots() has been replaced with plotSpatial(), which ", 
+          "is suitable for both sequencing-based and imaging-based platforms.")
 }
-
-
