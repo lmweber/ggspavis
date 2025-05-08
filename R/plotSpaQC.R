@@ -1,4 +1,4 @@
-#' plotSpatialQC
+#' plotSpaQC
 #' 
 #' Plotting functions for spatial transcriptomics data.
 #' 
@@ -110,21 +110,21 @@
 #' colData(spe)$sum <- colSums(counts(spe))
 #' colData(spe)$low_libsize <- colData(spe)$sum < 400
 #' 
-#' plotSpatialQC(spe, plot_type = "histogram", x_metric = "sum", annotate = "low_libsize")
-#' plotSpatialQC(spe, plot_type = "scatter", x_metric = "sum", y_metric = "cell_count")
-#' plotSpatialQC(spe, plot_type = "spot", annotate = "low_libsize", in_tissue = "in_tissue")
-#' plotSpatialQC(spe, plot_type = "violin", x_metric = "sum", annotate = "low_libsize")
+#' plotSpaQC(spe, plot_type = "histogram", x_metric = "sum", annotate = "low_libsize")
+#' plotSpaQC(spe, plot_type = "scatter", x_metric = "sum", y_metric = "cell_count")
+#' plotSpaQC(spe, plot_type = "spot", annotate = "low_libsize", in_tissue = "in_tissue")
+#' plotSpaQC(spe, plot_type = "violin", x_metric = "sum", annotate = "low_libsize")
 #' 
-plotSpatialQC <- function(spe, 
-                          plot_type = c("histogram", "scatter", "spot", "violin"), 
-                          x_coord = NULL, y_coord = NULL, 
-                          x_metric = NULL, y_metric = NULL, 
-                          x_threshold = NULL, y_threshold = NULL, 
-                          trend = TRUE, marginal = TRUE, 
-                          annotate = NULL, in_tissue = NULL, 
-                          legend_point_size = 3, 
-                          n_bins = 100, point_size = 0.3, 
-                          y_reverse = TRUE) {
+plotSpaQC <- function(spe, 
+                      plot_type = c("histogram", "scatter", "spot", "violin"), 
+                      x_coord = NULL, y_coord = NULL, 
+                      x_metric = NULL, y_metric = NULL, 
+                      x_threshold = NULL, y_threshold = NULL, 
+                      trend = TRUE, marginal = TRUE, 
+                      annotate = NULL, in_tissue = NULL, 
+                      legend_point_size = 3, 
+                      n_bins = 100, point_size = 0.3, 
+                      y_reverse = TRUE) {
   
   # check validity of arguments
   plot_type <- match.arg(plot_type)
@@ -291,20 +291,20 @@ plotSpatialQC <- function(spe,
 }
 
 
-#' @rdname plotSpatialQC
+#' @rdname plotSpaQC
 #' @param ... Not used.
 #' @export
 plotQC <- function(...) {
   # message when using deprecated function name
-  message("The function plotQC() has been replaced with plotSpatialQC() and ", 
+  message("The function plotQC() has been replaced with plotSpaQC() and ", 
           "plotFeatureQC(). Please use one of these functions instead.")
 }
 
 
-#' @rdname plotSpatialQC
+#' @rdname plotSpaQC
 #' @param ... Not used.
 #' @export
 plotSpotQC <- function(...) {
   # message when using deprecated function name
-  message("The function plotSpotQC() has been replaced with plotSpatialQC().")
+  message("The function plotSpotQC() has been replaced with plotSpaQC().")
 }
