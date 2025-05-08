@@ -156,7 +156,7 @@ plotVisium <- function(spe,
     if (annotate %in% rownames(spe)) {
       stopifnot(
         is.character(assay), 
-        length(grep(assay, assayNames(spe))) == 1)
+        length(grep(paste0("^", assay, "$"), assayNames(spe))) == 1)
       df[[annotate]] <- assay(spe, assay)[annotate, ]
     }
     if (is.numeric(df[[annotate]]) & is.null(pal)) {
