@@ -204,7 +204,8 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
   
   # main plot
   
-  p <- ggplot(df, aes(x = get(x_coord), y = get(y_coord), color = get(annotate))) + 
+  p <- ggplot(df, aes(x = get(x_coord), y = get(y_coord), 
+                      color = if (!is.null(annotate)) get(annotate) else NULL)) + 
     geom_point(size = point_size, shape = point_shape) + 
     labs(x = x_coord, 
          y = y_coord, 

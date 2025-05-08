@@ -281,7 +281,8 @@ plotVisium <- function(spe,
   }
   
   # display plot
-  p <- ggplot(df, aes(get(x_coord), get(y_coord), fill = get(annotate), 
+  p <- ggplot(df, aes(get(x_coord), get(y_coord), 
+                      fill = if (!is.null(annotate)) get(annotate) else NULL, 
                       col = get("highlight"))) + 
     labs(fill = annotate) + 
     images + points + highlights + scale + 

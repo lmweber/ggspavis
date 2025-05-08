@@ -177,7 +177,8 @@ plotDimRed <- function(spe, plot_type = c("UMAP", "PCA"),
   
   # main plot
   
-  p <- ggplot(df, aes(x = get(x_label), y = get(y_label), color = get(annotate))) + 
+  p <- ggplot(df, aes(x = get(x_label), y = get(y_label), 
+                      color = if (!is.null(annotate)) get(annotate) else NULL)) + 
     geom_point(size = point_size) + 
     labs(x = x_label, 
          y = y_label, 
