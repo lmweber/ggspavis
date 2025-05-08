@@ -43,7 +43,7 @@
 #'   
 #' @param trans Transformation to apply for continuous scales. Ignored unless
 #'   \code{annotate} is numeric, e.g. feature expression. (See
-#'   \code{\link{ggplot2}{continuous_scale}} for valid options.)
+#'   \code{?continuous_scale} from \code{ggplot2} for valid options.)
 #' 
 #' @param point_shape (numeric) Point shape. Default = 21, which gives a
 #'   circular shape suitable for representing for example, a Visium spot or
