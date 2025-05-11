@@ -1,6 +1,6 @@
-changes in version 1.15.4 (2025-05-08)
-+ renamed functions plotSpatial() / plotSpatialQC() to plotSpa() / plotSpaQC() 
-  to avoid function name clash with imcRtools package
+changes in version 1.15.6 (2025-05-11)
++ renamed functions plotSpatial() and plotSpatialQC() to plotCoords() and 
+  plotObsQC() to avoid function name clash with imcRtools package
 
 changes in version 1.15.1 (2025-05-07)
 + support for Visium HD data; renamed functions plotSpots() / plotSpotQC() to 
