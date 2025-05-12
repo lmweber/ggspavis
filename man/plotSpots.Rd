@@ -2,6 +2,7 @@
 % Please edit documentation in R/plotSpots.R
 \name{plotSpots}
 \alias{plotSpots}
+\alias{plotCoords}
 \title{plotSpots}
 \usage{
 plotSpots(
@@ -23,6 +24,8 @@ plotSpots(
   text_by_size = 5,
   text_by_color = "black"
 )
+
+plotCoords(...)
 }
 \arguments{
 \item{spe}{Input data, assumed to be a \code{SpatialExperiment} or
@@ -96,6 +99,8 @@ Default = 5.}
 
 \item{text_by_color}{Color name or hex code for annotation labels. Default =
 "black".}
+
+\item{...}{Not used.}
 }
 \value{
 Returns a ggplot object, which may be further modified using ggplot

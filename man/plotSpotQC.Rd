@@ -3,6 +3,7 @@
 \name{plotSpotQC}
 \alias{plotSpotQC}
 \alias{plotQC}
+\alias{plotObsQC}
 \title{plotSpotQC}
 \usage{
 plotSpotQC(
@@ -25,6 +26,8 @@ plotSpotQC(
 )
 
 plotQC(...)
+
+plotObsQC(...)
 }
 \arguments{
 \item{spe}{Input data, assumed to be a \code{SpatialExperiment} or

@@ -299,3 +299,14 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
   # return plot
   p
 }
+
+
+#' @rdname plotSpots
+#' @param ... Not used.
+#' @export
+plotCoords <- function(...) {
+  # message regarding updated function name
+  message("The function plotSpots() has been replaced with plotCoords() in ", 
+          "ggspavis version 1.15 onwards. If you are using an older version of ", 
+          "the package, you may need to use the old function name plotSpots().")
+}

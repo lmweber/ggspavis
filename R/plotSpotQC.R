@@ -292,3 +292,14 @@ plotQC <- function(...) {
   message("The function plotQC() has been replaced with plotSpotQC() and ", 
           "plotFeatureQC(). Please use one of these functions instead.")
 }
+
+
+#' @rdname plotSpotQC
+#' @param ... Not used.
+#' @export
+plotObsQC <- function(...) {
+  # message regarding updated function name
+  message("The function plotSpotQC() has been renamed to plotObsQC() in ", 
+          "ggspavis version 1.15 onwards. If you are using an older version of ", 
+          "the package, you may need to use the old function name plotSpotQC().")
+}
