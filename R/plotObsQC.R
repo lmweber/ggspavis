@@ -309,5 +309,6 @@ plotQC <- function(...) {
 #' @export
 plotSpotQC <- function(...) {
   # message when using deprecated function name
-  message("The function plotSpotQC() has been replaced with plotObsQC().")
+  message("The function plotSpotQC() has been replaced with plotObsQC(). Please ", 
+          "use the new function name.")
 }

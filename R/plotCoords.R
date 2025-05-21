@@ -316,5 +316,6 @@ plotCoords <- function(spe, x_coord = NULL, y_coord = NULL,
 plotSpots <- function(...) {
   # message when using deprecated function name
   message("The function plotSpots() has been replaced with plotCoords(), which ", 
-          "is suitable for both sequencing-based and imaging-based platforms.")
+          "can be used with both sequencing-based and imaging-based data. Please ", 
+          "use the new function name.")
 }
