@@ -296,6 +296,11 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
     p <- p + scale_y_reverse()
   }
   
+  # deprecation message
+  message("Note that the function plotSpots() has been replaced with plotCoords() ", 
+          "in ggspavis version 1.15 onwards. Depending on which version you are ", 
+          "using, you may need to use the new function name.")
+  
   # return plot
   p
 }
@@ -307,6 +312,6 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
 plotCoords <- function(...) {
   # message regarding updated function name
   message("The function plotSpots() has been replaced with plotCoords() in ", 
-          "ggspavis version 1.15 onwards. If you are using an older version of ", 
-          "the package, you may need to use the old function name plotSpots().")
+          "ggspavis version 1.15 onwards. If you are using an older version, ", 
+          "you may need to use the old function name plotSpots().")
 }

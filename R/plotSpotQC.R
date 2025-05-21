@@ -279,6 +279,11 @@ plotSpotQC <- function(spe,
     }
   }
   
+  # deprecation message
+  message("Note that the function plotSpotQC() has been replaced with plotObsQC() ", 
+          "in ggspavis version 1.15 onwards. Depending on which version you are ", 
+          "using, you may need to use the new function name.")
+  
   # return plot
   p
 }
@@ -300,6 +305,6 @@ plotQC <- function(...) {
 plotObsQC <- function(...) {
   # message regarding updated function name
   message("The function plotSpotQC() has been renamed to plotObsQC() in ", 
-          "ggspavis version 1.15 onwards. If you are using an older version of ", 
-          "the package, you may need to use the old function name plotSpotQC().")
+          "ggspavis version 1.15 onwards. If you are using an older version, ", 
+          "you may need to use the old function name plotSpotQC().")
 }
