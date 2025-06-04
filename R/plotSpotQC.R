@@ -304,5 +304,5 @@ plotQC <- function(...) {
 #' @export
 plotObsQC <- function(...) {
   # wrapper function
-  plotSpotQC(...)
+  suppressMessages(plotSpotQC(...))
 }

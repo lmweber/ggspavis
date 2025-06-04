@@ -311,5 +311,5 @@ plotSpots <- function(spe, x_coord = NULL, y_coord = NULL,
 #' @export
 plotCoords <- function(...) {
   # wrapper function
-  plotSpots(...)
+  suppressMessages(plotSpots(...))
 }
