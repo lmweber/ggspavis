@@ -35,12 +35,28 @@ library(ggspavis)
 library(STexampleData)
 library(patchwork)
 library(scater)
+library(OSTA.data)
 ```
 
 
+### Spot shape - Visium & SlideSeqV2
+
+```{r, message=FALSE, warning=FALSE}
+spe_slide <- STexampleData::SlideSeqV2_mouseHPC()
+spe_slide$loglibsize <- log1p(colSums(counts(spe_slide)))
+```
+
+```{r, fig.width=10, fig.height=3, warning=FALSE, message=FALSE}
+(plotSpatial(spe_slide, annotate = "celltype", in_tissue = NULL, point_size = 0.1) + 
+  guides(color=guide_legend(override.aes = list(size = 3), ncol=2)) |
+  plotSpatial(spe_slide, annotate = "loglibsize", in_tissue = NULL,point_size = 0.1) + 
+  scale_color_gradient(name="Log library size") + ggtitle("")) +
+  plot_annotation(title = 'Slide Seq v2 Mouse Brain')
+```
+
 ## 10x Genomics Visium: Mouse coronal brain section
 
-First we start with a demo for a 10x Genomics Visium mouse brain dataset. We generate visualizations of library size and expression levels of selected genes. Both `plotVisium()` and `plotSpatial()` reflect the spatial coordinates of spots, with the former also overlaying spots on the H\&E histology image. Note that `plotVisium()` accepts a `SpatialExperiment` class object, while other functions in the package accept either `SpatialExperiment` or `SingleCellExperiment` class objects.
+First we start with a demo for a 10x Genomics Visium mouse brain dataset. We generate visualizations of library size and expression levels of selected genes. Both `plotVisium()` and `plotCoords()` reflect the spatial coordinates of spots, with the former also overlaying spots on the H\&E histology image. Note that `plotVisium()` accepts a `SpatialExperiment` class object, while other functions in the package accept either `SpatialExperiment` or `SingleCellExperiment` class objects.
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
@@ -90,13 +106,13 @@ p1 | p2
 ```
 
 
-#### plotSpatial
+#### plotCoords
 
-Using `plotSpatial()`, for a 10x Genomics Visium dataset, by default we subset to spots that are over tissue. Palettes in `plotSpatial()` can be changed in a similar manner to `plotVisium()`.
+Using `plotCoords()`, for a 10x Genomics Visium dataset, by default we subset to spots that are over tissue. Palettes in `plotCoords()` can be changed in a similar manner to `plotVisium()`.
 
 ```{r, fig.width=8, fig.height=3.5}
-p1 <- plotSpatial(spe, annotate = "Gapdh")
-p2 <- plotSpatial(spe, annotate = "Mbp", pal = "viridis")
+p1 <- plotCoords(spe, annotate = "Gapdh")
+p2 <- plotCoords(spe, annotate = "Mbp", pal = "viridis")
 
 # display panels using patchwork
 p1 | p2
@@ -107,7 +123,7 @@ p1 | p2
 
 ### Discrete annotations
 
-`plotSpatial()` and `plotVisium()` can also be used to visualize discrete or categorical annotation variables, such as cluster labels as colors on the spatial coordinates. We will introduce this functionality using the Visium human brain dorsolateral prefrontal cortex (DLPFC) dataset.
+`plotCoords()` and `plotVisium()` can also be used to visualize discrete or categorical annotation variables, such as cluster labels as colors on the spatial coordinates. We will introduce this functionality using the Visium human brain dorsolateral prefrontal cortex (DLPFC) dataset.
 
 ```{r, message=FALSE}
 # load data in SpatialExperiment format
@@ -123,12 +139,12 @@ plotVisium(spe, annotate = "ground_truth", highlight = "in_tissue",
            pal = "libd_layer_colors")
 ```
 
-For `plotSpatial()`, we leave the palette as NULL, and since the reference annotations are categorical, eight distinct colors are automatically generated. (Similarly, leaving the palette as NULL for a continuous variable will generate a default three-color gradient of "blue-beige-red".)
+For `plotCoords()`, we leave the palette as NULL, and since the reference annotations are categorical, eight distinct colors are automatically generated. (Similarly, leaving the palette as NULL for a continuous variable will generate a default three-color gradient of "blue-beige-red".)
 
 ```{r, fig.width=8, fig.height=4}
-p1 <- plotSpatial(spe, annotate = "ground_truth") + 
+p1 <- plotCoords(spe, annotate = "ground_truth", pal = "Okabe-Ito") +
   ggtitle("Reference")
-p2 <- plotSpatial(spe, annotate = "libsize") + 
+p2 <- plotCoords(spe, annotate = "libsize") + 
   ggtitle("Library size")
 
 # display panels using patchwork
@@ -137,10 +153,73 @@ p1 | p2
 
 We can also overlay text labels over the clusters using the `text_by` argument.
 
+### bin shape - VisiumHD
+```{r}
+# retrieve dataset from OSF repo
+id <- "VisiumHD_HumanColon_Oliveira"
+pa <- OSTA.data_load(id)
+dir.create(td <- tempfile())
+unzip(pa, exdir=td)
+
+# read 8um bins into 'SpatialExperiment'
+vhd8 <- TENxVisiumHD(spacerangerOut=td, processing="filtered", format="h5", 
+                     images="lowres", bin_size="008") |> import()
+
+# use gene symbols as feature names
+gs <- rowData(vhd8)$Symbol; rownames(vhd8) <- make.unique(gs)
+colnames(vhd8) <- vhd8$barcode 
+
+# retrieve annotations
+gz <- "binned_outputs/square_008um/deconvolution.csv.gz"
+df <- read.csv(file.path(td, gz), row.names=2)
+head(df <- df[complete.cases(df), -1])
+
+# keep only annotated bins
+vhd8 <- vhd8[, rownames(df)]
+names(df) <- c("DeconClass", "DeconLabel1", "DeconLabel2")
+colData(vhd8)[names(df)] <- df
+```
+
+## Imaging-based spatial transcriptomics data
+
+Xenium (10x Genomics), CosMx (Nanostring, now Bruker), MERSCOPE (Vizgen). 
+```{r, message=FALSE, warning=FALSE}
+spe_xen <- STexampleData::Janesick_breastCancer_Xenium_rep1()
+spe_cos <- STexampleData::CosMx_lungCancer()
+spe_mer <- STexampleData::MERSCOPE_ovarianCancer()
+spe_sta <- STexampleData::STARmapPLUS_mouseBrain()
+```
+
+Note that `in_tissue = NULL` must be specified for all imaging-based SPE objects. Point size could be adjusted manually if needed. 
+```{r, message=FALSE, fig.width=12, fig.height=3}
+plotCoords(spe_xen, annotate = "cell_area", in_tissue = NULL, pal = "magma",
+            point_size = 0.15) + ggtitle("Xenium Breast Cancer") |
+  plotCoords(spe_cos, annotate = "Area", in_tissue = NULL, pal = "plasma", 
+              point_size = 0.1) + ggtitle("CosMx Breast Cancer") |
+  plotCoords(spe_mer, annotate = "volume", in_tissue = NULL, 
+              pal = c("navyblue", "yellow"),
+              point_size = 0.05) + ggtitle("MERSCOPE Ovarian Cancer")
+```
+
+Another imaging-based technology STARmap PLUS has annotated mouse brain data. We demonstrate the following visualization on this relatively small dataset.  
+```{r, message=FALSE, fig.width=6, fig.height=3.5}
+plotCoords(spe_sta, annotate = "Main_molecular_tissue_region", in_tissue = NULL,
+            point_size = 0.1, text_by = "Main_molecular_tissue_region",
+            text_by_size = 4, text_by_color = "#2d2d2d")
+```
+
+Here we perform some quick processing to get reduced dimension. 
+```{r}
+spe_sta <- logNormCounts(spe_sta)
+dec <- modelGeneVar(spe_sta)
+hvg <- getTopHVGs(dec, n=3e3)
+spe_sta <- runPCA(spe_sta, subset_row=hvg)
+spe_sta <- runUMAP(spe_sta, dimred="PCA")
+```
 
 ## Quality control (QC) plots
 
-### Spot-level QC
+### Spot/bin/cell-level QC
 
 We next derive some spot-level quality control (QC) flags for plotting. We use the `scater` package to add QC metrics to our data object.
 
@@ -154,16 +233,16 @@ colData(spe)$low_libsize <- colData(spe)$sum < 400 | colData(spe)$detected < 400
 colData(spe)$high_mito <- colData(spe)$subsets_mito_percent > 30
 ```
 
-`plotSpatialQC(plot_type = "spot")` reflects the spatial coordinates of the spots, where spots of interests can be labeled by a flag with TRUE or FALSE levels. The TRUE level are highlighted by red color.
+`plotObsQC(plot_type = "spot")` reflects the spatial coordinates of the spots, where spots of interests can be labeled by a flag with TRUE or FALSE levels. The TRUE level are highlighted by red color.
 
 We can investigate spots with low library size using histograms, violin plots, and spot plots.
 
 ```{r, fig.width=8, fig.height=4.5}
-p1 <- plotSpatialQC(spe, plot_type = "histogram", 
+p1 <- plotObsQC(spe, plot_type = "histogram", 
                  x_metric = "sum", annotate = "low_libsize", )
-p2 <- plotSpatialQC(spe, plot_type = "violin", 
+p2 <- plotObsQC(spe, plot_type = "violin", 
                  x_metric = "sum", annotate = "low_libsize", point_size = 0.1)
-p3 <- plotSpatialQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
+p3 <- plotObsQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
                  annotate = "low_libsize", point_size = 0.2)
 
 # display panels using patchwork
@@ -173,11 +252,11 @@ p1 | p2 | p3
 Similarly, we can investigate spots with high mitochondrial proportion of reads.
 
 ```{r, fig.width=10, fig.height=4.5}
-p1 <- plotSpatialQC(spe, plot_type = "histogram", 
+p1 <- plotObsQC(spe, plot_type = "histogram", 
                  x_metric = "subsets_mito_percent", annotate = "high_mito", )
-p2 <- plotSpatialQC(spe, plot_type = "violin", 
+p2 <- plotObsQC(spe, plot_type = "violin", 
                  x_metric = "subsets_mito_percent", annotate = "high_mito", point_size = 0.1)
-p3 <- plotSpatialQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
+p3 <- plotObsQC(spe, plot_type = "spot", in_tissue = "in_tissue", 
                  annotate = "high_mito", point_size = 0.2)
 
 # display panels using patchwork
@@ -187,7 +266,7 @@ p1 | p2 | p3
 We can also use a scatter plot to check the trend between two variables, for example mitochondrial proportion vs. library size. We can also highlight spots by putting thresholds on the x and/or y axes.
 
 ```{r, out.width="60%", warning=FALSE, message=FALSE}
-plotSpatialQC(spe, plot_type = "scatter", 
+plotObsQC(spe, plot_type = "scatter", 
            x_metric = "subsets_mito_percent", y_metric = "sum", 
            x_threshold = 30, y_threshold = 400)
 ```
@@ -213,6 +292,11 @@ p1 | p2
 ## Reduced dimension plots
 
 We can also use the `plotDimRed()` function to generate reduced dimension plots, e.g. PCA or UMAP.
+```{r}
+
+```
+
+
 
 
 # Session information
