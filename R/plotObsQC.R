@@ -1,12 +1,12 @@
-#' plotSpatialQC
+#' plotObsQC
 #' 
 #' Plotting functions for spatial transcriptomics data.
 #' 
-#' Function to create quality control (QC) plots for spatial transcriptomics
-#' data.
+#' Function to create observation-level quality control (QC) plots for spatial
+#' transcriptomics data.
 #' 
-#' The following types of QC plots are available for spot-level or cell-level QC
-#' (see \code{\link{plotFeatureQC}} for feature-level QC):
+#' The following types of observation-level (i.e. spot-level or cell-level) QC
+#' plots are available:
 #' 
 #' \itemize{
 #' \item Histogram (\code{plot_type = "histogram"}) for a single QC metric, e.g.
@@ -22,6 +22,9 @@
 #' number of UMI counts per spot. For number of counts per spot, the violin plot
 #' can optionally highlight selected spots, e.g. spots with low library size.
 #' }
+#' 
+#' For feature-level (i.e. gene-level) QC plots, see
+#' \code{\link{plotFeatureQC}}.
 #' 
 #' 
 #' @param spe Input data, assumed to be a \code{SpatialExperiment} or
@@ -110,21 +113,21 @@
 #' colData(spe)$sum <- colSums(counts(spe))
 #' colData(spe)$low_libsize <- colData(spe)$sum < 400
 #' 
-#' plotSpatialQC(spe, plot_type = "histogram", x_metric = "sum", annotate = "low_libsize")
-#' plotSpatialQC(spe, plot_type = "scatter", x_metric = "sum", y_metric = "cell_count")
-#' plotSpatialQC(spe, plot_type = "spot", annotate = "low_libsize", in_tissue = "in_tissue")
-#' plotSpatialQC(spe, plot_type = "violin", x_metric = "sum", annotate = "low_libsize")
+#' plotObsQC(spe, plot_type = "histogram", x_metric = "sum", annotate = "low_libsize")
+#' plotObsQC(spe, plot_type = "scatter", x_metric = "sum", y_metric = "cell_count")
+#' plotObsQC(spe, plot_type = "spot", annotate = "low_libsize", in_tissue = "in_tissue")
+#' plotObsQC(spe, plot_type = "violin", x_metric = "sum", annotate = "low_libsize")
 #' 
-plotSpatialQC <- function(spe, 
-                          plot_type = c("histogram", "scatter", "spot", "violin"), 
-                          x_coord = NULL, y_coord = NULL, 
-                          x_metric = NULL, y_metric = NULL, 
-                          x_threshold = NULL, y_threshold = NULL, 
-                          trend = TRUE, marginal = TRUE, 
-                          annotate = NULL, in_tissue = NULL, 
-                          legend_point_size = 3, 
-                          n_bins = 100, point_size = 0.3, 
-                          y_reverse = TRUE) {
+plotObsQC <- function(spe, 
+                      plot_type = c("histogram", "scatter", "spot", "violin"), 
+                      x_coord = NULL, y_coord = NULL, 
+                      x_metric = NULL, y_metric = NULL, 
+                      x_threshold = NULL, y_threshold = NULL, 
+                      trend = TRUE, marginal = TRUE, 
+                      annotate = NULL, in_tissue = NULL, 
+                      legend_point_size = 3, 
+                      n_bins = 100, point_size = 0.3, 
+                      y_reverse = TRUE) {
   
   # check validity of arguments
   plot_type <- match.arg(plot_type)
@@ -291,20 +294,21 @@ plotSpatialQC <- function(spe,
 }
 
 
-#' @rdname plotSpatialQC
+#' @rdname plotObsQC
 #' @param ... Not used.
 #' @export
 plotQC <- function(...) {
   # message when using deprecated function name
-  message("The function plotQC() has been replaced with plotSpatialQC() and ", 
-          "plotFeatureQC(). Please use one of these functions instead.")
+  message("The function plotQC() has been replaced with plotObsQC() and ", 
+          "plotFeatureQC().")
 }
 
 
-#' @rdname plotSpatialQC
+#' @rdname plotObsQC
 #' @param ... Not used.
 #' @export
 plotSpotQC <- function(...) {
   # message when using deprecated function name
-  message("The function plotSpotQC() has been replaced with plotSpatialQC().")
+  message("The function plotSpotQC() has been replaced with plotObsQC(). Please ", 
+          "use the new function name.")
 }

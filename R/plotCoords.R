@@ -1,4 +1,4 @@
-#' plotSpatial
+#' plotCoords
 #' 
 #' Plotting functions for spatial transcriptomics data.
 #' 
@@ -110,23 +110,21 @@
 #' 
 #' # discrete annotations
 #' spe <- Visium_humanDLPFC()
-#' plotSpatial(spe, annotate = "ground_truth")
+#' plotCoords(spe, annotate = "ground_truth")
 #' 
 #' # continuous annotations
 #' spe <- Visium_mouseCoronal()
-#' plotSpatial(spe, annotate = "Gapdh", feature_names = "gene_name")
+#' plotCoords(spe, annotate = "Gapdh", feature_names = "gene_name")
 #' 
-plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL, 
-                        sample_id = NULL, in_tissue = "in_tissue", 
-                        annotate = NULL, feature_names = NULL, 
-                        assay_name = "counts", 
-                        pal = NULL, 
-                        point_shape = 16, point_size = 0.3, 
-                        legend_position = "right", 
-                        legend_point_size = 3, 
-                        show_axes = FALSE, y_reverse = TRUE, 
-                        text_by = NULL, text_by_size = 5, 
-                        text_by_color = "black") {
+plotCoords <- function(spe, x_coord = NULL, y_coord = NULL, 
+                       sample_id = NULL, in_tissue = "in_tissue", 
+                       annotate = NULL, feature_names = NULL, 
+                       assay_name = "counts", 
+                       pal = NULL, point_shape = 16, point_size = 0.3, 
+                       legend_position = "right", legend_point_size = 3, 
+                       show_axes = FALSE, y_reverse = TRUE, 
+                       text_by = NULL, text_by_size = 5, 
+                       text_by_color = "black") {
   
   # check validity of arguments
   if (!is.null(in_tissue)) {
@@ -312,11 +310,12 @@ plotSpatial <- function(spe, x_coord = NULL, y_coord = NULL,
 }
 
 
-#' @rdname plotSpatial
+#' @rdname plotCoords
 #' @param ... Not used.
 #' @export
 plotSpots <- function(...) {
   # message when using deprecated function name
-  message("The function plotSpots() has been replaced with plotSpatial(), which ", 
-          "is suitable for both sequencing-based and imaging-based platforms.")
+  message("The function plotSpots() has been replaced with plotCoords(), which ", 
+          "can be used with both sequencing-based and imaging-based data. Please ", 
+          "use the new function name.")
 }

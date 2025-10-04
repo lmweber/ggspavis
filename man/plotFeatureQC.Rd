@@ -45,11 +45,11 @@ Returns a ggplot object, which may be further modified using ggplot
 Plotting functions for spatial transcriptomics data.
 }
 \details{
-Function to create quality control (QC) plots for spatial transcriptomics
-data.
+Function to create feature-level quality control (QC) plots for spatial
+transcriptomics data.
 
-The following types of QC plots are available for feature-level QC (see
-\code{\link{plotSpotQC}} for spot-level or cell-level QC):
+The following types of feature-level (i.e. gene-level) QC plots are
+available:
 
 \itemize{
 \item Histogram (\code{plot_type = "histogram"}) for a single QC metric, e.g.
@@ -59,6 +59,9 @@ highlight selected features, e.g. low abundance features.
 UMI counts across all spots per feature. The violin plot can optionally
 highlight selected features, e.g. low abundance features.
 }
+
+For observation-level (i.e. spot-level or cell-level) QC plots, see
+\code{\link{plotObsQC}}.
 }
 \examples{
 library(STexampleData)
