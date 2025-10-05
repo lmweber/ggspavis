@@ -2,6 +2,8 @@
 
 [![R build status](https://github.com/lmweber/ggspavis/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/lmweber/ggspavis/actions)
 
+<img src="inst/extdata/ggspavis.png" width="200" align="right"/>
+
 The `ggspavis` package contains visualization functions for spatial transcriptomics data, including functions to generate several types of plots, including spot plots, feature (molecule) plots, reduced dimension plots, spot-level quality control (QC) plots, and feature-level QC plots, for datasets from the 10x Genomics Visium and other technological platforms. Datasets are assumed to be in either [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) or [SingleCellExperiment](https://bioconductor.org/packages/SingleCellExperiment) Bioconductor format.
 
 The package is available from [Bioconductor](https://bioconductor.org/packages/ggspavis).

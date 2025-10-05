@@ -1,5 +1,5 @@
 Package: ggspavis
-Version: 1.15.7
+Version: 1.15.8
 Title: Visualization functions for spatial transcriptomics data
 Description: Visualization functions for spatial transcriptomics data. Includes 
     functions to generate several types of plots, including spot plots, feature 
@@ -37,6 +37,7 @@ Imports:
     SpatialExperiment, 
     SingleCellExperiment, 
     SummarizedExperiment, 
+    arrow,
     ggside, 
     grid, 
     ggrepel, 
@@ -59,4 +60,4 @@ Suggests:
     uwot, 
     testthat, 
     patchwork
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
