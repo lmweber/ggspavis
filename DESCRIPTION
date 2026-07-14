@@ -1,5 +1,5 @@
 Package: ggspavis
-Version: 1.19.0
+Version: 1.19.1
 Title: Visualization functions for spatial transcriptomics data
 Description: Visualization functions for spatial transcriptomics data. Includes 
     functions to generate several types of plots, including spot plots, feature 
@@ -9,7 +9,7 @@ Description: Visualization functions for spatial transcriptomics data. Includes
     either SpatialExperiment or SingleCellExperiment format.
 Authors@R: c(
     person("Lukas M.", "Weber", 
-        email = "lmweb012@gmail.com", 
+        email = "weberlm3@gmail.com", 
         role = c("aut", "cre"), 
         comment = c(ORCID = "0000-0002-3282-1730")), 
     person("Helena L.", "Crowell", 
